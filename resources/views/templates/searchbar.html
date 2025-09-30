@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện Tìm kiếm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f8ff;
+        }
+
+        .litepicker {
+            font-family: 'Inter', sans-serif;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .tab-button.active span {
+            color: #2563eb;
+        }
+
+        .tab-button.active svg {
+            fill: #2563eb;
+            color: #2563eb;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #2563eb;
+            border-radius: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .styled-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-size: 1rem;
+            font-weight: 600;
+            padding-top: 1.25rem;
+            height: 56px;
+        }
+
+        .styled-input-label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            color: #6b7280;
+            pointer-events: none;
+            transition: all 0.2s ease-out;
+            font-size: 1rem;
+        }
+
+        .styled-input:focus + .styled-input-label,
+        .styled-input:not(:placeholder-shown) + .styled-input-label {
+            top: 8px;
+            transform: translateY(0);
+            font-size: 0.75rem;
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid #e2e8f0;
+            background-color: #fff;
+            z-index: 1000;
+            max-height: 240px;
+            overflow-y: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .autocomplete-suggestion {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+        }
+
+        .autocomplete-suggestion:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #2563eb;
+        }
+
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+<div class="w-full max-w-6xl bg-white rounded-2xl shadow-lg p-4 sm:p-5">
+    <div class="flex items-center space-x-2 sm:space-x-8 border-b border-gray-200 overflow-x-auto">
+        <button data-tab="bus"
+                class="tab-button active relative flex-shrink-0 flex items-center space-x-2 py-3 px-1 text-gray-500 font-medium hover:text-blue-600 transition-colors">
+            <svg viewBox="0 0 24 24" class="w-6 h-6">
+                <path
+                    d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"></path>
+            </svg>
+            <span>Xe khách</span>
+        </button>
+        <button data-tab="flight"
+                class="tab-button relative flex-shrink-0 flex items-center space-x-2 py-3 px-1 text-gray-500 font-medium hover:text-blue-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 class="w-6 h-6">
+                <path
+                    d="M22 16v-2l-8.421-5V3.5c0-.83-.705-1.5-1.579-1.5s-1.579.67-1.579 1.5V9L2 14v2l8.421-2.5V19l-2.105 1.5V22L12 21l3.684 1v-1.5L13.58 19v-5.5L22 16z"
+                    fill="#474747"></path>
+            </svg>
+            <span>Máy bay</span>
+            <span
+                class="absolute -top-1 right-0 transform translate-x-1/2 text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-full">-20K</span>
+        </button>
+        <button data-tab="train"
+                class="tab-button relative flex-shrink-0 flex items-center space-x-2 py-3 px-1 text-gray-500 font-medium hover:text-blue-600 transition-colors">
+            <svg width="25" height="24" viewBox="0 0 25 24" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M8.5 2a4 4 0 0 0-4 4v11a1 1 0 0 0 1 1h1l-2 4h2l.6-1.2h10.8l.6 1.2h2l-2-4h1a1 1 0 0 0 1-1V6a4 4 0 0 0-4-4h-8zm8 16h-8L8 19h9l-.5-1zm-8-14a2 2 0 0 0-2 2v5h5V4h-3zm10 7h-5V4h3a2 2 0 0 1 2 2v5zm-9 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM17 16a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"
+                      fill="#474747"></path>
+            </svg>
+            <span>Tàu hỏa</span>
+        </button>
+    </div>
+
+    <div class="mt-5">
+        <div class="space-y-4 lg:hidden">
+            <div class="relative rounded-xl border border-gray-200 p-4">
+                <div class="flex">
+                    <div class="flex flex-col items-center mr-4 shrink-0">
+                        <div class="w-4 h-14 flex items-center">
+                            <div
+                                class="w-4 h-4 rounded-full bg-blue-500 border-2 border-white ring-2 ring-blue-500"></div>
+                        </div>
+                        <div class="w-px h-2 border-l-2 border-dashed border-gray-300"></div>
+                        <div class="w-4 h-14 flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-red-500"></div>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="input-wrapper">
+                            <input id="origin-input-mobile" type="text" value="Hà Nội" class="styled-input"
+                                   placeholder=" " autocomplete="off">
+                            <label for="origin-input-mobile" class="styled-input-label">Nơi xuất phát</label>
+                            <div id="origin-suggestions-mobile" class="autocomplete-suggestions hidden"></div>
+                        </div>
+                        <div class="input-wrapper">
+                            <input id="destination-input-mobile" type="text" value="Lào Cai" class="styled-input"
+                                   placeholder=" " autocomplete="off">
+                            <label for="destination-input-mobile" class="styled-input-label">Nơi đến</label>
+                            <div id="destination-suggestions-mobile" class="autocomplete-suggestions hidden"></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="swap-button-mobile"
+                        class="absolute top-1/2 right-4 -translate-y-1/2 p-2 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 transition-colors">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 16V4m0 12l-4-4m4 4l4-4m6 8v-8l-4 4m4-4l4 4"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="rounded-xl border border-gray-200 p-4 space-y-4">
+                <div class="flex items-center">
+                    <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
+                         alt="date icon" width="24" height="24" class="mr-4">
+                    <div class="input-wrapper">
+                        <input id="departure-date-mobile" class="styled-input cursor-pointer" placeholder=" " readonly>
+                        <label for="departure-date-mobile" class="styled-input-label">Ngày đi</label>
+                    </div>
+                </div>
+                <hr class="border-gray-200">
+                <div class="flex items-center justify-between">
+                    <span class="font-semibold text-gray-700">Khứ hồi</span>
+                    <div
+                        class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="toggle" id="round-trip-toggle"
+                               class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                        <label for="round-trip-toggle"
+                               class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                    </div>
+                </div>
+                <div id="return-date-wrapper-mobile" class="hidden">
+                    <hr class="border-gray-200 mb-4">
+                    <div class="flex items-center">
+                        <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
+                             alt="date icon" width="24" height="24" class="mr-4">
+                        <div class="input-wrapper">
+                            <input id="return-date-mobile" class="styled-input cursor-pointer" placeholder=" " readonly>
+                            <label for="return-date-mobile" class="styled-input-label">Ngày về</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button
+                class="w-full h-14 bg-yellow-400 text-gray-900 font-bold rounded-lg hover:bg-yellow-500 transition-colors text-lg">
+                Tìm kiếm
+            </button>
+        </div>
+
+        <div class="hidden lg:flex flex-col lg:flex-row items-center border border-gray-200 rounded-xl shadow-sm">
+            <div class="w-full flex-grow flex flex-col lg:flex-row items-center">
+                <div class="flex items-center p-4 w-full">
+                    <img src="https://229a2c9fe669f7b.cmccloud.com.vn/svgIcon/pickup_vex_blue_24dp.svg" width="24"
+                         height="24" alt="origin icon" class="mr-3">
+                    <div class="input-wrapper">
+                        <input id="origin-input-desktop" type="text" value="Hà Nội" class="styled-input" placeholder=" "
+                               autocomplete="off">
+                        <label for="origin-input-desktop" class="styled-input-label">Nơi xuất phát</label>
+                        <div id="origin-suggestions-desktop" class="autocomplete-suggestions hidden"></div>
+                    </div>
+                </div>
+                <button id="swap-button-desktop"
+                        class="p-2 my-2 lg:my-0 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 transition-colors flex-shrink-0">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                    </svg>
+                </button>
+                <div class="hidden lg:block w-px h-10 bg-gray-200 mx-2"></div>
+                <div class="flex items-center p-4 w-full">
+                    <img src="https://229a2c9fe669f7b.cmccloud.com.vn/svgIcon/dropoff_new_24dp.svg" width="24"
+                         height="24" alt="destination icon" class="mr-3">
+                    <div class="input-wrapper">
+                        <input id="destination-input-desktop" type="text" value="Lào Cai" class="styled-input"
+                               placeholder=" " autocomplete="off">
+                        <label for="destination-input-desktop" class="styled-input-label">Nơi đến</label>
+                        <div id="destination-suggestions-desktop" class="autocomplete-suggestions hidden"></div>
+                    </div>
+                </div>
+                <div class="hidden lg:block w-px h-10 bg-gray-200"></div>
+                <div class="flex items-center p-4 w-full">
+                    <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
+                         alt="date icon" width="24" height="24" class="mr-3">
+                    <div class="input-wrapper">
+                        <input id="departure-date-desktop" class="styled-input cursor-pointer" placeholder=" " readonly>
+                        <label for="departure-date-desktop" class="styled-input-label">Ngày đi</label>
+                    </div>
+                </div>
+                <div class="hidden lg:block w-px h-10 bg-gray-200"></div>
+                <div class="p-4 w-full" id="return-date-wrapper-desktop">
+                    <button id="add-return-date-button-desktop"
+                            class="flex items-center text-blue-600 font-semibold w-full h-14">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span>Thêm ngày về</span>
+                    </button>
+                    <div id="return-date-container-desktop" class="hidden w-full h-full flex items-center">
+                        <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
+                             alt="date icon" width="24" height="24" class="mr-3">
+                        <div class="input-wrapper">
+                            <input id="return-date-desktop" class="styled-input cursor-pointer" placeholder=" "
+                                   readonly>
+                            <label for="return-date-desktop" class="styled-input-label">Ngày về</label>
+                        </div>
+                        <button id="clear-return-date-desktop" class="text-gray-400 hover:text-gray-600 ml-2 z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full lg:w-auto p-2">
+                <button
+                    class="w-full h-14 bg-yellow-400 text-gray-900 font-bold rounded-lg hover:bg-yellow-500 transition-colors text-lg px-8 whitespace-nowrap">
+                    Tìm kiếm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- SHARED DATA & FUNCTIONS ---
+        const locations = ['Hà Nội', 'Lào Cai', 'Sa Pa', 'Ninh Bình', 'Quảng Bình', 'Huế', 'Đà Nẵng', 'Hội An', 'Quận Hoàn Kiếm', 'Thị xã Sa Pa', 'Thành Phố Ninh Bình', 'Tam Cốc', 'Phong Nha', 'Thành Phố Huế', 'Thành Phố Đà Nẵng', 'Thành Phố Hội An'];
+        const dayOfWeek = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+
+        function formatDate(date) {
+            if (!date) return '';
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const y = date.getFullYear();
+            return `${dayOfWeek[date.getDay()]}, ${d}/${m}/${y}`;
+        }
+
+        function setupAutocomplete(inputElement, suggestionsElement) {
+            const removeAccents = str => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+
+            const showSuggestions = (query = '') => {
+                const normalizedQuery = removeAccents(query.toLowerCase());
+                const filteredLocations = locations.filter(location => removeAccents(location.toLowerCase()).includes(normalizedQuery));
+                suggestionsElement.innerHTML = '';
+                suggestionsElement.classList.toggle('hidden', filteredLocations.length === 0);
+                filteredLocations.forEach(location => {
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-suggestion';
+                    item.textContent = location;
+                    item.addEventListener('click', () => {
+                        inputElement.value = location;
+                        suggestionsElement.classList.add('hidden');
+                        inputElement.dispatchEvent(new Event('input'));
+                    });
+                    suggestionsElement.appendChild(item);
+                });
+            };
+            inputElement.addEventListener('input', () => showSuggestions(inputElement.value));
+            inputElement.addEventListener('focus', () => showSuggestions(inputElement.value));
+        }
+
+        // --- ELEMENT SELECTORS ---
+        // Mobile
+        const originInputMobile = document.getElementById('origin-input-mobile');
+        const destinationInputMobile = document.getElementById('destination-input-mobile');
+        const departureDateInputMobile = document.getElementById('departure-date-mobile');
+        const returnDateInputMobile = document.getElementById('return-date-mobile');
+        const roundTripToggle = document.getElementById('round-trip-toggle');
+        const returnDateWrapperMobile = document.getElementById('return-date-wrapper-mobile');
+        const swapButtonMobile = document.getElementById('swap-button-mobile');
+
+        // Desktop
+        const originInputDesktop = document.getElementById('origin-input-desktop');
+        const destinationInputDesktop = document.getElementById('destination-input-desktop');
+        const departureDateInputDesktop = document.getElementById('departure-date-desktop');
+        const returnDateInputDesktop = document.getElementById('return-date-desktop');
+        const addReturnDateButtonDesktop = document.getElementById('add-return-date-button-desktop');
+        const returnDateContainerDesktop = document.getElementById('return-date-container-desktop');
+        const clearReturnDateButtonDesktop = document.getElementById('clear-return-date-desktop');
+        const swapButtonDesktop = document.getElementById('swap-button-desktop');
+
+        // --- SHARED LOGIC ---
+        document.addEventListener('click', (e) => {
+            if (!originInputMobile.parentElement.contains(e.target)) document.getElementById('origin-suggestions-mobile').classList.add('hidden');
+            if (!destinationInputMobile.parentElement.contains(e.target)) document.getElementById('destination-suggestions-mobile').classList.add('hidden');
+            if (!originInputDesktop.parentElement.contains(e.target)) document.getElementById('origin-suggestions-desktop').classList.add('hidden');
+            if (!destinationInputDesktop.parentElement.contains(e.target)) document.getElementById('destination-suggestions-desktop').classList.add('hidden');
+        });
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => button.addEventListener('click', function () {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        }));
+
+        // --- MOBILE SPECIFIC LOGIC ---
+        setupAutocomplete(originInputMobile, document.getElementById('origin-suggestions-mobile'));
+        setupAutocomplete(destinationInputMobile, document.getElementById('destination-suggestions-mobile'));
+        swapButtonMobile.addEventListener('click', () => {
+            [originInputMobile.value, destinationInputMobile.value] = [destinationInputMobile.value, originInputMobile.value];
+            originInputMobile.dispatchEvent(new Event('input'));
+            destinationInputMobile.dispatchEvent(new Event('input'));
+        });
+
+        let returnDatePickerMobile = null;
+        const departurePickerMobile = new Litepicker({
+            element: departureDateInputMobile, singleMode: true, lang: 'vi-VN', setup: (picker) => {
+                picker.on('selected', (date) => {
+                    departureDateInputMobile.value = formatDate(date.toJSDate());
+                    departureDateInputMobile.dispatchEvent(new Event('input'));
+                    if (returnDatePickerMobile) {
+                        returnDatePickerMobile.setOptions({minDate: date.toJSDate()});
+                        if (returnDatePickerMobile.getDate() && returnDatePickerMobile.getDate().toJSDate() < date.toJSDate()) {
+                            returnDatePickerMobile.clearSelection();
+                        }
+                    }
+                });
+            }
+        });
+
+        roundTripToggle.addEventListener('change', function () {
+            if (this.checked) {
+                returnDateWrapperMobile.classList.remove('hidden');
+                if (!returnDatePickerMobile) {
+                    returnDatePickerMobile = new Litepicker({
+                        element: returnDateInputMobile,
+                        singleMode: true,
+                        lang: 'vi-VN',
+                        minDate: departurePickerMobile.getDate() ? departurePickerMobile.getDate().toJSDate() : new Date(),
+                        setup: (picker) => {
+                            picker.on('selected', (date) => {
+                                returnDateInputMobile.value = formatDate(date.toJSDate());
+                                returnDateInputMobile.dispatchEvent(new Event('input'));
+                            });
+                        }
+                    });
+                }
+            } else {
+                returnDateWrapperMobile.classList.add('hidden');
+                if (returnDatePickerMobile) returnDatePickerMobile.clearSelection();
+            }
+        });
+
+        // --- DESKTOP SPECIFIC LOGIC ---
+        setupAutocomplete(originInputDesktop, document.getElementById('origin-suggestions-desktop'));
+        setupAutocomplete(destinationInputDesktop, document.getElementById('destination-suggestions-desktop'));
+        swapButtonDesktop.addEventListener('click', () => {
+            [originInputDesktop.value, destinationInputDesktop.value] = [destinationInputDesktop.value, originInputDesktop.value];
+            originInputDesktop.dispatchEvent(new Event('input'));
+            destinationInputDesktop.dispatchEvent(new Event('input'));
+        });
+
+        let returnDatePickerDesktop = null;
+        const departurePickerDesktop = new Litepicker({
+            element: departureDateInputDesktop, singleMode: true, lang: 'vi-VN', setup: (picker) => {
+                picker.on('selected', (date) => {
+                    departureDateInputDesktop.value = formatDate(date.toJSDate());
+                    departureDateInputDesktop.dispatchEvent(new Event('input'));
+                    if (returnDatePickerDesktop) {
+                        returnDatePickerDesktop.setOptions({minDate: date.toJSDate()});
+                        if (returnDatePickerDesktop.getDate() && returnDatePickerDesktop.getDate().toJSDate() < date.toJSDate()) {
+                            returnDatePickerDesktop.clearSelection();
+                        }
+                    }
+                });
+            }
+        });
+
+        addReturnDateButtonDesktop.addEventListener('click', () => {
+            addReturnDateButtonDesktop.classList.add('hidden');
+            returnDateContainerDesktop.classList.remove('hidden');
+            if (!returnDatePickerDesktop) {
+                returnDatePickerDesktop = new Litepicker({
+                    element: returnDateInputDesktop,
+                    singleMode: true,
+                    lang: 'vi-VN',
+                    minDate: departurePickerDesktop.getDate() ? departurePickerDesktop.getDate().toJSDate() : new Date(),
+                    setup: (picker) => {
+                        picker.on('selected', (date) => {
+                            returnDateInputDesktop.value = formatDate(date.toJSDate());
+                            returnDateInputDesktop.dispatchEvent(new Event('input'));
+                        });
+                    }
+                });
+            }
+            returnDatePickerDesktop.show();
+        });
+
+        clearReturnDateButtonDesktop.addEventListener('click', () => {
+            if (returnDatePickerDesktop) returnDatePickerDesktop.destroy();
+            returnDatePickerDesktop = null;
+            returnDateInputDesktop.value = '';
+            returnDateContainerDesktop.classList.add('hidden');
+            addReturnDateButtonDesktop.classList.remove('hidden');
+        });
+
+        // --- INITIAL STATE SETUP (for both views) ---
+        const initialDepartureDate = new Date('2025-09-25');
+        const initialReturnDate = new Date('2025-10-02');
+
+        departurePickerMobile.setDate(initialDepartureDate);
+        departurePickerDesktop.setDate(initialDepartureDate);
+
+        roundTripToggle.click();
+        addReturnDateButtonDesktop.click();
+
+        setTimeout(() => {
+            if (returnDatePickerMobile) returnDatePickerMobile.setDate(initialReturnDate);
+            if (returnDatePickerDesktop) returnDatePickerDesktop.setDate(initialReturnDate);
+        }, 100);
+
+        // Trigger floating label for pre-filled values
+        document.querySelectorAll('.styled-input').forEach(input => {
+            if (input.value) {
+                input.dispatchEvent(new Event('input'));
+            }
+        });
+    });
+</script>
+</body>
+</html>
