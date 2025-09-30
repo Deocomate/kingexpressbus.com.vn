@@ -183,7 +183,7 @@
                 padding-bottom: 4px;
             }
 
-                        .trip-gallery-list button {
+            .trip-gallery-list button {
                 display: inline-flex;
                 border-radius: 10px;
                 overflow: hidden;
@@ -604,7 +604,7 @@
                                                 <span
                                                     class="availability-badge {{ $trip->seats_available > 0 ? 'availability-badge--available' : 'availability-badge--unavailable' }}">
                                                     <i class="fa-solid fa-circle text-xs"></i>
-                                                    <span>{{ $trip->seats_available > 0 ? 'Còn ' . $trip->seats_available . ' chỗ' : 'Hết chỗ' }}</span>
+                                                    <span>{{ $trip->seats_available > 0 ? 'Còn chỗ' : 'Hết chỗ' }}</span>
                                                 </span>
                                             @else
                                                 <p class="text-lg font-bold text-blue-600">Giá liên hệ</p>
@@ -794,7 +794,8 @@
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-5 h-5 rounded bg-gray-400 text-white flex items-center justify-center">
-                                        <i class="fa-solid fa-lock text-xs"></i></div><span>Đã đặt</span>
+                                        <i class="fa-solid fa-lock text-xs"></i>
+                                    </div><span>Đã đặt</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div class="w-5 h-5 rounded bg-blue-500 border border-blue-600"></div><span>Đang
@@ -1019,7 +1020,7 @@
                         }
 
                         const seatsAvailable = Number(tripData.seats_available ?? 0);
-                        modalAvailability.textContent = seatsAvailable > 0 ? 'Còn cho' : 'Hết cho';
+                        modalAvailability.textContent = seatsAvailable > 0 ? 'Còn chỗ' : 'Hết chỗ';
 
                         const bookedSeats = Array.isArray(tripData.booked_seats) ? tripData
                             .booked_seats : [];
