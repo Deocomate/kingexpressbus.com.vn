@@ -190,7 +190,7 @@ class BookingController extends Controller
 
                 if ($mailDetails) {
                     Mail::to($validated['customer_email'])->queue(new BookingConfirmMail($mailDetails));
-                    Mail::to("kinexpressbus@gmail.com")->queue(new BookingConfirmMail($mailDetails));
+                    Mail::to("kingexpressbus@gmail.com")->queue(new BookingConfirmMail($mailDetails));
                 } else {
                     Log::error('Không thể chuẩn bị dữ liệu mail cho booking ID: ' . $bookingId);
                 }
