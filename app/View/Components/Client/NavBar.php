@@ -20,30 +20,26 @@ class NavBar extends Component
     public function __construct($webProfile = null, $mainMenu = [], $authUser = null, array $customerLinks = [])
     {
         $this->webProfile = $webProfile;
-        $this->mainMenu = $this->normalizeMenu($mainMenu);
+        $this->mainMenu = $this->buildMenuTree(collect($mainMenu));
         $this->authUser = $authUser;
         $this->customerLinks = $customerLinks;
     }
 
-    protected function normalizeMenu($menu): array
+    protected function buildMenuTree(Collection $menuItems, $parentId = null): array
     {
-        if (!$menu) {
-            return [];
+        $branch = [];
+
+        $items = $menuItems->where('parent_id', $parentId)->sortBy('priority')->values();
+
+        foreach ($items as $item) {
+            $children = $this->buildMenuTree($menuItems, $item->id);
+            if (!empty($children)) {
+                $item->children = $children;
+            }
+            $branch[] = $item;
         }
 
-        if ($menu instanceof Collection) {
-            return $menu->values()->all();
-        }
-
-        if (is_array($menu)) {
-            return array_values($menu);
-        }
-
-        if (is_iterable($menu)) {
-            return collect($menu)->values()->all();
-        }
-
-        return [];
+        return $branch;
     }
 
     public function render(): View|Closure|string
