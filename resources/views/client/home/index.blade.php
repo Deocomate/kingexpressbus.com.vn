@@ -18,7 +18,7 @@
             }
 
             .hero-floating-card {
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.82));
+                /*background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.82));*/
                 backdrop-filter: blur(18px);
             }
 

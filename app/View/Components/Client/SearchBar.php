@@ -2,10 +2,10 @@
 
 namespace App\View\Components\Client;
 
+use App\Support\Client\SearchDataBuilder;
 use Closure;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\Component;
 
 class SearchBar extends Component
@@ -25,125 +25,17 @@ class SearchBar extends Component
 
     protected function prepareSearchData(array $searchData): array
     {
-        $locations = $searchData['locations'] ?? null;
+        // Sử dụng SearchDataBuilder làm nguồn dữ liệu duy nhất
+        // Nó đã bao gồm logic sắp xếp priority từ cao đến thấp
+        $builderResult = SearchDataBuilder::make($searchData);
 
-        if (empty($locations)) {
-            $locations = $this->loadLocations();
-        } elseif ($locations instanceof \Illuminate\Support\Collection) {
-            $locations = $locations->toArray();
-        }
-
-        $defaults = $searchData['defaults'] ?? [];
-        if ($defaults instanceof \Illuminate\Support\Collection) {
-            $defaults = $defaults->toArray();
-        }
-
-        $locations = is_array($locations) ? $locations : [];
-        $defaults = $this->resolveDefaults($defaults, $locations);
+        // Logic cũ để phân giải giá trị mặc định vẫn được giữ lại và áp dụng
+        $defaults = $this->resolveDefaults($builderResult['defaults'], $builderResult['locations']);
 
         return [
-            'locations' => $locations,
+            'locations' => $builderResult['locations'],
             'defaults' => $defaults,
         ];
-    }
-
-    protected function loadLocations(): array
-    {
-        $locations = [];
-
-        $provinces = DB::table('provinces')
-            ->select('id', 'name', 'priority')
-            ->orderByDesc('priority')
-            ->orderBy('name')
-            ->get();
-
-        foreach ($provinces as $province) {
-            $locations[] = [
-                'id' => (int) $province->id,
-                'name' => (string) $province->name,
-                'type' => 'province',
-                'type_label' => 'Tỉnh/Thành phố',
-                'context' => null,
-                'address' => null,
-                'priority' => (int) ($province->priority ?? 0),
-            ];
-        }
-
-        $districts = DB::table('districts as d')
-            ->join('provinces as p', 'd.province_id', '=', 'p.id')
-            ->leftJoin('district_types as dt', 'd.district_type_id', '=', 'dt.id')
-            ->select('d.id', 'd.name', 'd.priority', 'p.name as province_name', 'dt.name as district_type_name')
-            ->orderByDesc('d.priority')
-            ->orderBy('d.name')
-            ->get();
-
-        foreach ($districts as $district) {
-            $contextParts = array_filter([
-                $district->district_type_name,
-                $district->province_name,
-            ]);
-
-            $locations[] = [
-                'id' => (int) $district->id,
-                'name' => (string) $district->name,
-                'type' => 'district',
-                'type_label' => 'Quận/Huyện',
-                'context' => $contextParts ? implode(' · ', $contextParts) : ($district->province_name ?? null),
-                'address' => null,
-                'priority' => (int) ($district->priority ?? 0),
-            ];
-        }
-
-        $stops = DB::table('stops as s')
-            ->join('districts as d', 's.district_id', '=', 'd.id')
-            ->join('provinces as p', 'd.province_id', '=', 'p.id')
-            ->select('s.id', 's.name', 's.address', 's.priority', 'd.name as district_name', 'p.name as province_name')
-            ->orderByDesc('s.priority')
-            ->orderBy('s.name')
-            ->get();
-
-        foreach ($stops as $stop) {
-            $locations[] = [
-                'id' => (int) $stop->id,
-                'name' => (string) $stop->name,
-                'type' => 'stop',
-                'type_label' => 'Điểm đón/trả',
-                'context' => trim(sprintf('%s, %s', $stop->district_name, $stop->province_name), ', '),
-                'address' => $stop->address,
-                'priority' => (int) ($stop->priority ?? 0),
-            ];
-        }
-
-        $typeOrder = ['province' => 0, 'district' => 1, 'stop' => 2];
-
-        $locations = collect($locations)
-            ->unique(function (array $item) {
-                return $item['type'] . ':' . $item['id'];
-            })
-            ->sort(function (array $a, array $b) use ($typeOrder) {
-                $priority = ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0);
-                if ($priority !== 0) {
-                    return $priority;
-                }
-
-                $typeComparison = ($typeOrder[$a['type']] ?? 99) <=> ($typeOrder[$b['type']] ?? 99);
-                if ($typeComparison !== 0) {
-                    return $typeComparison;
-                }
-
-                return strcasecmp($a['name'], $b['name']);
-            })
-            ->values()
-            ->map(function (array $item) {
-                $item['priority'] = (int) ($item['priority'] ?? 0);
-                $item['context'] = $item['context'] ? (string) $item['context'] : null;
-                $item['address'] = $item['address'] ? (string) $item['address'] : null;
-
-                return $item;
-            })
-            ->all();
-
-        return $locations;
     }
 
     protected function resolveDefaults(array $defaults, array $locations): array
@@ -171,20 +63,20 @@ class SearchBar extends Component
         $oldLabel = old($field . '_label');
 
         if ($oldId && $oldType) {
-            $location = $this->findLocation((int) $oldId, (string) $oldType, $locations);
+            $location = $this->findLocation((int)$oldId, (string)$oldType, $locations);
 
             if ($location) {
                 if ($oldLabel) {
-                    $location['name'] = (string) $oldLabel;
+                    $location['name'] = (string)$oldLabel;
                 }
 
                 return $location;
             }
 
             return [
-                'id' => (int) $oldId,
-                'type' => (string) $oldType,
-                'name' => (string) ($oldLabel ?? ''),
+                'id' => (int)$oldId,
+                'type' => (string)$oldType,
+                'name' => (string)($oldLabel ?? ''),
                 'type_label' => $this->typeLabel($oldType),
                 'context' => null,
                 'address' => null,
@@ -193,24 +85,24 @@ class SearchBar extends Component
         }
 
         if (is_array($value) && isset($value['id'], $value['type'])) {
-            $location = $this->findLocation((int) $value['id'], (string) $value['type'], $locations);
+            $location = $this->findLocation((int)$value['id'], (string)$value['type'], $locations);
 
             if ($location) {
                 if (!empty($value['name'])) {
-                    $location['name'] = (string) $value['name'];
+                    $location['name'] = (string)$value['name'];
                 }
 
                 return $location;
             }
 
             return [
-                'id' => (int) $value['id'],
-                'type' => (string) $value['type'],
-                'name' => (string) ($value['name'] ?? ''),
+                'id' => (int)$value['id'],
+                'type' => (string)$value['type'],
+                'name' => (string)($value['name'] ?? ''),
                 'type_label' => $this->typeLabel($value['type']),
                 'context' => $value['context'] ?? null,
                 'address' => $value['address'] ?? null,
-                'priority' => (int) ($value['priority'] ?? 0),
+                'priority' => (int)($value['priority'] ?? 0),
             ];
         }
 
@@ -270,7 +162,7 @@ class SearchBar extends Component
     protected function findLocation(int $id, string $type, array $locations): ?array
     {
         foreach ($locations as $location) {
-            if ((int) $location['id'] === $id && $location['type'] === $type) {
+            if ((int)$location['id'] === $id && $location['type'] === $type) {
                 return $location;
             }
         }

@@ -4,7 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         // Bảng lưu thông tin chung của website
@@ -36,7 +40,7 @@ return new class extends Migration {
             $table->string('name', 1000);
             $table->string('url', 1000)->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->string('type', 1000)->default('custom_link')->comment('Loại menu: custom_link, route, page...');
             $table->unsignedBigInteger('related_id')->nullable()->comment('ID liên kết với type (vd: route_id)');
             $table->timestamps();
@@ -47,13 +51,13 @@ return new class extends Migration {
         Schema::create('provinces', function (Blueprint $table) {
             $table->id();
             $table->string('name', 1000);
-            $table->string('slug')->unique(); // Giảm độ dài về mặc định (255)
+            $table->string('slug')->unique();
             $table->string('title', 1000)->nullable()->comment('Tiêu đề (SEO)');
             $table->string('description', 1000)->nullable()->comment('Mô tả (SEO)');
             $table->string('thumbnail_url', 1000)->nullable();
             $table->json('image_list_url')->nullable();
             $table->longText('content')->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
@@ -61,7 +65,15 @@ return new class extends Migration {
         Schema::create('district_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 1000);
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
+        });
+
+        // Bảng dịch vụ tiện ích trên xe
+        Schema::create('bus_services', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 255);
+            $table->string('icon', 100)->nullable()->comment('Font Awesome icon class, e.g., fas fa-wifi');
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
         });
 
         // Bảng quận/huyện hoặc các địa điểm lớn
@@ -70,13 +82,13 @@ return new class extends Migration {
             $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade');
             $table->foreignId('district_type_id')->constrained('district_types')->onDelete('cascade');
             $table->string('name', 1000);
-            $table->string('slug')->unique(); // Giảm độ dài về mặc định (255)
+            $table->string('slug')->unique();
             $table->string('title', 1000)->nullable()->comment('Tiêu đề (SEO)');
             $table->string('description', 1000)->nullable()->comment('Mô tả (SEO)');
             $table->string('thumbnail_url', 1000)->nullable();
             $table->json('image_list_url')->nullable();
             $table->longText('content')->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
@@ -86,7 +98,7 @@ return new class extends Migration {
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->string('name', 1000)->comment('Tên địa điểm cụ thể, vd: 123 Nguyễn Trãi');
             $table->string('address', 1000);
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
@@ -95,7 +107,7 @@ return new class extends Migration {
             $table->foreignId('province_start_id')->constrained('provinces')->onDelete('cascade');
             $table->foreignId('province_end_id')->constrained('provinces')->onDelete('cascade');
             $table->string('name', 1000)->comment('Tên tuyến đường, vd: Tuyến Hà Nội - Lào Cai');
-            $table->string('slug')->unique(); // Giảm độ dài về mặc định (255)
+            $table->string('slug')->unique();
             $table->string('title', 1000)->nullable()->comment('Tiêu đề (SEO)');
             $table->string('description', 1000)->nullable()->comment('Mô tả (SEO)');
             $table->string('duration', 1000)->nullable()->comment('Thời gian di chuyển dự kiến');
@@ -103,7 +115,7 @@ return new class extends Migration {
             $table->string('thumbnail_url', 1000)->nullable();
             $table->json('image_list_url')->nullable();
             $table->longText('content')->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
@@ -112,16 +124,17 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade')->comment('Liên kết 1-1 với user quản lý');
             $table->string('name', 1000);
-            $table->string('slug')->unique(); // Giảm độ dài về mặc định (255)
+            $table->string('slug')->unique();
             $table->string('title', 1000)->nullable()->comment('Tiêu đề (SEO)');
             $table->string('description', 1000)->nullable()->comment('Mô tả (SEO)');
             $table->string('thumbnail_url', 1000)->nullable()->comment('Logo công ty');
             $table->json('image_list_url')->nullable();
             $table->longText('content')->nullable();
             $table->string('phone', 1000)->nullable();
+            $table->string('hotline', 1000)->nullable();
             $table->string('email', 1000)->nullable();
             $table->string('address', 1000)->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
@@ -137,17 +150,17 @@ return new class extends Migration {
             $table->string('thumbnail_url', 1000)->nullable();
             $table->json('image_list_url')->nullable();
             $table->longText('content')->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
-        // Bảng các tuyến đường (trừu tượng), ví dụ: Hà Nội - Sapa
+        // Bảng các tuyến đường của nhà xe
         Schema::create('company_routes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('route_id')->constrained('routes')->onDelete('cascade');
             $table->string('name', 1000)->comment('Tên tuyến đường, vd: Tuyến Hà Nội - Lào Cai Kingexpressbus');
-            $table->string('slug')->unique()->comment('Slug riêng của nhà xe'); // Giảm độ dài
+            $table->string('slug')->unique()->comment('Slug riêng của nhà xe');
             $table->string('title', 1000)->nullable()->comment('Tiêu đề (SEO)');
             $table->string('description', 1000)->nullable()->comment('Mô tả (SEO)');
             $table->string('duration', 1000)->nullable()->comment('Thời gian di chuyển dự kiến');
@@ -155,17 +168,17 @@ return new class extends Migration {
             $table->string('thumbnail_url', 1000)->nullable();
             $table->json('image_list_url')->nullable();
             $table->longText('content')->nullable();
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
-        // Bảng các điểm dừng cho một chuyến xe cụ thể
+        // Bảng các điểm dừng cho một tuyến đường của nhà xe
         Schema::create('company_route_stops', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_route_id')->constrained('company_routes')->onDelete('cascade');
             $table->foreignId('stop_id')->constrained('stops')->onDelete('cascade');
             $table->enum('stop_type', ['pickup', 'dropoff', 'both'])->default('both')->comment('Loại điểm dừng: đón, trả, cả hai');
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
         });
 
         // Bảng chuyến xe: Gắn một xe cụ thể với một tuyến đường, có giờ chạy và giá vé
@@ -177,7 +190,7 @@ return new class extends Migration {
             $table->time('end_time');
             $table->unsignedBigInteger('price')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->integer('priority')->default(0);
+            $table->integer('priority')->default(0)->comment('Số priority càng lớn thì độ ưu tiên càng cao');
             $table->timestamps();
         });
 
@@ -193,7 +206,7 @@ return new class extends Migration {
             $table->string('customer_phone', 1000);
             $table->unsignedBigInteger('pickup_stop_id');
             $table->unsignedBigInteger('dropoff_stop_id');
-            $table->integer('quantity')->default(1)->comment("Số lượng vé khác đặt");
+            $table->integer('quantity')->default(1)->comment("Số lượng vé đặt");
             $table->unsignedBigInteger('total_price');
             $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])->default('pending');
             $table->enum('payment_method', ['online_banking', 'cash_on_pickup'])->default('cash_on_pickup');
@@ -210,6 +223,19 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        // Add drop table statements here in reverse order of creation if needed
+        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('bus_routes');
+        Schema::dropIfExists('company_route_stops');
+        Schema::dropIfExists('company_routes');
+        Schema::dropIfExists('buses');
+        Schema::dropIfExists('companies');
+        Schema::dropIfExists('routes');
+        Schema::dropIfExists('stops');
+        Schema::dropIfExists('districts');
+        Schema::dropIfExists('bus_services');
+        Schema::dropIfExists('district_types');
+        Schema::dropIfExists('provinces');
+        Schema::dropIfExists('menus');
+        Schema::dropIfExists('web_profiles');
     }
 };

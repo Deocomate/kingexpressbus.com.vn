@@ -1,13 +1,3 @@
-<?php
-// Ghi chú: Trong một dự án Laravel, phần Blade view và phần PHP class component sẽ nằm ở 2 file riêng biệt.
-// View: resources/views/components/client/search-bar.blade.php
-// Class: app/View/Components/Client/SearchBar.php
-// Tôi sẽ trình bày cả hai phần trong cùng một file để tiện cho việc review của anh.
-
-// =================================================================
-// Phần 1: Nội dung file view (search-bar.blade.php)
-// =================================================================
-?>
 @php
     $defaults = $searchData['defaults'] ?? [];
 @endphp
@@ -15,7 +5,8 @@
 @once
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round">
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round">
         <style>
             .ksb-form {
                 width: 100%;
@@ -29,6 +20,7 @@
 
             .ksb-shell {
                 display: flex;
+                justify-content: flex-end;
                 flex-wrap: wrap;
                 gap: 1rem;
                 align-items: stretch;
@@ -41,7 +33,6 @@
                 align-items: stretch;
                 border: 1px solid #e2e8f0;
                 border-radius: 18px;
-                /* overflow: hidden; <- This was hiding the dropdown. Removed. */
             }
 
             .ksb-field {
@@ -349,7 +340,6 @@
                     grid-template-columns: 1fr;
                     border-radius: 16px;
                     position: relative;
-                    /* Added for swap button positioning */
                 }
 
                 .ksb-field {
@@ -364,13 +354,11 @@
 
                 .ksb-field--swap {
                     display: none;
-                    /* Hide the original placeholder */
                 }
 
                 #ksb-swap-button {
                     position: absolute;
                     top: 47px;
-                    /* Position it between the first and second field */
                     right: 20px;
                     z-index: 10;
                     width: 42px;
@@ -381,23 +369,18 @@
 
                 #ksb-swap-button:hover {
                     transform: scale(1.05);
-                    /* Keep hover effect */
                 }
-
 
                 .ksb-field--destination {
                     order: 2;
-                    /* Adjust order */
                 }
 
                 .ksb-field--date {
                     order: 3;
-                    /* Adjust order */
                 }
 
                 .ksb-field--return {
                     order: 4;
-                    /* Adjust order */
                 }
 
                 .ksb-submit {
@@ -427,38 +410,38 @@
 
 <form id="client-search-form" action="{{ $action }}" method="GET" class="ksb-form" novalidate>
     <input type="hidden" name="origin_id" id="origin_id"
-        value="{{ old('origin_id', data_get($defaults, 'origin.id')) }}">
+           value="{{ old('origin_id', data_get($defaults, 'origin.id')) }}">
     <input type="hidden" name="origin_type" id="origin_type"
-        value="{{ old('origin_type', data_get($defaults, 'origin.type')) }}">
+           value="{{ old('origin_type', data_get($defaults, 'origin.type')) }}">
     <input type="hidden" name="origin_label" id="origin_label"
-        value="{{ old('origin_label', data_get($defaults, 'origin.name')) }}">
+           value="{{ old('origin_label', data_get($defaults, 'origin.name')) }}">
     <input type="hidden" name="destination_id" id="destination_id"
-        value="{{ old('destination_id', data_get($defaults, 'destination.id')) }}">
+           value="{{ old('destination_id', data_get($defaults, 'destination.id')) }}">
     <input type="hidden" name="destination_type" id="destination_type"
-        value="{{ old('destination_type', data_get($defaults, 'destination.type')) }}">
+           value="{{ old('destination_type', data_get($defaults, 'destination.type')) }}">
     <input type="hidden" name="destination_label" id="destination_label"
-        value="{{ old('destination_label', data_get($defaults, 'destination.name')) }}">
+           value="{{ old('destination_label', data_get($defaults, 'destination.name')) }}">
     <input type="hidden" name="return_date" id="ksb-return-value"
-        value="{{ old('return_date', data_get($defaults, 'return_date')) }}">
+           value="{{ old('return_date', data_get($defaults, 'return_date')) }}">
     <input type="hidden" name="departure_date" id="ksb-departure-value"
-        value="{{ old('departure_date', data_get($defaults, 'departure_date')) }}">
+           value="{{ old('departure_date', data_get($defaults, 'departure_date')) }}">
 
     <div class="ksb-shell">
         <div class="ksb-fields">
             <div class="ksb-field ksb-field--origin {{ data_get($defaults, 'origin.id') ? 'has-value' : '' }}"
-                data-role="origin">
+                 data-role="origin">
                 <div class="ksb-field__body">
                     <div class="ksb-icon">
-                        <img src="https://229a2c9fe669f7b.cmccloud.com.vn/svgIcon/pickup_vex_blue_24dp.svg"
-                            alt="Điểm xuất phát" loading="lazy">
+                        <img src="{{asset("/client/icons/pickup.svg")}}"
+                             alt="Điểm xuất phát" loading="lazy">
                     </div>
                     <div class="ksb-content">
                         <span class="ksb-label">Nơi xuất phát</span>
                         <input type="text" id="ksb-origin-input" class="ksb-input" placeholder="Chọn điểm đón"
-                            autocomplete="off" spellcheck="false" inputmode="search"
-                            value="{{ old('origin_label', data_get($defaults, 'origin.name')) }}">
+                               autocomplete="off" spellcheck="false" inputmode="search"
+                               value="{{ old('origin_label', data_get($defaults, 'origin.name')) }}">
                         <span class="ksb-caption"
-                            data-caption="origin">{{ data_get($defaults, 'origin.context') ?: data_get($defaults, 'origin.type_label') }}</span>
+                              data-caption="origin">{{ data_get($defaults, 'origin.context') ?: data_get($defaults, 'origin.type_label') }}</span>
                     </div>
                 </div>
                 <div class="ksb-dropdown" data-dropdown="origin"></div>
@@ -469,19 +452,19 @@
                 </button>
             </div>
             <div class="ksb-field ksb-field--destination {{ data_get($defaults, 'destination.id') ? 'has-value' : '' }}"
-                data-role="destination">
+                 data-role="destination">
                 <div class="ksb-field__body">
                     <div class="ksb-icon">
-                        <img src="https://229a2c9fe669f7b.cmccloud.com.vn/svgIcon/dropoff_new_24dp.svg" alt="Điểm đến"
-                            loading="lazy">
+                        <img src="{{asset("/client/icons/dropoff.svg")}}" alt="Điểm đến"
+                             loading="lazy">
                     </div>
                     <div class="ksb-content">
                         <span class="ksb-label">Nơi đến</span>
                         <input type="text" id="ksb-destination-input" class="ksb-input" placeholder="Chọn điểm đến"
-                            autocomplete="off" spellcheck="false" inputmode="search"
-                            value="{{ old('destination_label', data_get($defaults, 'destination.name')) }}">
+                               autocomplete="off" spellcheck="false" inputmode="search"
+                               value="{{ old('destination_label', data_get($defaults, 'destination.name')) }}">
                         <span class="ksb-caption"
-                            data-caption="destination">{{ data_get($defaults, 'destination.context') ?: data_get($defaults, 'destination.type_label') }}</span>
+                              data-caption="destination">{{ data_get($defaults, 'destination.context') ?: data_get($defaults, 'destination.type_label') }}</span>
                     </div>
                 </div>
                 <div class="ksb-dropdown" data-dropdown="destination"></div>
@@ -489,18 +472,19 @@
             <div class="ksb-field ksb-field--date" data-role="departure">
                 <div class="ksb-field__body">
                     <div class="ksb-icon">
-                        <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
-                            alt="Ngày đi" loading="lazy">
+                        <img src="{{asset("client/icons/date.svg")}}"
+                             alt="Ngày đi" loading="lazy">
                     </div>
                     <div class="ksb-content">
                         <span class="ksb-label">Ngày đi</span>
                         <input type="text" id="ksb-departure-display" class="ksb-value-input"
-                            placeholder="Chọn ngày"
-                            value="{{ old('departure_date', data_get($defaults, 'departure_date')) }}" readonly>
+                               placeholder="Chọn ngày"
+                               value="{{ old('departure_date', data_get($defaults, 'departure_date')) }}" readonly>
                     </div>
                 </div>
             </div>
-            <div class="ksb-field ksb-field--return{{ old('return_date', data_get($defaults, 'return_date')) ? ' has-date' : '' }}"
+            <div
+                class="ksb-field ksb-field--return{{ old('return_date', data_get($defaults, 'return_date')) ? ' has-date' : '' }}"
                 data-role="return">
                 <div class="ksb-return-empty" id="ksb-return-empty">
                     <span class="material-icons-round">add</span>
@@ -510,13 +494,13 @@
                     <div class="ksb-field__body">
                         <div class="ksb-icon">
                             <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
-                                alt="Ngày về" loading="lazy">
+                                 alt="Ngày về" loading="lazy">
                         </div>
                         <div class="ksb-content">
                             <span class="ksb-label">Ngày về</span>
                             <input type="text" id="ksb-return-display" class="ksb-value-input"
-                                placeholder="Chọn ngày"
-                                value="{{ old('return_date', data_get($defaults, 'return_date')) }}" readonly>
+                                   placeholder="Chọn ngày"
+                                   value="{{ old('return_date', data_get($defaults, 'return_date')) }}" readonly>
                         </div>
                     </div>
                     <button type="button" class="ksb-return-clear" id="ksb-clear-return" aria-label="Xóa ngày về">
@@ -531,7 +515,7 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('client-search-form');
             if (!form) {
                 return;
@@ -587,7 +571,7 @@
 
                 try {
                     const regex = new RegExp(safeQuery, 'gi');
-                    highlighted = highlighted.replace(regex, function(match) {
+                    highlighted = highlighted.replace(regex, function (match) {
                         return '<mark>' + match + '</mark>';
                     });
                 } catch (error) {
@@ -654,7 +638,7 @@
                 return location;
             }
 
-            (searchData.locations || []).forEach(function(raw) {
+            (searchData.locations || []).forEach(function (raw) {
                 const location = buildLocation(raw);
                 if (location) {
                     registerLocation(location);
@@ -681,14 +665,14 @@
                 });
             }
 
-            Object.keys(typeBuckets).forEach(function(type) {
+            Object.keys(typeBuckets).forEach(function (type) {
                 typeBuckets[type].sort(compareLocations);
             });
 
             function buildDefaultSuggestions() {
                 const collected = [];
 
-                ['province', 'district', 'stop'].forEach(function(type) {
+                ['province', 'district', 'stop'].forEach(function (type) {
                     const bucket = typeBuckets[type] || [];
                     for (let i = 0; i < bucket.length && collected.length < 18; i += 1) {
                         if (!collected.includes(bucket[i])) {
@@ -698,7 +682,7 @@
                 });
 
                 if (collected.length < 18) {
-                    locationItems.forEach(function(location) {
+                    locationItems.forEach(function (location) {
                         if (collected.length >= 18) {
                             return;
                         }
@@ -714,7 +698,7 @@
             let defaultSuggestions = buildDefaultSuggestions();
 
             function refreshBuckets() {
-                Object.keys(typeBuckets).forEach(function(type) {
+                Object.keys(typeBuckets).forEach(function (type) {
                     typeBuckets[type].sort(compareLocations);
                 });
                 defaultSuggestions = buildDefaultSuggestions();
@@ -825,9 +809,9 @@
                     } else {
                         const matches = [];
 
-                        locationItems.forEach(function(location) {
+                        locationItems.forEach(function (location) {
                             if (!location.fullNormalized || location.fullNormalized.indexOf(
-                                    normalizedQuery) === -1) {
+                                normalizedQuery) === -1) {
                                 return;
                             }
 
@@ -854,7 +838,7 @@
                             });
                         });
 
-                        matches.sort(function(a, b) {
+                        matches.sort(function (a, b) {
                             const aKey = a.sortKey;
                             const bKey = b.sortKey;
 
@@ -868,7 +852,7 @@
                             return 0;
                         });
 
-                        suggestions = matches.slice(0, 18).map(function(item) {
+                        suggestions = matches.slice(0, 18).map(function (item) {
                             return item.location;
                         });
                     }
@@ -902,7 +886,7 @@
 
                     sortedGroupNames.forEach(groupName => {
                         html += `<li class="ksb-option-header">${groupName}</li>`;
-                        groupedSuggestions[groupName].forEach(function(location) {
+                        groupedSuggestions[groupName].forEach(function (location) {
                             const name = highlightText(location.name, trimmed);
                             const context = location.context ? highlightText(location.context,
                                 trimmed) : '';
@@ -930,7 +914,7 @@
                 refs.dropdown.scrollTop = 0;
 
                 const options = refs.dropdown.querySelectorAll('[data-option]');
-                options.forEach(function(option) {
+                options.forEach(function (option) {
                     function handleOption(event) {
                         event.preventDefault();
                         const id = Number(option.getAttribute('data-id'));
@@ -1030,13 +1014,13 @@
                 closeDropdown(fieldName);
             }
 
-            Object.keys(fields).forEach(function(fieldName) {
+            Object.keys(fields).forEach(function (fieldName) {
                 const refs = fields[fieldName];
                 if (!refs || !refs.input) {
                     return;
                 }
 
-                refs.input.addEventListener('focus', function() {
+                refs.input.addEventListener('focus', function () {
                     if (refs.wrapper) {
                         refs.wrapper.classList.add('is-focused');
                     }
@@ -1044,7 +1028,7 @@
                     refs.input.select();
                 });
 
-                refs.input.addEventListener('input', function() {
+                refs.input.addEventListener('input', function () {
                     state[fieldName] = null;
                     if (refs.idInput) {
                         refs.idInput.value = '';
@@ -1065,7 +1049,7 @@
                     renderSuggestions(fieldName, refs.input.value);
                 });
 
-                refs.input.addEventListener('keydown', function(event) {
+                refs.input.addEventListener('keydown', function (event) {
                     if (event.key === 'Enter') {
                         event.preventDefault();
                         const suggestions = suggestionCache[fieldName] || [];
@@ -1076,8 +1060,8 @@
                     }
                 });
 
-                refs.input.addEventListener('blur', function() {
-                    window.setTimeout(function() {
+                refs.input.addEventListener('blur', function () {
+                    window.setTimeout(function () {
                         closeDropdown(fieldName);
                         if (refs.wrapper) {
                             refs.wrapper.classList.remove('is-focused');
@@ -1093,11 +1077,11 @@
                 });
             });
 
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!form.contains(event.target)) {
                     closeDropdown('origin');
                     closeDropdown('destination');
-                    Object.keys(fields).forEach(function(fieldName) {
+                    Object.keys(fields).forEach(function (fieldName) {
                         const wrapper = fields[fieldName] && fields[fieldName].wrapper;
                         if (wrapper) {
                             wrapper.classList.remove('is-focused');
@@ -1148,7 +1132,7 @@
 
             const swapButton = document.getElementById('ksb-swap-button');
             if (swapButton) {
-                swapButton.addEventListener('click', function() {
+                swapButton.addEventListener('click', function () {
                     const currentOrigin = state.origin;
                     const currentDestination = state.destination;
 
@@ -1238,7 +1222,7 @@
                         apply: 'Chọn',
                         cancel: 'Hủy'
                     },
-                    onSelect: function(date) {
+                    onSelect: function (date) {
                         if (!date) {
                             return;
                         }
@@ -1305,7 +1289,7 @@
                         apply: 'Chọn',
                         cancel: 'Hủy'
                     },
-                    onSelect: function(date) {
+                    onSelect: function (date) {
                         if (!date) {
                             return;
                         }
@@ -1343,7 +1327,7 @@
             }
 
             if (addReturnBtn) {
-                addReturnBtn.addEventListener('click', function() {
+                addReturnBtn.addEventListener('click', function () {
                     if (returnFieldElement) {
                         returnFieldElement.classList.add('has-date');
                     }
@@ -1363,7 +1347,7 @@
             }
 
             if (clearReturnBtn) {
-                clearReturnBtn.addEventListener('click', function(event) {
+                clearReturnBtn.addEventListener('click', function (event) {
                     event.preventDefault();
                     clearReturnDate();
                 });
@@ -1386,10 +1370,10 @@
                 }
             }
 
-            form.addEventListener('submit', function(event) {
+            form.addEventListener('submit', function (event) {
                 let isValid = true;
 
-                ['origin', 'destination'].forEach(function(fieldName) {
+                ['origin', 'destination'].forEach(function (fieldName) {
                     if (!state[fieldName]) {
                         const refs = fields[fieldName];
                         if (refs && refs.input) {
@@ -1423,7 +1407,7 @@
                 }
             });
 
-            window.addEventListener('pageshow', function(event) {
+            window.addEventListener('pageshow', function (event) {
                 if (event.persisted) {
                     const submitButton = form.querySelector('.ksb-submit');
                     if (submitButton && submitButton.dataset.originalText) {
