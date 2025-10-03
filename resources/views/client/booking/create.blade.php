@@ -1,4 +1,5 @@
-<x-client.layout :web-profile="$web_profile ?? null" :main-menu="$mainMenu ?? []" :title="$title ?? 'Đặt vé King Express Bus'" :description="$description ?? ''">
+<x-client.layout :web-profile="$web_profile ?? null" :main-menu="$mainMenu ?? []"
+                 :title="$title ?? 'Đặt vé King Express Bus'" :description="$description ?? ''">
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
         <style>
@@ -8,16 +9,20 @@
                 border-radius: 1rem;
                 border: 1px solid #e5e7eb;
             }
+
             .quantity-btn {
                 transition: all 0.2s ease-in-out;
             }
+
             .quantity-btn:hover {
                 transform: scale(1.1);
             }
+
             .payment-method-label {
                 transition: all 0.2s ease-in-out;
                 cursor: pointer;
             }
+
             .payment-method-label.selected {
                 border-color: #3b82f6;
                 box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
@@ -26,8 +31,8 @@
     @endpush
 
     @php
-    $busImage = $busImages[0] ?? $trip->bus_thumbnail ?? '/userfiles/files/kingexpressbus/cabin/1.jpg';
-        $seatPrice = (int) ($trip->price ?? 0);
+        $busImage = $busImages[0] ?? $trip->bus_thumbnail ?? '/userfiles/files/kingexpressbus/cabin/1.jpg';
+            $seatPrice = (int) ($trip->price ?? 0);
     @endphp
 
     <section class="bg-gray-900 text-white">
@@ -43,13 +48,16 @@
                     </h1>
                     <div class="flex flex-wrap gap-x-6 gap-y-2 text-base text-white/80">
                         <span class="inline-flex items-center gap-2"><i class="fa-solid fa-clock w-4 text-center"></i> {{ \Carbon\Carbon::parse($trip->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($trip->end_time)->format('H:i') }}</span>
-                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-calendar-day w-4 text-center"></i> {{ $bookingDate->format('d/m/Y') }}</span>
+                        <span class="inline-flex items-center gap-2"><i
+                                class="fa-solid fa-calendar-day w-4 text-center"></i> {{ $bookingDate->format('d/m/Y') }}</span>
                         <span class="inline-flex items-center gap-2"><i class="fa-solid fa-couch w-4 text-center"></i> {{ $trip->bus_name }} ({{ $trip->bus_model ?? 'Đang cập nhật' }})</span>
                     </div>
                 </div>
                 <div class="relative h-48 lg:h-56 rounded-3xl overflow-hidden shadow-xl">
-                    <img src="{{ $busImage }}" alt="{{ $trip->bus_name }}" class="h-full w-full object-cover" loading="lazy">
-                    <span class="absolute bottom-4 left-4 inline-flex items-center gap-2 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold">
+                    <img src="{{ $busImage }}" alt="{{ $trip->bus_name }}" class="h-full w-full object-cover"
+                         loading="lazy">
+                    <span
+                        class="absolute bottom-4 left-4 inline-flex items-center gap-2 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold">
                         <i class="fa-solid fa-shield-heart text-blue-600"></i>
                         Bảo hiểm chuyến đi
                     </span>
@@ -60,7 +68,8 @@
 
     <section class="py-10 bg-gray-50">
         <div class="container mx-auto px-4 grid grid-cols-1 xl:grid-cols-3 gap-8">
-            <form class="xl:col-span-2 space-y-8" method="POST" action="{{ route('client.booking.store') }}" id="booking-form">
+            <form class="xl:col-span-2 space-y-8" method="POST" action="{{ route('client.booking.store') }}"
+                  id="booking-form">
                 @if (session('error'))
                     <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl" role="alert">
                         <strong class="font-bold">Đã có lỗi xảy ra!</strong>
@@ -91,22 +100,32 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="booking_date" class="block text-sm font-semibold text-gray-700 mb-2">Ngày đi</label>
-                            <input type="text" id="booking_date" name="booking_date" value="{{ $bookingDate->format('d/m/Y') }}"
-                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" required>
+                            <label for="booking_date" class="block text-sm font-semibold text-gray-700 mb-2">Ngày
+                                đi</label>
+                            <input type="text" id="booking_date" name="booking_date"
+                                   value="{{ $bookingDate->format('d/m/Y') }}"
+                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                   required>
                         </div>
                         <div>
-                            <label for="quantity" class="block text-sm font-semibold text-gray-700 mb-2">Số lượng vé</label>
+                            <label for="quantity" class="block text-sm font-semibold text-gray-700 mb-2">Số lượng
+                                vé</label>
                             <div class="flex items-center gap-4">
-                                <button type="button" id="decrease-quantity" class="quantity-btn p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                <button type="button" id="decrease-quantity"
+                                        class="quantity-btn p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300">
                                     <i class="fa-solid fa-minus"></i>
                                 </button>
-                                <input type="number" name="quantity" id="quantity" value="{{ old('quantity', request('quantity', 1)) }}" min="1" max="{{ $availableSeats }}"
-                                       class="w-20 text-center font-bold text-lg rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm" readonly>
-                                <button type="button" id="increase-quantity" class="quantity-btn p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                <input type="number" name="quantity" id="quantity"
+                                       value="{{ old('quantity', request('quantity', 1)) }}" min="1"
+                                       max="{{ $availableSeats }}"
+                                       class="w-20 text-center font-bold text-lg rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                                       readonly>
+                                <button type="button" id="increase-quantity"
+                                        class="quantity-btn p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
-                                <span class="text-sm text-gray-500">Còn <strong class="text-gray-800">{{ $availableSeats }}</strong> vé</span>
+                                <span class="text-sm text-gray-500">Còn <strong
+                                        class="text-gray-800">{{ $availableSeats }}</strong> vé</span>
                             </div>
                         </div>
                     </div>
@@ -120,44 +139,64 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Họ tên hành khách</label>
-                            <input type="text" id="customer_name" name="customer_name" value="{{ old('customer_name', request('customer_name', $user->name ?? '')) }}"
-                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" required placeholder="Ví dụ: Nguyễn Văn An">
+                            <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Họ tên
+                                hành khách</label>
+                            <input type="text" id="customer_name" name="customer_name"
+                                   value="{{ old('customer_name', request('customer_name', $user->name ?? '')) }}"
+                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                   required placeholder="Ví dụ: Nguyễn Văn An">
                         </div>
                         <div>
-                            <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Số điện thoại</label>
-                            <input type="tel" id="customer_phone" name="customer_phone" value="{{ old('customer_phone', request('customer_phone', $user->phone ?? '')) }}"
-                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" required placeholder="Số điện thoại nhận thông tin vé">
+                            <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Số điện
+                                thoại</label>
+                            <input type="tel" id="customer_phone" name="customer_phone"
+                                   value="{{ old('customer_phone', request('customer_phone', $user->phone ?? '')) }}"
+                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                   required placeholder="Số điện thoại nhận thông tin vé">
                         </div>
                         <div>
-                            <label for="customer_email" class="block text-sm font-semibold text-gray-700 mb-2">Email nhận vé</label>
-                            <input type="email" id="customer_email" name="customer_email" value="{{ old('customer_email', request('customer_email', $user->email ?? '')) }}"
-                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" required placeholder="Email để nhận xác nhận đặt vé">
+                            <label for="customer_email" class="block text-sm font-semibold text-gray-700 mb-2">Email
+                                nhận vé</label>
+                            <input type="email" id="customer_email" name="customer_email"
+                                   value="{{ old('customer_email', request('customer_email', $user->email ?? '')) }}"
+                                   class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                   required placeholder="Email để nhận xác nhận đặt vé">
                         </div>
                         <div>
-                            <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">Ghi chú bổ sung</label>
-                            <textarea id="notes" name="notes" rows="3" class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" placeholder="Ví dụ: cần hỗ trợ đón tại khách sạn...">{{ old('notes', request('notes')) }}</textarea>
+                            <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">Ghi chú bổ
+                                sung</label>
+                            <textarea id="notes" name="notes" rows="3"
+                                      class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                      placeholder="Ví dụ: cần hỗ trợ đón tại khách sạn...">{{ old('notes', request('notes')) }}</textarea>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="pickup_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm đón</label>
-                            <select id="pickup_stop_id" name="pickup_stop_id" class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" required>
+                            <label for="pickup_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm
+                                đón</label>
+                            <select id="pickup_stop_id" name="pickup_stop_id"
+                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                    required>
                                 <option value="">Chọn điểm đón của bạn</option>
                                 @foreach ($stops->where('stop_type', '!=', 'dropoff') as $point)
-                                    <option value="{{ $point->id }}" @selected(old('pickup_stop_id', request('pickup_stop_id')) == $point->id)>
+                                    <option
+                                        value="{{ $point->id }}" @selected(old('pickup_stop_id', request('pickup_stop_id')) == $point->id)>
                                         {{ $point->name }} ({{ $point->district_name }})
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label for="dropoff_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm trả</label>
-                            <select id="dropoff_stop_id" name="dropoff_stop_id" class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0" required>
+                            <label for="dropoff_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm
+                                trả</label>
+                            <select id="dropoff_stop_id" name="dropoff_stop_id"
+                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                                    required>
                                 <option value="">Chọn điểm trả của bạn</option>
                                 @foreach ($stops->where('stop_type', '!=', 'pickup') as $point)
-                                    <option value="{{ $point->id }}" @selected(old('dropoff_stop_id', request('dropoff_stop_id')) == $point->id)>
+                                    <option
+                                        value="{{ $point->id }}" @selected(old('dropoff_stop_id', request('dropoff_stop_id')) == $point->id)>
                                         {{ $point->name }} ({{ $point->district_name }})
                                     </option>
                                 @endforeach
@@ -170,13 +209,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach ($paymentMethods as $method)
                                 <label class="payment-method-label block border border-gray-200 rounded-2xl p-4">
-                                    <input type="radio" name="payment_method" value="{{ $method['key'] }}" class="hidden payment-method-input" @checked(old('payment_method', request('payment_method', 'cash_on_pickup')) === $method['key'])>
+                                    <input type="radio" name="payment_method" value="{{ $method['key'] }}"
+                                           class="hidden payment-method-input" @checked(old('payment_method', request('payment_method', 'cash_on_pickup')) === $method['key'])>
                                     <div class="flex items-start gap-4">
-                                        <div class="mt-1 w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center radio-icon">
+                                        <div
+                                            class="mt-1 w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center radio-icon">
                                             <div class="w-2.5 h-2.5 rounded-full bg-blue-600 hidden"></div>
                                         </div>
                                         <div class="flex-1">
-                                            <span class="text-sm font-semibold text-gray-900">{{ $method['label'] }}</span>
+                                            <span
+                                                class="text-sm font-semibold text-gray-900">{{ $method['label'] }}</span>
                                             <p class="text-sm text-gray-600 mt-1">{{ $method['description'] }}</p>
                                         </div>
                                     </div>
@@ -188,9 +230,13 @@
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="text-sm text-gray-600">
-                        Bằng cách tiếp tục, bạn đồng ý với <a href="#" class="font-semibold text-blue-600 hover:underline">chính sách</a> của chúng tôi.
+                        Bằng cách tiếp tục, bạn đồng ý với <a href="#"
+                                                              class="font-semibold text-blue-600 hover:underline">chính
+                            sách</a> của chúng tôi.
                     </div>
-                    <button type="submit" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed" id="submit-booking">
+                    <button type="submit"
+                            class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
+                            id="submit-booking">
                         <span id="submit-text">Xác nhận đặt vé</span>
                         <i id="submit-spinner" class="fa-solid fa-spinner animate-spin hidden"></i>
                     </button>
@@ -203,7 +249,8 @@
                     <div class="space-y-3 text-base text-gray-600">
                         <div class="flex items-center justify-between">
                             <span>Giá mỗi vé</span>
-                            <span class="font-semibold text-gray-900">{{ $seatPrice > 0 ? number_format($seatPrice) . 'đ' : 'Liên hệ' }}</span>
+                            <span
+                                class="font-semibold text-gray-900">{{ $seatPrice > 0 ? number_format($seatPrice) . 'đ' : 'Liên hệ' }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span>Số lượng</span>
@@ -214,7 +261,8 @@
                             <span class="text-green-600 font-semibold">Miễn phí</span>
                         </div>
                     </div>
-                    <div class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between text-xl font-bold text-gray-900">
+                    <div
+                        class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between text-xl font-bold text-gray-900">
                         <span>Tổng cộng</span>
                         <span id="summary-total-price">0đ</span>
                     </div>
@@ -229,26 +277,70 @@
                                 {{ $service }}
                             </li>
                         @empty
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i> Điều hòa</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i> Chăn gối</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i> Nước suối</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i> Wi-Fi</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
+                                Điều hòa
+                            </li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
+                                Chăn gối
+                            </li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
+                                Nước suối
+                            </li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
+                                Wi-Fi
+                            </li>
                         @endforelse
                     </ul>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-3xl p-6 space-y-4">
                     <h3 class="text-xl font-semibold text-gray-900">Cần hỗ trợ?</h3>
-                    <p class="text-gray-600">Nếu có bất kỳ thắc mắc nào, đừng ngần ngại liên hệ với chúng tôi để được hỗ trợ nhanh nhất.</p>
+                    <p class="text-gray-600">Nếu có bất kỳ thắc mắc nào, đừng ngần ngại liên hệ với chúng tôi để được hỗ
+                        trợ nhanh nhất.</p>
                     <div class="space-y-3">
-                        <a href="tel:{{ $web_profile->hotline ?? '' }}" class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
-                            <i class="fa-solid fa-phone-volume text-blue-600 text-lg"></i>
-                            <span class="font-semibold text-gray-800">Hotline: {{ $web_profile->hotline ?? 'Đang cập nhật' }}</span>
-                        </a>
-                        <a href="{{ $web_profile->zalo_url ?? '#' }}" target="_blank" class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
-                            <i class="fa-brands fa-rocketchat text-blue-600 text-lg"></i>
-                            <span class="font-semibold text-gray-800">Chat qua Zalo</span>
-                        </a>
+                        @if(!empty($web_profile->hotline))
+                            <a href="tel:{{ preg_replace('/[^\d+]/', '', $web_profile->hotline) }}"
+                               class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-phone-volume text-blue-600 text-lg"></i>
+                                <span class="font-semibold text-gray-800">Hotline: {{ $web_profile->hotline }}</span>
+                            </a>
+                        @endif
+                        @if(!empty($web_profile->phone))
+                            <a href="tel:{{ preg_replace('/[^\d+]/', '', $web_profile->phone) }}"
+                               class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-headset text-blue-600 text-lg"></i>
+                                <span class="font-semibold text-gray-800">Tổng đài: {{ $web_profile->phone }}</span>
+                            </a>
+                        @endif
+                        @if(!empty($web_profile->email))
+                            <a href="mailto:{{ $web_profile->email }}"
+                               class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fa-regular fa-envelope text-blue-600 text-lg"></i>
+                                <span class="font-semibold text-gray-800">Email: {{ $web_profile->email }}</span>
+                            </a>
+                        @endif
+                        @if(!empty($web_profile->zalo_url))
+                            <a href="{{ $web_profile->zalo_url }}" target="_blank"
+                               class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-comment-dots text-blue-600 text-lg"></i>
+                                <span class="font-semibold text-gray-800">Chat qua Zalo</span>
+                            </a>
+                        @endif
+                        @if(!empty($web_profile->whatsapp))
+                            <a href="https://wa.me/{{ preg_replace('/[^\d]/', '', $web_profile->whatsapp) }}"
+                               target="_blank"
+                               class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fab fa-whatsapp text-blue-600 text-lg"></i>
+                                <span class="font-semibold text-gray-800">Chat qua WhatsApp</span>
+                            </a>
+                        @endif
+                        @if(!empty($web_profile->facebook_url))
+                            <a href="{{ $web_profile->facebook_url }}" target="_blank"
+                               class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fa-brands fa-facebook-messenger text-blue-600 text-lg"></i>
+                                <span class="font-semibold text-gray-800">Chat qua Facebook</span>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </aside>
@@ -264,7 +356,7 @@
                 const submitText = document.getElementById('submit-text');
                 const submitSpinner = document.getElementById('submit-spinner');
 
-                bookingForm.addEventListener('submit', function() {
+                bookingForm.addEventListener('submit', function () {
                     if (document.getElementById('quantity').value > 0) {
                         submitButton.disabled = true;
                         submitText.classList.add('hidden');

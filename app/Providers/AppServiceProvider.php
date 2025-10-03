@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (Schema::hasTable('web_profiles') && Schema::hasTable('menus')) {
-            View::composer('layouts.client.*', function ($view) {
+            View::composer(['layouts.client.*', 'client.*'], function ($view) {
                 $web_profile = DB::table('web_profiles')->where('is_default', true)->first();
                 $menuItems = DB::table('menus')->orderBy('parent_id')->orderBy('priority')->get();
                 $mainMenu = $this->buildMenuTree($menuItems);
