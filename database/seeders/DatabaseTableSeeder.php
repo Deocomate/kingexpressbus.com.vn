@@ -29,7 +29,7 @@ class DatabaseTableSeeder extends Seeder
         $companies = $this->seedCompanies();
         $buses = $this->seedBuses($companies);
         $routes = $this->seedRoutes($provinces);
-        $companyRoutes = $this->seedCompanyRoutes($routes, $companies);
+        $companyRoutes = $this->seedCompanyRoutes($routes, $companies, $provinces);
         $this->seedCompanyRouteStops($companyRoutes, $routes, $stops);
         $busRoutes = $this->seedBusRoutes($buses, $companyRoutes, $routes);
         $this->seedMenus($routes);
@@ -79,7 +79,7 @@ class DatabaseTableSeeder extends Seeder
                 'address' => '19 Hàng Thiếc - Hoàn Kiếm - Hà Nội',
                 'facebook_url' => 'https://www.facebook.com/HanoiSapa',
                 'zalo_url' => 'https://zalo.me/0865095066',
-                'map_embedded' => '<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.09681418826!2d105.8480952758832!3d21.02882898062132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab953255153b%3A0x1326315159040a8!2zMTkgUC4gSMàbmcgVGhp4bq_YywgSMàbmcgQsOhLCBIb8OgbiBLaeG6v20sIEjDoCBO4buZaSwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1694982361623!5m2!1svi!2s\" width=\"100%\" height=\"100%\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>',
+                'map_embedded' => '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2056.7461655506627!2d105.84669827498637!3d21.03349741327072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abbe60e203cb%3A0xad322a16a1be4362!2zMTkgUC4gSMOgbmcgVGhp4bq_YywgSMOgbmcgR2FpLCBIb8OgbiBLaeG6v20sIEjDoCBO4buZaSAxMTA3MDEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1759471064920!5m2!1sen!2s" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
                 'policy_content' => '<h1>Chính sách chung</h1><p>Chính sách và điều khoản của nhà xe King Express Bus</p>',
                 'introduction_content' => '<h2>Về chúng tôi</h2><p>King Express Bus tự hào là một trong những đơn vị vận tải hàng đầu</p>',
                 'created_at' => now(),
@@ -116,8 +116,19 @@ class DatabaseTableSeeder extends Seeder
             ['id' => 11, 'name' => 'Hội An', 'slug' => 'hoi-an'],
         ];
 
-        $insertData = array_map(function ($item, $index) {
-            return [
+        $priorityMap = [
+            'Hà Nội' => 100,
+            'Sapa' => 99,
+            'Huế' => 98,
+            'Đà Nẵng' => 97,
+        ];
+
+        $insertData = [];
+        $otherPriority = count($priorityMap) + 1;
+
+        foreach ($data as $item) {
+            $priority = $priorityMap[$item['name']] ?? $otherPriority++;
+            $insertData[] = [
                 'id' => $item['id'],
                 'name' => $item['name'],
                 'slug' => $item['slug'],
@@ -126,11 +137,11 @@ class DatabaseTableSeeder extends Seeder
                 'thumbnail_url' => '/userfiles/files/city_imgs/' . $item['slug'] . '.jpg',
                 'image_list_url' => json_encode(['/userfiles/files/city_imgs/' . $item['slug'] . '.jpg']),
                 'content' => null,
-                'priority' => $index + 1,
+                'priority' => $priority,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-        }, $data, array_keys($data));
+        }
 
         DB::table('provinces')->insert($insertData);
         return $data;
@@ -279,7 +290,7 @@ class DatabaseTableSeeder extends Seeder
                 'image_list_url' => json_encode(['/userfiles/files/kingexpressbus/sleeper_vip_32/sleeper32-1.jpg', '/userfiles/files/kingexpressbus/sleeper_vip_32/sleeper32-2.jpg']),
                 'content' => '<p>Xe giường nằm VIP 32 chỗ với rèm che riêng tư, không gian sang trọng.</p>', 'priority' => 2,
             ],
-             [
+            [
                 'id' => 7, 'name' => 'VIP 22 cabin single', 'model_name' => 'VIP Cabin Single 22', 'seat_count' => 22,
                 'services' => json_encode(['Nước uống', 'Rèm che', 'TV', 'Cổng sạc USB']),
                 'thumbnail_url' => '/userfiles/files/kingexpressbus/cabin/1.jpg',
@@ -307,50 +318,50 @@ class DatabaseTableSeeder extends Seeder
         $routesList = [
             ['from' => 'Hà Nội', 'to' => 'Sapa', 'duration' => '6h', 'priority' => 1],
             ['from' => 'Sapa', 'to' => 'Hà Nội', 'duration' => '6h', 'priority' => 2],
-            ['from' => 'Hà Nội', 'to' => 'Tuần Châu', 'duration' => '3,5h', 'priority' => 10],
-            ['from' => 'Tuần Châu', 'to' => 'Hà Nội', 'duration' => '3,5h', 'priority' => 11],
-            ['from' => 'Hà Nội', 'to' => 'Mai Châu', 'duration' => '3,5h', 'priority' => 12],
-            ['from' => 'Mai Châu', 'to' => 'Hà Nội', 'duration' => '3,5h', 'priority' => 13],
-            ['from' => 'Hà Nội', 'to' => 'Cát Bà', 'duration' => '3,5h', 'priority' => 8],
-            ['from' => 'Cát Bà', 'to' => 'Hà Nội', 'duration' => '3,5h', 'priority' => 9],
-            ['from' => 'Hà Nội', 'to' => 'Hà Giang', 'duration' => '6h', 'priority' => 3],
-            ['from' => 'Hà Giang', 'to' => 'Hà Nội', 'duration' => '6h', 'priority' => 4],
-            ['from' => 'Hà Nội', 'to' => 'Ninh Bình', 'duration' => '2h', 'priority' => 5],
-            ['from' => 'Ninh Bình', 'to' => 'Hà Nội', 'duration' => '2h', 'priority' => 6],
-            ['from' => 'Hà Nội', 'to' => 'Phong Nha', 'duration' => '9h', 'priority' => 14],
-            ['from' => 'Phong Nha', 'to' => 'Hà Nội', 'duration' => '9h', 'priority' => 15],
-            ['from' => 'Hà Nội', 'to' => 'Huế', 'duration' => '12h', 'priority' => 16],
+            ['from' => 'Hà Nội', 'to' => 'Huế', 'duration' => '12h', 'priority' => 3],
+            ['from' => 'Hà Nội', 'to' => 'Đà Nẵng', 'duration' => '15h', 'priority' => 4],
+            ['from' => 'Hà Nội', 'to' => 'Hà Giang', 'duration' => '6h', 'priority' => 5],
+            ['from' => 'Hà Giang', 'to' => 'Hà Nội', 'duration' => '6h', 'priority' => 6],
+            ['from' => 'Hà Nội', 'to' => 'Ninh Bình', 'duration' => '2h', 'priority' => 7],
+            ['from' => 'Ninh Bình', 'to' => 'Hà Nội', 'duration' => '2h', 'priority' => 8],
+            ['from' => 'Hà Giang', 'to' => 'Sapa', 'duration' => '7h', 'priority' => 9],
+            ['from' => 'Sapa', 'to' => 'Hà Giang', 'duration' => '7h', 'priority' => 10],
+            ['from' => 'Hà Nội', 'to' => 'Cát Bà', 'duration' => '3,5h', 'priority' => 11],
+            ['from' => 'Cát Bà', 'to' => 'Hà Nội', 'duration' => '3,5h', 'priority' => 12],
+            ['from' => 'Hà Nội', 'to' => 'Tuần Châu', 'duration' => '3,5h', 'priority' => 13],
+            ['from' => 'Tuần Châu', 'to' => 'Hà Nội', 'duration' => '3,5h', 'priority' => 14],
+            ['from' => 'Hà Nội', 'to' => 'Mai Châu', 'duration' => '3,5h', 'priority' => 15],
+            ['from' => 'Mai Châu', 'to' => 'Hà Nội', 'duration' => '3,5h', 'priority' => 16],
             ['from' => 'Huế', 'to' => 'Hà Nội', 'duration' => '12h', 'priority' => 17],
-            ['from' => 'Hà Nội', 'to' => 'Đà Nẵng', 'duration' => '15h', 'priority' => 18],
-            ['from' => 'Đà Nẵng', 'to' => 'Hà Nội', 'duration' => '15h', 'priority' => 19],
-            ['from' => 'Hà Nội', 'to' => 'Hội An', 'duration' => '16h', 'priority' => 20],
-            ['from' => 'Hội An', 'to' => 'Hà Nội', 'duration' => '16h', 'priority' => 21],
-            ['from' => 'Ninh Bình', 'to' => 'Phong Nha', 'duration' => '7h', 'priority' => 22],
-            ['from' => 'Phong Nha', 'to' => 'Ninh Bình', 'duration' => '7h', 'priority' => 23],
-            ['from' => 'Ninh Bình', 'to' => 'Huế', 'duration' => '10h', 'priority' => 24],
-            ['from' => 'Huế', 'to' => 'Ninh Bình', 'duration' => '10h', 'priority' => 25],
-            ['from' => 'Ninh Bình', 'to' => 'Đà Nẵng', 'duration' => '13h', 'priority' => 26],
-            ['from' => 'Đà Nẵng', 'to' => 'Ninh Bình', 'duration' => '13h', 'priority' => 27],
-            ['from' => 'Ninh Bình', 'to' => 'Hội An', 'duration' => '14h', 'priority' => 28],
-            ['from' => 'Hội An', 'to' => 'Ninh Bình', 'duration' => '14h', 'priority' => 29],
-            ['from' => 'Đà Nẵng', 'to' => 'Hội An', 'duration' => '1h', 'priority' => 30],
-            ['from' => 'Hội An', 'to' => 'Đà Nẵng', 'duration' => '1h', 'priority' => 31],
-            ['from' => 'Huế', 'to' => 'Hội An', 'duration' => '4h', 'priority' => 32],
-            ['from' => 'Hội An', 'to' => 'Huế', 'duration' => '4h', 'priority' => 33],
-            ['from' => 'Huế', 'to' => 'Đà Nẵng', 'duration' => '3h', 'priority' => 34],
-            ['from' => 'Đà Nẵng', 'to' => 'Huế', 'duration' => '3h', 'priority' => 35],
-            ['from' => 'Phong Nha', 'to' => 'Hội An', 'duration' => '7h', 'priority' => 36],
-            ['from' => 'Hội An', 'to' => 'Phong Nha', 'duration' => '7h', 'priority' => 37],
-            ['from' => 'Phong Nha', 'to' => 'Đà Nẵng', 'duration' => '6h', 'priority' => 38],
-            ['from' => 'Đà Nẵng', 'to' => 'Phong Nha', 'duration' => '6h', 'priority' => 39],
-            ['from' => 'Phong Nha', 'to' => 'Huế', 'duration' => '3,5h', 'priority' => 40],
-            ['from' => 'Huế', 'to' => 'Phong Nha', 'duration' => '3,5h', 'priority' => 41],
-            ['from' => 'Hà Giang', 'to' => 'Ninh Bình', 'duration' => '8h', 'priority' => 42],
-            ['from' => 'Ninh Bình', 'to' => 'Hà Giang', 'duration' => '8h', 'priority' => 43],
-            ['from' => 'Hà Giang', 'to' => 'Sapa', 'duration' => '7h', 'priority' => 7],
-            ['from' => 'Sapa', 'to' => 'Hà Giang', 'duration' => '7h', 'priority' => 8],
-            ['from' => 'Hà Giang', 'to' => 'Cát Bà', 'duration' => '12h', 'priority' => 44],
-            ['from' => 'Cát Bà', 'to' => 'Hà Giang', 'duration' => '12h', 'priority' => 45],
+            ['from' => 'Đà Nẵng', 'to' => 'Hà Nội', 'duration' => '15h', 'priority' => 18],
+            ['from' => 'Hà Nội', 'to' => 'Phong Nha', 'duration' => '9h', 'priority' => 19],
+            ['from' => 'Phong Nha', 'to' => 'Hà Nội', 'duration' => '9h', 'priority' => 20],
+            ['from' => 'Hà Nội', 'to' => 'Hội An', 'duration' => '16h', 'priority' => 21],
+            ['from' => 'Hội An', 'to' => 'Hà Nội', 'duration' => '16h', 'priority' => 22],
+            ['from' => 'Ninh Bình', 'to' => 'Phong Nha', 'duration' => '7h', 'priority' => 23],
+            ['from' => 'Phong Nha', 'to' => 'Ninh Bình', 'duration' => '7h', 'priority' => 24],
+            ['from' => 'Ninh Bình', 'to' => 'Huế', 'duration' => '10h', 'priority' => 25],
+            ['from' => 'Huế', 'to' => 'Ninh Bình', 'duration' => '10h', 'priority' => 26],
+            ['from' => 'Ninh Bình', 'to' => 'Đà Nẵng', 'duration' => '13h', 'priority' => 27],
+            ['from' => 'Đà Nẵng', 'to' => 'Ninh Bình', 'duration' => '13h', 'priority' => 28],
+            ['from' => 'Ninh Bình', 'to' => 'Hội An', 'duration' => '14h', 'priority' => 29],
+            ['from' => 'Hội An', 'to' => 'Ninh Bình', 'duration' => '14h', 'priority' => 30],
+            ['from' => 'Đà Nẵng', 'to' => 'Hội An', 'duration' => '1h', 'priority' => 31],
+            ['from' => 'Hội An', 'to' => 'Đà Nẵng', 'duration' => '1h', 'priority' => 32],
+            ['from' => 'Huế', 'to' => 'Hội An', 'duration' => '4h', 'priority' => 33],
+            ['from' => 'Hội An', 'to' => 'Huế', 'duration' => '4h', 'priority' => 34],
+            ['from' => 'Huế', 'to' => 'Đà Nẵng', 'duration' => '3h', 'priority' => 35],
+            ['from' => 'Đà Nẵng', 'to' => 'Huế', 'duration' => '3h', 'priority' => 36],
+            ['from' => 'Phong Nha', 'to' => 'Hội An', 'duration' => '7h', 'priority' => 37],
+            ['from' => 'Hội An', 'to' => 'Phong Nha', 'duration' => '7h', 'priority' => 38],
+            ['from' => 'Phong Nha', 'to' => 'Đà Nẵng', 'duration' => '6h', 'priority' => 39],
+            ['from' => 'Đà Nẵng', 'to' => 'Phong Nha', 'duration' => '6h', 'priority' => 40],
+            ['from' => 'Phong Nha', 'to' => 'Huế', 'duration' => '3,5h', 'priority' => 41],
+            ['from' => 'Huế', 'to' => 'Phong Nha', 'duration' => '3,5h', 'priority' => 42],
+            ['from' => 'Hà Giang', 'to' => 'Ninh Bình', 'duration' => '8h', 'priority' => 43],
+            ['from' => 'Ninh Bình', 'to' => 'Hà Giang', 'duration' => '8h', 'priority' => 44],
+            ['from' => 'Hà Giang', 'to' => 'Cát Bà', 'duration' => '12h', 'priority' => 45],
+            ['from' => 'Cát Bà', 'to' => 'Hà Giang', 'duration' => '12h', 'priority' => 46],
         ];
 
         $insertData = [];
@@ -388,10 +399,11 @@ class DatabaseTableSeeder extends Seeder
         return $insertData;
     }
 
-    private function seedCompanyRoutes(array $routes, array $companies): array
+    private function seedCompanyRoutes(array $routes, array $companies, array $provinces): array
     {
         $companyId = $companies[0]['id'];
         $companySlug = $companies[0]['slug'];
+        $haNoiId = collect($provinces)->firstWhere('name', 'Hà Nội')['id'];
 
         $insertData = [];
         foreach ($routes as $route) {
@@ -409,6 +421,7 @@ class DatabaseTableSeeder extends Seeder
                 'image_list_url' => $route['image_list_url'],
                 'content' => $route['content'],
                 'priority' => $route['priority'],
+                'available_hotel_pickup' => ($route['province_start_id'] == $haNoiId),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -444,9 +457,9 @@ class DatabaseTableSeeder extends Seeder
             $dropoffStopId = $stopMap[$endProvId][1] ?? null;
 
             if ($startProvId == 7) { // Ninh Binh has special pickup points for some routes
-                 if (in_array($endProvId, [8, 9, 10, 11])) { // Phong Nha, Hue, Da Nang, Hoi An
-                     $pickupStopId = 12; // VP Tam Coc
-                 }
+                if (in_array($endProvId, [8, 9, 10, 11])) { // Phong Nha, Hue, Da Nang, Hoi An
+                    $pickupStopId = 12; // VP Tam Coc
+                }
             }
 
             if ($pickupStopId) {
@@ -464,7 +477,7 @@ class DatabaseTableSeeder extends Seeder
         $time = Carbon::createFromTimeString($startTime);
         $durationStr = str_replace(',', '.', $durationStr);
         if (str_contains($durationStr, 'h')) {
-            $hours = (float) str_replace('h', '', $durationStr);
+            $hours = (float)str_replace('h', '', $durationStr);
             $minutes = ($hours - floor($hours)) * 60;
             $time->addHours(floor($hours))->addMinutes($minutes);
         }
@@ -667,9 +680,9 @@ class DatabaseTableSeeder extends Seeder
         $menuItems[] = ['id' => 3, 'name' => 'Liên Hệ', 'url' => '/lien-he', 'parent_id' => null, 'priority' => 2, 'type' => 'custom_link', 'related_id' => null];
 
         $nextId = 4;
-        $sortedRoutes = collect($routes)->sortBy('priority')->values();
+        $popularRoutes = collect($routes)->sortBy('priority')->take(5)->values();
 
-        foreach ($sortedRoutes as $index => $route) {
+        foreach ($popularRoutes as $index => $route) {
             $menuItems[] = [
                 'id' => $nextId++,
                 'name' => $route['name'],
@@ -681,7 +694,7 @@ class DatabaseTableSeeder extends Seeder
             ];
         }
 
-        $insertData = array_map(function($item) {
+        $insertData = array_map(function ($item) {
             $item['created_at'] = now();
             $item['updated_at'] = now();
             return $item;

@@ -1,4 +1,5 @@
-<x-client.layout :web-profile="$web_profile ?? null" :main-menu="$mainMenu ?? []" :title="$title ?? 'Thông tin tuyến xe'" :description="$description ?? ''">
+<x-client.layout :web-profile="$web_profile ?? null" :main-menu="$mainMenu ?? []"
+                 :title="$title ?? 'Thông tin tuyến xe'" :description="$description ?? ''">
     @php
         $heroImage = $route->banner_url ?? ($route->thumbnail_url ?? '/userfiles/files/city_imgs/ha-noi.jpg');
         $minPrice = (int) ($route->min_price ?? 0);
@@ -136,7 +137,7 @@
                 pointer-events: none;
             }
 
-            .filter-pill input:checked+span {
+            .filter-pill input:checked + span {
                 background-color: #2563eb;
                 color: #ffffff;
                 border-radius: 9999px;
@@ -349,7 +350,7 @@
     <div id="search-section" class="bg-gray-100 py-6">
         <section class="container mx-auto px-4">
             <div class="bg-white shadow-lg rounded-3xl p-4 md:p-5 border border-gray-200">
-                <x-client.search-bar :search-data="$searchData" submit-label="Đổi và tìm lại" />
+                <x-client.search-bar :search-data="$searchData" submit-label="Đổi và tìm lại"/>
             </div>
         </section>
     </div>
@@ -365,7 +366,7 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <button data-filter-toggle
-                            class="lg:hidden inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition">
+                                class="lg:hidden inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition">
                             <i class="fa-solid fa-filter"></i>
                             <span>Lọc kết quả</span>
                             @if ($hasActiveFilters)
@@ -380,11 +381,12 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <aside class="lg:col-span-3">
                         <div id="filter-panel"
-                            class="filters-card fixed inset-0 z-[110] transform -translate-x-full transition-transform duration-300 ease-in-out lg:static lg:transform-none lg:z-auto lg:inset-auto bg-white p-6 lg:p-0 overflow-y-auto lg:overflow-visible">
+                             class="filters-card fixed inset-0 z-[110] transform -translate-x-full transition-transform duration-300 ease-in-out lg:static lg:transform-none lg:z-auto lg:inset-auto bg-white p-6 lg:p-0 overflow-y-auto lg:overflow-visible">
                             <div class="flex justify-between items-center lg:hidden mb-5">
                                 <h3 class="text-xl font-bold">Lọc kết quả</h3>
                                 <button data-filter-close
-                                    class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                                        class="text-gray-500 hover:text-gray-700 text-2xl">&times;
+                                </button>
                             </div>
 
                             <form id="filter-form" action="{{ $clearFiltersUrl }}" method="GET" class="space-y-6">
@@ -399,8 +401,8 @@
                                             @foreach ($sortOptions as $value => $label)
                                                 <label class="flex items-center gap-3 text-sm text-gray-700">
                                                     <input type="radio" name="sort" value="{{ $value }}"
-                                                        @checked(($filterState['sort'] ?? 'recommended') === $value)
-                                                        class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                           @checked(($filterState['sort'] ?? 'recommended') === $value)
+                                                           class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                                     <span>{{ $label }}</span>
                                                 </label>
                                             @endforeach
@@ -415,19 +417,20 @@
                                         </h3>
                                         <div class="flex items-center gap-3">
                                             <input type="number" name="price_min"
-                                                value="{{ $filterState['price_min'] }}"
-                                                placeholder="{{ $priceRange['min'] ? number_format($priceRange['min']) : 'Từ' }}"
-                                                class="filter-input text-sm" min="0" inputmode="numeric">
+                                                   value="{{ $filterState['price_min'] }}"
+                                                   placeholder="{{ $priceRange['min'] ? number_format($priceRange['min']) : 'Từ' }}"
+                                                   class="filter-input text-sm" min="0" inputmode="numeric">
                                             <span class="text-gray-400 text-sm">-</span>
                                             <input type="number" name="price_max"
-                                                value="{{ $filterState['price_max'] }}"
-                                                placeholder="{{ $priceRange['max'] ? number_format($priceRange['max']) : 'Đến' }}"
-                                                class="filter-input text-sm" min="0" inputmode="numeric">
+                                                   value="{{ $filterState['price_max'] }}"
+                                                   placeholder="{{ $priceRange['max'] ? number_format($priceRange['max']) : 'Đến' }}"
+                                                   class="filter-input text-sm" min="0" inputmode="numeric">
                                         </div>
                                         @if ($priceRange['min'] && $priceRange['max'])
                                             <div class="text-xs text-gray-500 mt-2">Khoảng giá tham khảo:
                                                 {{ number_format($priceRange['min']) }}đ -
-                                                {{ number_format($priceRange['max']) }}đ</div>
+                                                {{ number_format($priceRange['max']) }}đ
+                                            </div>
                                         @endif
                                     </div>
 
@@ -442,7 +445,7 @@
                                                 @foreach ($timeRangeOptions as $key => $range)
                                                     <label class="filter-pill">
                                                         <input type="checkbox" name="time_ranges[]"
-                                                            value="{{ $key }}" @checked(in_array($key, $filterState['time_ranges'] ?? []))>
+                                                               value="{{ $key }}" @checked(in_array($key, $filterState['time_ranges'] ?? []))>
                                                         <span>{{ $range['label'] ?? $key }}</span>
                                                     </label>
                                                 @endforeach
@@ -461,7 +464,7 @@
                                                 @foreach ($availableServices as $service)
                                                     <label class="filter-pill">
                                                         <input type="checkbox" name="services[]"
-                                                            value="{{ $service }}" @checked(in_array($service, $filterState['services'] ?? []))>
+                                                               value="{{ $service }}" @checked(in_array($service, $filterState['services'] ?? []))>
                                                         <span>{{ $service }}</span>
                                                     </label>
                                                 @endforeach
@@ -480,8 +483,9 @@
                                                 @foreach ($busCategoryOptions as $category)
                                                     <label class="flex items-center gap-3 text-sm text-gray-700">
                                                         <input type="checkbox" name="bus_categories[]"
-                                                            value="{{ $category }}" @checked(in_array($category, $filterState['bus_categories'] ?? []))
-                                                            class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                               value="{{ $category }}"
+                                                               @checked(in_array($category, $filterState['bus_categories'] ?? []))
+                                                               class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                                         <span>{{ $category }}</span>
                                                     </label>
                                                 @endforeach
@@ -500,8 +504,9 @@
                                                 @foreach ($pickupOptions as $pickup)
                                                     <label class="flex items-center gap-3 text-sm text-gray-700">
                                                         <input type="checkbox" name="pickup_points[]"
-                                                            value="{{ $pickup }}" @checked(in_array($pickup, $filterState['pickup_points'] ?? []))
-                                                            class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                               value="{{ $pickup }}"
+                                                               @checked(in_array($pickup, $filterState['pickup_points'] ?? []))
+                                                               class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                                         <span class="line-clamp-2">{{ $pickup }}</span>
                                                     </label>
                                                 @endforeach
@@ -520,8 +525,9 @@
                                                 @foreach ($dropoffOptions as $dropoff)
                                                     <label class="flex items-center gap-3 text-sm text-gray-700">
                                                         <input type="checkbox" name="dropoff_points[]"
-                                                            value="{{ $dropoff }}" @checked(in_array($dropoff, $filterState['dropoff_points'] ?? []))
-                                                            class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                               value="{{ $dropoff }}"
+                                                               @checked(in_array($dropoff, $filterState['dropoff_points'] ?? []))
+                                                               class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                                         <span class="line-clamp-2">{{ $dropoff }}</span>
                                                     </label>
                                                 @endforeach
@@ -530,14 +536,14 @@
                                     @endif
                                 </div>
 
-                                <div class="pt-5 border-t border-gray-200 space-y-3">
+                                <div class="pt-5 border-t border-gray-200 space-y-3 p-4">
                                     <button type="submit"
-                                        class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition">
+                                            class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition">
                                         <i class="fa-solid fa-check"></i>
                                         Áp dụng lọc
                                     </button>
                                     <a href="{{ $clearFiltersUrl }}"
-                                        class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition">
+                                       class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition">
                                         <i class="fa-solid fa-rotate-left"></i>
                                         Xóa bộ lọc
                                     </a>
@@ -576,7 +582,7 @@
                             <article class="trip-card">
                                 <div class="trip-card-media">
                                     <img id="trip-image-{{ $trip->bus_route_id }}" src="{{ $primaryImage }}"
-                                        alt="{{ $trip->company_name }}" loading="lazy">
+                                         alt="{{ $trip->company_name }}" loading="lazy">
                                     <span
                                         class="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 bg-white/90 text-gray-800 text-xs font-semibold rounded-full shadow-sm">
                                         <i class="fa-solid fa-bus"></i>
@@ -586,7 +592,8 @@
                                 <div class="trip-card-body flex-1 space-y-5">
                                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                                         <div class="flex items-start gap-4">
-                                            <img src="{{ $trip->company_thumbnail ?: '/userfiles/files/web information/logo.jpg' }}"
+                                            <img
+                                                src="{{ $trip->company_thumbnail ?: '/userfiles/files/web information/logo.jpg' }}"
                                                 alt="{{ $trip->company_name }}"
                                                 class="h-12 w-12 rounded-full object-cover border border-gray-200">
                                             <div>
@@ -617,7 +624,7 @@
                                             <p class="text-2xl font-bold text-gray-900">
                                                 {{ $tripStart->format('H:i') }}</p>
                                             <p class="text-sm text-gray-500"
-                                                title="{{ $firstPickup->name ?? 'Diem don' }}">
+                                               title="{{ $firstPickup->name ?? 'Diem don' }}">
                                                 {{ $firstPickup->name ?? 'Diem don' }}</p>
                                         </div>
                                         <div class="text-center space-y-1">
@@ -633,7 +640,7 @@
                                             <p class="text-2xl font-bold text-gray-900">{{ $tripEnd->format('H:i') }}
                                             </p>
                                             <p class="text-sm text-gray-500"
-                                                title="{{ $firstDropoff->name ?? 'Diem tra' }}">
+                                               title="{{ $firstDropoff->name ?? 'Diem tra' }}">
                                                 {{ $firstDropoff->name ?? 'Diem tra' }}</p>
                                         </div>
                                     </div>
@@ -677,8 +684,8 @@
                                         <div class="trip-gallery-list">
                                             @foreach ($imageGallery->take(6) as $image)
                                                 <button type="button" data-image-trigger
-                                                    data-target="#trip-image-{{ $trip->bus_route_id }}"
-                                                    data-image="{{ $image }}">
+                                                        data-target="#trip-image-{{ $trip->bus_route_id }}"
+                                                        data-image="{{ $image }}">
                                                     <img src="{{ $image }}" alt="Hinh xe" loading="lazy">
                                                 </button>
                                             @endforeach
@@ -699,13 +706,13 @@
 
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <a href="{{ route('client.booking.create', ['bus_route_id' => $trip->bus_route_id, 'date' => $departureDate]) }}"
-                                            class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-yellow-400 text-gray-900 rounded-xl font-semibold hover:bg-yellow-500 transition shadow-sm">
+                                           class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-yellow-400 text-gray-900 rounded-xl font-semibold hover:bg-yellow-500 transition shadow-sm">
                                             <i class="fa-solid fa-ticket"></i>
                                             Chọn chuyến
                                         </a>
                                         <button type="button"
-                                            class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition view-trip-details-btn"
-                                            data-trip='{{ json_encode($trip) }}'>
+                                                class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition view-trip-details-btn"
+                                                data-trip='{{ json_encode($trip) }}'>
                                             <i class="fa-solid fa-circle-info"></i>
                                             Xem chi tiết
                                         </button>
@@ -726,13 +733,13 @@
                 </p>
                 <div class="flex justify-center gap-3">
                     <a href="#search-section"
-                        class="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition">
+                       class="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span>Tìm kiếm lại</span>
                     </a>
                     @if ($hasActiveFilters ?? false)
                         <a href="{{ $clearFiltersUrl }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition">
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition">
                             <i class="fa-solid fa-xmark"></i>
                             <span>Xóa bộ lọc</span>
                         </a>
@@ -761,7 +768,7 @@
     @endif
 
     <div id="trip-details-modal"
-        class="hidden fixed inset-0 bg-black bg-opacity-60 z-[120] flex items-center justify-center p-4">
+         class="hidden fixed inset-0 bg-black bg-opacity-60 z-[120] flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] flex flex-col">
             <div class="flex justify-between items-center p-5 border-b">
                 <h3 class="text-xl font-bold text-gray-900">Chi tiết chuyến xe</h3>
@@ -772,13 +779,14 @@
                     <div>
                         <h4 class="font-semibold text-gray-800 mb-3">Thông tin xe</h4>
                         <img id="modal-bus-image" src="" alt="Hinh xe"
-                            class="w-full h-48 object-cover rounded-lg mb-4">
+                             class="w-full h-48 object-cover rounded-lg mb-4">
                         <div id="modal-gallery" class="modal-gallery"></div>
                         <ul class="space-y-2 text-base mt-4">
                             <li><strong>Nhà xe:</strong> <span id="modal-company-name"></span></li>
                             <li><strong>Dòng xe:</strong> <span id="modal-bus-category"></span></li>
                             <li><strong>Thông tin:</strong> <span id="modal-bus-name"></span> (<span
-                                    id="modal-bus-model"></span>)</li>
+                                    id="modal-bus-model"></span>)
+                            </li>
                         </ul>
                         <h4 class="font-semibold text-gray-800 mt-4 mb-2">Tiện ích</h4>
                         <div id="modal-services" class="flex flex-wrap gap-2"></div>
@@ -788,17 +796,20 @@
                         <div id="seat-map-container" class="space-y-4">
                             <div class="flex flex-wrap gap-4 mb-4 text-sm">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-5 h-5 rounded bg-white border border-gray-300"></div><span>Còn
+                                    <div class="w-5 h-5 rounded bg-white border border-gray-300"></div>
+                                    <span>Còn
                                         trống</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-5 h-5 rounded bg-gray-400 text-white flex items-center justify-center">
                                         <i class="fa-solid fa-lock text-xs"></i>
-                                    </div><span>Đã đặt</span>
+                                    </div>
+                                    <span>Đã đặt</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-5 h-5 rounded bg-blue-500 border border-blue-600"></div><span>Đang
+                                    <div class="w-5 h-5 rounded bg-blue-500 border border-blue-600"></div>
+                                    <span>Đang
                                         chọn</span>
                                 </div>
                             </div>
@@ -819,11 +830,12 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Trạng thái: <span id="modal-availability"
-                                    class="font-semibold text-emerald-600"></span></p>
+                                                                               class="font-semibold text-emerald-600"></span>
+                            </p>
                         </div>
                         <div class="pt-4 border-t">
                             <a id="modal-booking-link" href="#"
-                                class="w-full text-center px-5 py-3 bg-yellow-400 text-gray-900 font-bold rounded-full hover:bg-yellow-500 transition block">
+                               class="w-full text-center px-5 py-3 bg-yellow-400 text-gray-900 font-bold rounded-full hover:bg-yellow-500 transition block">
                                 Đặt vé ngay
                             </a>
                         </div>
@@ -835,7 +847,7 @@
 
     @push('scripts')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const body = document.body;
                 const filterPanel = document.getElementById('filter-panel');
                 const filterBackdrop = document.getElementById('filter-backdrop');
@@ -862,14 +874,14 @@
                     body.classList.remove('overflow-hidden');
                 }
 
-                document.querySelectorAll('[data-filter-toggle]').forEach(function(button) {
-                    button.addEventListener('click', function() {
+                document.querySelectorAll('[data-filter-toggle]').forEach(function (button) {
+                    button.addEventListener('click', function () {
                         openFilters();
                     });
                 });
 
-                document.querySelectorAll('[data-filter-close]').forEach(function(button) {
-                    button.addEventListener('click', function() {
+                document.querySelectorAll('[data-filter-close]').forEach(function (button) {
+                    button.addEventListener('click', function () {
                         closeFilters();
                     });
                 });
@@ -878,7 +890,7 @@
                     filterBackdrop.addEventListener('click', closeFilters);
                 }
 
-                window.addEventListener('resize', function() {
+                window.addEventListener('resize', function () {
                     if (window.innerWidth >= 1024) {
                         body.classList.remove('overflow-hidden');
                         if (filterBackdrop) {
@@ -890,8 +902,8 @@
                     }
                 });
 
-                document.querySelectorAll('[data-image-trigger]').forEach(function(button) {
-                    button.addEventListener('click', function() {
+                document.querySelectorAll('[data-image-trigger]').forEach(function (button) {
+                    button.addEventListener('click', function () {
                         const targetSelector = button.getAttribute('data-target');
                         const imageUrl = button.getAttribute('data-image');
                         const target = document.querySelector(targetSelector);
@@ -931,15 +943,15 @@
                 }
 
                 if (modal) {
-                    modal.addEventListener('click', function(event) {
+                    modal.addEventListener('click', function (event) {
                         if (event.target === modal) {
                             closeModal();
                         }
                     });
                 }
 
-                document.querySelectorAll('.view-trip-details-btn').forEach(function(button) {
-                    button.addEventListener('click', function() {
+                document.querySelectorAll('.view-trip-details-btn').forEach(function (button) {
+                    button.addEventListener('click', function () {
                         const rawData = button.getAttribute('data-trip');
                         if (!rawData) return;
                         const tripData = JSON.parse(rawData);
@@ -959,7 +971,7 @@
                         modalGallery.innerHTML = '';
                         if (galleryImages.length > 0) {
                             let activeThumb = null;
-                            galleryImages.forEach(function(src) {
+                            galleryImages.forEach(function (src) {
                                 const thumbBtn = document.createElement('button');
                                 thumbBtn.type = 'button';
                                 thumbBtn.className = 'modal-thumb';
@@ -968,7 +980,7 @@
                                     thumbBtn.classList.add('is-active');
                                     activeThumb = thumbBtn;
                                 }
-                                thumbBtn.addEventListener('click', function() {
+                                thumbBtn.addEventListener('click', function () {
                                     modalBusImage.src = src;
                                     if (activeThumb) {
                                         activeThumb.classList.remove('is-active');
@@ -989,7 +1001,7 @@
 
                         modalServices.innerHTML = '';
                         if (tripData.services && tripData.services.length > 0) {
-                            tripData.services.forEach(function(service) {
+                            tripData.services.forEach(function (service) {
                                 const chip = document.createElement('span');
                                 chip.className =
                                     'inline-flex items-center gap-2 px-3 py-1 text-sm font-semibold rounded-full bg-blue-50 text-blue-700';
@@ -1003,7 +1015,7 @@
 
                         modalPickupPoints.innerHTML = '';
                         if (tripData.pickup_points) {
-                            tripData.pickup_points.forEach(function(point) {
+                            tripData.pickup_points.forEach(function (point) {
                                 const item = document.createElement('li');
                                 item.textContent = point.name || '';
                                 modalPickupPoints.appendChild(item);
@@ -1012,7 +1024,7 @@
 
                         modalDropoffPoints.innerHTML = '';
                         if (tripData.dropoff_points) {
-                            tripData.dropoff_points.forEach(function(point) {
+                            tripData.dropoff_points.forEach(function (point) {
                                 const item = document.createElement('li');
                                 item.textContent = point.name || '';
                                 modalDropoffPoints.appendChild(item);
@@ -1046,19 +1058,19 @@
 
                     try {
                         const seatMap = typeof seatMapData === 'string' ? JSON.parse(seatMapData) : seatMapData;
-                        const booked = bookedSeats.map(function(seat) {
+                        const booked = bookedSeats.map(function (seat) {
                             return String(seat).toUpperCase();
                         });
 
                         if (seatMap.floors && seatMap.floors.length > 0) {
-                            seatMap.floors.forEach(function(floor) {
+                            seatMap.floors.forEach(function (floor) {
                                 const deckDiv = document.createElement('div');
                                 deckDiv.className = 'seat-deck';
                                 deckDiv.innerHTML = '<h5 class="seat-deck-title">' + (floor.label || 'Tầng') +
                                     '</h5>';
 
                                 const rows = {};
-                                floor.seats.forEach(function(seat) {
+                                floor.seats.forEach(function (seat) {
                                     const rowKey = seat.row;
                                     if (!rows[rowKey]) {
                                         rows[rowKey] = [];
@@ -1066,12 +1078,12 @@
                                     rows[rowKey].push(seat);
                                 });
 
-                                Object.keys(rows).sort().forEach(function(rowKey) {
+                                Object.keys(rows).sort().forEach(function (rowKey) {
                                     const rowDiv = document.createElement('div');
                                     rowDiv.className = 'seat-row';
-                                    rows[rowKey].sort(function(a, b) {
+                                    rows[rowKey].sort(function (a, b) {
                                         return a.col - b.col;
-                                    }).forEach(function(seat) {
+                                    }).forEach(function (seat) {
                                         const seatEl = document.createElement('div');
                                         if (seat.type === 'aisle') {
                                             seatEl.className = 'seat-aisle';

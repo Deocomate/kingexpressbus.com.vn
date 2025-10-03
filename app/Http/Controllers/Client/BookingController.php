@@ -29,6 +29,7 @@ class BookingController extends Controller
             ->join('company_routes as cr', 'br.company_route_id', '=', 'cr.id')
             ->join('companies as c', 'cr.company_id', '=', 'c.id')
             ->join('routes as r', 'cr.route_id', '=', 'r.id')
+            ->join('provinces as p_start', 'r.province_start_id', '=', 'p_start.id')
             ->join('buses as b', 'br.bus_id', '=', 'b.id')
             ->select([
                 'br.id as bus_route_id',
@@ -39,6 +40,7 @@ class BookingController extends Controller
                 'cr.id as company_route_id',
                 'cr.name as company_route_name',
                 'cr.slug as company_route_slug',
+                'cr.available_hotel_pickup',
                 'c.name as company_name',
                 'c.slug as company_slug',
                 'c.phone as company_phone',
@@ -47,6 +49,7 @@ class BookingController extends Controller
                 'r.id as route_id',
                 'r.name as route_name',
                 'r.slug as route_slug',
+                'p_start.name as start_province_name',
                 'b.id as bus_id',
                 'b.name as bus_name',
                 'b.model_name as bus_model',
@@ -117,26 +120,36 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $isHotelPickup = $request->input('pickup_stop_id') === 'hotel_pickup';
+
+        $rules = [
             'bus_route_id' => 'required|integer|exists:bus_routes,id',
             'booking_date' => 'required|date_format:d/m/Y',
             'quantity' => 'required|integer|min:1',
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'customer_email' => 'required|email|max:255',
-            'pickup_stop_id' => 'required|integer|exists:stops,id',
+            'pickup_stop_id' => 'required|string',
             'dropoff_stop_id' => 'required|integer|exists:stops,id',
             'total_price' => 'required|integer|min:0',
             'payment_method' => 'required|string|in:cash_on_pickup,online_banking',
-            'notes' => 'nullable|string|max:2000',
-        ]);
+            'notes' => 'nullable|string|max:1000',
+        ];
+
+        if ($isHotelPickup) {
+            $rules['hotel_pickup_address'] = 'required|string|max:1000';
+            $rules['pickup_stop_id'] = 'required|in:hotel_pickup';
+        } else {
+            $rules['pickup_stop_id'] = 'required|integer|exists:stops,id';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
         $validated = $validator->validated();
-        $validated['notes'] = isset($validated['notes']) ? strip_tags($validated['notes']) : null;
         $bookingDateForDb = Carbon::createFromFormat('d/m/Y', $validated['booking_date'])->format('Y-m-d');
 
         DB::beginTransaction();
@@ -163,6 +176,16 @@ class BookingController extends Controller
                 return back()->with('error', 'Chuyến xe không còn đủ ' . $requestedQuantity . ' vé. Chỉ còn lại ' . $availableSeats . ' vé.')->withInput();
             }
 
+            $bookingNotes = isset($validated['notes']) ? strip_tags($validated['notes']) : null;
+            $pickupStopId = $validated['pickup_stop_id'];
+
+            if ($isHotelPickup) {
+                $hotelAddress = strip_tags($validated['hotel_pickup_address']);
+                $hotelNote = "[Đón tại khách sạn]: " . $hotelAddress;
+                $bookingNotes = $bookingNotes ? $hotelNote . "\n[Ghi chú của khách]: " . $bookingNotes : $hotelNote;
+                $pickupStopId = null;
+            }
+
             $bookingId = DB::table('bookings')->insertGetId([
                 'user_id' => Auth::id(),
                 'bus_route_id' => $validated['bus_route_id'],
@@ -171,14 +194,14 @@ class BookingController extends Controller
                 'customer_name' => $validated['customer_name'],
                 'customer_phone' => $validated['customer_phone'],
                 'customer_email' => $validated['customer_email'],
-                'pickup_stop_id' => $validated['pickup_stop_id'],
+                'pickup_stop_id' => $pickupStopId,
                 'dropoff_stop_id' => $validated['dropoff_stop_id'],
                 'quantity' => $requestedQuantity,
                 'total_price' => $validated['total_price'],
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => 'unpaid',
                 'status' => $validated['payment_method'] === 'online_banking' ? 'pending' : 'confirmed',
-                'notes' => $validated['notes'],
+                'notes' => $bookingNotes,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -205,6 +228,7 @@ class BookingController extends Controller
             return redirect()->route('client.booking.success')->with('booking_id', $bookingId);
         } catch (\Throwable $exception) {
             DB::rollBack();
+            dd($exception);
             Log::error('Đặt vé phía client thất bại', ['error' => $exception->getMessage()]);
             return back()->with('error', 'Hệ thống đang quá tải, vui lòng thử lại sau.')->withInput();
         }
@@ -218,31 +242,20 @@ class BookingController extends Controller
             ->join('company_routes as cr', 'br.company_route_id', '=', 'cr.id')
             ->join('routes as r', 'cr.route_id', '=', 'r.id')
             ->join('companies as c', 'cr.company_id', '=', 'c.id')
-            ->join('stops as p_stop', 'b.pickup_stop_id', '=', 'p_stop.id')
+            ->leftJoin('stops as p_stop', 'b.pickup_stop_id', '=', 'p_stop.id')
             ->join('stops as d_stop', 'b.dropoff_stop_id', '=', 'd_stop.id')
             ->join('provinces as start_prov', 'r.province_start_id', '=', 'start_prov.id')
             ->join('provinces as end_prov', 'r.province_end_id', '=', 'end_prov.id')
             ->select([
-                'b.*',
-                'r.name as route_name',
-                'c.name as company_name',
-                'c.hotline as company_hotline',
-                'br.start_time',
-                'bus.name as bus_name',
-                'bus.model_name as bus_model_name',
-                'p_stop.name as pickup_name',
-                'p_stop.address as pickup_address',
-                'd_stop.name as dropoff_name',
-                'd_stop.address as dropoff_address',
-                'start_prov.name as start_province',
-                'end_prov.name as end_province',
+                'b.*', 'r.name as route_name', 'c.name as company_name', 'c.hotline as company_hotline',
+                'br.start_time', 'bus.name as bus_name', 'bus.model_name as bus_model_name',
+                'p_stop.name as pickup_name', 'p_stop.address as pickup_address',
+                'd_stop.name as dropoff_name', 'd_stop.address as dropoff_address',
+                'start_prov.name as start_province', 'end_prov.name as end_province',
             ])
-            ->where('b.id', $bookingId)
-            ->first();
+            ->where('b.id', $bookingId)->first();
 
-        if (!$details) {
-            return null;
-        }
+        if (!$details) return null;
 
         $result = (array)$details;
         $webProfile = DB::table('web_profiles')->where('is_default', true)->first();
@@ -251,11 +264,19 @@ class BookingController extends Controller
         $result['web_phone'] = $webProfile->hotline ?? $webProfile->phone ?? 'N/A';
         $result['web_email'] = $webProfile->email ?? 'N/A';
         $result['web_link'] = url('/');
-        $result['departure_date'] = isset($result['booking_date']) ? Carbon::parse($result['booking_date'])->format('d/m/Y') : 'N/A';
-        $result['start_time'] = isset($result['start_time']) ? Carbon::parse($result['start_time'])->format('H:i') : 'N/A';
+        $result['web_logo'] = !empty($webProfile->logo_url) ? url($webProfile->logo_url) : null;
+
+        $result['departure_date'] = Carbon::parse($result['booking_date'])->format('d/m/Y');
+        $result['start_time'] = Carbon::parse($result['start_time'])->format('H:i');
         $result['bus_type_name'] = $result['bus_model_name'] ?? 'Đang cập nhật';
-        $result['pickup_info'] = sprintf('%s - %s', $result['pickup_name'] ?? 'N/A', $result['pickup_address'] ?? 'N/A');
-        $result['needs_bank_transfer_info'] = ($result['payment_method'] === 'online_banking');
+
+        if (is_null($result['pickup_stop_id']) && Str::contains($result['notes'], '[Đón tại khách sạn]')) {
+            $result['pickup_info'] = Str::after($result['notes'], '[Đón tại khách sạn]: ');
+        } else {
+            $result['pickup_info'] = sprintf('%s - %s', $result['pickup_name'] ?? 'N/A', $result['pickup_address'] ?? 'N/A');
+        }
+
+        $result['needs_bank_transfer_info'] = ($result['payment_method'] === 'online_banking' && $result['payment_status'] !== 'paid');
 
         return $result;
     }
@@ -272,7 +293,7 @@ class BookingController extends Controller
             ->join('company_routes as cr', 'br.company_route_id', '=', 'cr.id')
             ->join('routes as r', 'cr.route_id', '=', 'r.id')
             ->join('companies as c', 'cr.company_id', '=', 'c.id')
-            ->join('stops as p_stop', 'b.pickup_stop_id', '=', 'p_stop.id')
+            ->leftJoin('stops as p_stop', 'b.pickup_stop_id', '=', 'p_stop.id')
             ->join('stops as d_stop', 'b.dropoff_stop_id', '=', 'd_stop.id')
             ->select([
                 'b.id',
@@ -285,6 +306,8 @@ class BookingController extends Controller
                 'b.total_price',
                 'b.payment_method',
                 'b.payment_status',
+                'b.notes',
+                'b.pickup_stop_id',
                 'br.start_time',
                 'br.end_time',
                 'cr.name as company_route_name',
@@ -314,7 +337,6 @@ class BookingController extends Controller
             try {
                 return Carbon::createFromFormat($pattern, $value)->startOfDay();
             } catch (\Throwable $exception) {
-                // try next pattern
             }
         }
 

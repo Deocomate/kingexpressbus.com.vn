@@ -26,8 +26,8 @@ class RouteController extends Controller
         ]);
 
         try {
-            $startProvinceId = $this->resolveProvinceId($validated['origin_type'], (int) $validated['origin_id']);
-            $endProvinceId = $this->resolveProvinceId($validated['destination_type'], (int) $validated['destination_id']);
+            $startProvinceId = $this->resolveProvinceId($validated['origin_type'], (int)$validated['origin_id']);
+            $endProvinceId = $this->resolveProvinceId($validated['destination_type'], (int)$validated['destination_id']);
 
             if (!$startProvinceId || !$endProvinceId) {
                 return $this->searchErrorResponse($request, 'Địa điểm khởi hành hoặc điểm đến không hợp lệ.');
@@ -191,6 +191,7 @@ class RouteController extends Controller
             'hasActiveFilters' => $activeFilterCount > 0,
         ]);
     }
+
     private function loadTripsForRoute(int $routeId, Carbon $departureDate)
     {
         $trips = DB::table('bus_routes as br')
@@ -222,49 +223,63 @@ class RouteController extends Controller
             ->orderBy('br.start_time')
             ->get();
 
-        return $trips->map(function ($trip) use ($departureDate) {
+        if ($trips->isEmpty()) {
+            return $trips;
+        }
+
+        $companyRouteIds = $trips->pluck('company_route_id')->unique()->all();
+        $busRouteIds = $trips->pluck('bus_route_id')->unique()->all();
+
+        $allStops = DB::table('company_route_stops as crs')
+            ->join('stops as s', 'crs.stop_id', '=', 's.id')
+            ->join('districts as d', 's.district_id', '=', 'd.id')
+            ->join('provinces as p', 'd.province_id', '=', 'p.id')
+            ->select([
+                'crs.company_route_id',
+                's.id',
+                's.name',
+                's.address',
+                'crs.stop_type',
+                'p.name as province_name',
+                'd.name as district_name',
+            ])
+            ->whereIn('crs.company_route_id', $companyRouteIds)
+            ->orderBy('crs.priority')
+            ->get()
+            ->groupBy('company_route_id');
+
+        $allBookedQuantities = DB::table('bookings')
+            ->select('bus_route_id', DB::raw('SUM(quantity) as total_quantity'))
+            ->whereIn('bus_route_id', $busRouteIds)
+            ->whereDate('booking_date', $departureDate)
+            ->whereIn('status', ['pending', 'confirmed', 'completed'])
+            ->groupBy('bus_route_id')
+            ->pluck('total_quantity', 'bus_route_id');
+
+        return $trips->map(function ($trip) use ($allStops, $allBookedQuantities) {
             $services = $trip->services ? json_decode($trip->services, true) : [];
             $images = $trip->image_list_url ? json_decode($trip->image_list_url, true) : [];
 
-            $stops = DB::table('company_route_stops as crs')
-                ->join('stops as s', 'crs.stop_id', '=', 's.id')
-                ->join('districts as d', 's.district_id', '=', 'd.id')
-                ->join('provinces as p', 'd.province_id', '=', 'p.id')
-                ->select([
-                    's.id',
-                    's.name',
-                    's.address',
-                    'crs.stop_type',
-                    'p.name as province_name',
-                    'd.name as district_name',
-                ])
-                ->where('crs.company_route_id', $trip->company_route_id)
-                ->orderBy('crs.priority')
-                ->get();
+            $tripStops = $allStops->get($trip->company_route_id, collect());
+            $bookedQuantity = (int)$allBookedQuantities->get($trip->bus_route_id, 0);
 
-            $bookedQuantity = (int) DB::table('bookings')
-                ->where('bus_route_id', $trip->bus_route_id)
-                ->whereDate('booking_date', $departureDate)
-                ->whereIn('status', ['pending', 'confirmed', 'completed'])
-                ->sum('quantity');
-
-            $seatCount = (int) $trip->seat_count;
+            $seatCount = (int)$trip->seat_count;
             $availableSeats = max($seatCount - $bookedQuantity, 0);
             $occupancy = $seatCount > 0 ? round(($bookedQuantity / $seatCount) * 100) : 0;
 
             $trip->services = $services;
             $trip->bus_images = $images;
-            $trip->pickup_points = $stops->whereIn('stop_type', ['pickup', 'both'])->values();
-            $trip->dropoff_points = $stops->whereIn('stop_type', ['dropoff', 'both'])->values();
+            $trip->pickup_points = $tripStops->whereIn('stop_type', ['pickup', 'both'])->values();
+            $trip->dropoff_points = $tripStops->whereIn('stop_type', ['dropoff', 'both'])->values();
             $trip->booked_quantity = $bookedQuantity;
             $trip->seats_available = $availableSeats;
             $trip->occupancy_percent = $occupancy;
-            $trip->bus_category = $this->determineBusCategory($trip->bus_model, $trip->bus_name, (int) $trip->seat_count);
+            $trip->bus_category = $this->determineBusCategory($trip->bus_model, $trip->bus_name, (int)$trip->seat_count);
             $trip->primary_bus_image = $this->resolvePrimaryBusImage($images, $trip->bus_thumbnail);
             $trip->image_gallery = collect($images)->filter()->values()->all();
             $trip->departure_hour = Carbon::createFromFormat('H:i:s', $trip->start_time)->hour;
             $trip->duration_minutes = $this->calculateTripDurationMinutes($trip->start_time, $trip->end_time);
-            $trip->price_value = $trip->price && $trip->price > 0 ? (int) $trip->price : null;
+            $trip->price_value = $trip->price && $trip->price > 0 ? (int)$trip->price : null;
             $trip->has_price = $trip->price && $trip->price > 0;
             $trip->seat_capacity = $seatCount;
             $trip->booked_seats = [];
@@ -287,8 +302,8 @@ class RouteController extends Controller
 
         return [
             'sort' => $sort,
-            'price_min' => is_numeric($priceMin) ? (int) $priceMin : null,
-            'price_max' => is_numeric($priceMax) ? (int) $priceMax : null,
+            'price_min' => is_numeric($priceMin) ? (int)$priceMin : null,
+            'price_max' => is_numeric($priceMax) ? (int)$priceMax : null,
             'services' => $this->normalizeArrayInput($request->input('services')),
             'pickup_points' => $this->normalizeArrayInput($request->input('pickup_points')),
             'dropoff_points' => $this->normalizeArrayInput($request->input('dropoff_points')),
@@ -433,14 +448,15 @@ class RouteController extends Controller
             }
         })->values();
     }
+
     private function buildFilterOptions(Collection $trips): array
     {
         $prices = $trips->pluck('price_value')->filter(fn($price) => $price && $price > 0);
 
         return [
             'price' => [
-                'min' => $prices->min() ? (int) $prices->min() : 0,
-                'max' => $prices->max() ? (int) $prices->max() : 0,
+                'min' => $prices->min() ? (int)$prices->min() : 0,
+                'max' => $prices->max() ? (int)$prices->max() : 0,
             ],
             'services' => $trips->flatMap(fn($trip) => collect($trip->services ?? []))
                 ->filter()
@@ -503,7 +519,7 @@ class RouteController extends Controller
         }
 
         return collect(Arr::wrap($value))
-            ->map(fn($item) => trim((string) $item))
+            ->map(fn($item) => trim((string)$item))
             ->filter()
             ->unique()
             ->values()
@@ -570,7 +586,7 @@ class RouteController extends Controller
                 $end->addDay();
             }
 
-            return (int) $start->diffInMinutes($end);
+            return (int)$start->diffInMinutes($end);
         } catch (\Throwable $exception) {
             return 0;
         }

@@ -2,6 +2,7 @@
                  :title="$title ?? 'Đặt vé King Express Bus'" :description="$description ?? ''">
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
         <style>
             .litepicker {
                 font-family: 'Inter', sans-serif;
@@ -27,12 +28,39 @@
                 border-color: #3b82f6;
                 box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
             }
+
+            .select2-container--default .select2-selection--single {
+                border-radius: 0.75rem;
+                border-color: #e5e7eb;
+                background-color: #f9fafb;
+                height: 48px;
+                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 46px;
+                padding-left: 1rem;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 46px;
+                right: 0.5rem;
+            }
+
+            .select2-dropdown {
+                border-radius: 0.75rem;
+                border-color: #e5e7eb;
+            }
+
+            .select2-results__option {
+                padding: 0.75rem 1rem;
+            }
         </style>
     @endpush
 
     @php
         $busImage = $busImages[0] ?? $trip->bus_thumbnail ?? '/userfiles/files/kingexpressbus/cabin/1.jpg';
-            $seatPrice = (int) ($trip->price ?? 0);
+        $seatPrice = (int) ($trip->price ?? 0);
     @endphp
 
     <section class="bg-gray-900 text-white">
@@ -175,14 +203,20 @@
                         <div>
                             <label for="pickup_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm
                                 đón</label>
-                            <select id="pickup_stop_id" name="pickup_stop_id"
-                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                                    required>
+                            <select id="pickup_stop_id" name="pickup_stop_id" class="w-full" required>
                                 <option value="">Chọn điểm đón của bạn</option>
+                                @if($trip->available_hotel_pickup)
+                                    <option
+                                        value="hotel_pickup" @selected(old('pickup_stop_id', request('pickup_stop_id')) == 'hotel_pickup')>
+                                        Đón tại khách sạn
+                                    </option>
+                                @endif
                                 @foreach ($stops->where('stop_type', '!=', 'dropoff') as $point)
                                     <option
-                                        value="{{ $point->id }}" @selected(old('pickup_stop_id', request('pickup_stop_id')) == $point->id)>
-                                        {{ $point->name }} ({{ $point->district_name }})
+                                        value="{{ $point->id }}"
+                                        data-address="{{ $point->address }}"
+                                        @selected(old('pickup_stop_id', request('pickup_stop_id')) == $point->id)>
+                                        {{ $point->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -190,18 +224,27 @@
                         <div>
                             <label for="dropoff_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm
                                 trả</label>
-                            <select id="dropoff_stop_id" name="dropoff_stop_id"
-                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                                    required>
+                            <select id="dropoff_stop_id" name="dropoff_stop_id" class="w-full" required>
                                 <option value="">Chọn điểm trả của bạn</option>
                                 @foreach ($stops->where('stop_type', '!=', 'pickup') as $point)
                                     <option
-                                        value="{{ $point->id }}" @selected(old('dropoff_stop_id', request('dropoff_stop_id')) == $point->id)>
-                                        {{ $point->name }} ({{ $point->district_name }})
+                                        value="{{ $point->id }}"
+                                        data-address="{{ $point->address }}"
+                                        @selected(old('dropoff_stop_id', request('dropoff_stop_id')) == $point->id)>
+                                        {{ $point->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+
+                    <div id="hotel-pickup-address-wrapper" class="hidden mt-4">
+                        <label for="hotel_pickup_address" class="block text-sm font-semibold text-gray-700 mb-2">Địa chỉ
+                            khách sạn</label>
+                        <input type="text" id="hotel_pickup_address" name="hotel_pickup_address"
+                               value="{{ old('hotel_pickup_address', request('hotel_pickup_address')) }}"
+                               class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
+                               placeholder="Nhập số nhà, tên đường, phường...">
                     </div>
 
                     <div>
@@ -349,6 +392,7 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const bookingForm = document.getElementById('booking-form');
@@ -364,13 +408,11 @@
                     }
                 });
 
-                // Quantity selector
                 const quantityInput = document.getElementById('quantity');
                 const decreaseBtn = document.getElementById('decrease-quantity');
                 const increaseBtn = document.getElementById('increase-quantity');
                 const maxQuantity = {{ $availableSeats }};
                 const seatPrice = {{ $seatPrice }};
-
                 const summaryQuantity = document.getElementById('summary-quantity');
                 const summaryTotalPrice = document.getElementById('summary-total-price');
                 const totalPriceInput = document.getElementById('total-price-input');
@@ -378,7 +420,6 @@
                 const updateSummary = () => {
                     const quantity = parseInt(quantityInput.value);
                     const totalPrice = quantity * seatPrice;
-
                     summaryQuantity.textContent = quantity;
                     summaryTotalPrice.textContent = totalPrice > 0 ? totalPrice.toLocaleString('vi-VN') + 'đ' : '0đ';
                     totalPriceInput.value = totalPrice;
@@ -401,7 +442,6 @@
                     }
                 });
 
-                // Date picker
                 const picker = new Litepicker({
                     element: document.getElementById('booking_date'),
                     format: 'DD/MM/YYYY',
@@ -412,21 +452,17 @@
                             const selectedDate = new Date(date.dateInstance).toLocaleDateString('fr-CA'); // YYYY-MM-DD
                             const url = new URL(window.location.href);
                             url.searchParams.set('date', selectedDate);
-
-                            // Preserve form data
                             const formData = new FormData(bookingForm);
                             for (let [key, value] of formData.entries()) {
                                 if (key !== 'booking_date' && key !== '_token' && value) {
                                     url.searchParams.set(key, value);
                                 }
                             }
-
                             window.location.href = url.toString();
                         });
                     },
                 });
 
-                // Restore form data from URL on page load
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.forEach((value, key) => {
                     const field = bookingForm.querySelector(`[name="${key}"]`);
@@ -441,16 +477,12 @@
                     }
                 });
 
-                // Payment method selection
                 const paymentLabels = document.querySelectorAll('.payment-method-label');
-                const paymentInputs = document.querySelectorAll('.payment-method-input');
-
                 const updatePaymentSelection = () => {
                     paymentLabels.forEach(label => {
                         const input = label.querySelector('.payment-method-input');
                         const radioIcon = label.querySelector('.radio-icon');
                         const innerDot = radioIcon.querySelector('div');
-
                         if (input.checked) {
                             label.classList.add('selected');
                             radioIcon.classList.add('border-blue-600');
@@ -462,16 +494,47 @@
                         }
                     });
                 };
-
                 paymentLabels.forEach(label => {
                     label.addEventListener('click', () => {
-                        const input = label.querySelector('.payment-method-input');
-                        input.checked = true;
+                        label.querySelector('.payment-method-input').checked = true;
                         updatePaymentSelection();
                     });
                 });
 
-                // Initial state
+                function formatStop(stop) {
+                    if (!stop.id) {
+                        return stop.text;
+                    }
+                    var $stop = $(
+                        '<span>' + stop.text + '</span><br/><small class="text-gray-500">' + (stop.element.getAttribute('data-address') || '') + '</small>'
+                    );
+                    return $stop;
+                }
+
+                $('#pickup_stop_id, #dropoff_stop_id').select2({
+                    templateResult: formatStop,
+                    templateSelection: function (stop) {
+                        return stop.text;
+                    }
+                });
+
+                const hotelPickupWrapper = document.getElementById('hotel-pickup-address-wrapper');
+                const hotelPickupInput = document.getElementById('hotel_pickup_address');
+                const pickupSelect = $('#pickup_stop_id');
+
+                function toggleHotelPickupField() {
+                    if (pickupSelect.val() === 'hotel_pickup') {
+                        hotelPickupWrapper.classList.remove('hidden');
+                        hotelPickupInput.required = true;
+                    } else {
+                        hotelPickupWrapper.classList.add('hidden');
+                        hotelPickupInput.required = false;
+                    }
+                }
+
+                pickupSelect.on('change', toggleHotelPickupField);
+
+                toggleHotelPickupField();
                 updateSummary();
                 updatePaymentSelection();
             });
