@@ -414,10 +414,74 @@ return [
         ]
     ],
     'menu' => [
-        'Trang chủ' => 'Home',
-        'Giới thiệu' => 'About Us',
-        'Liên hệ' => 'Contact',
-        'Tuyến đường' => 'Routes',
-        'Nhà xe' => 'Operators',
+        'home' => 'Home',
+        'about' => 'About Us',
+        'contact' => 'Contact',
+    ],
+    'about' => [
+        'meta' => [
+            'title' => 'About King Express Bus',
+            'description' => 'Learn about the mission, core values, and commitment of King Express Bus to providing a high-class and safe travel experience.',
+        ],
+        'hero' => [
+            'title' => 'About King Express Bus',
+            'subtitle' => 'Your companion on every journey with Safety - Comfort - Class.',
+            'image_alt' => 'Interior of a King Express Bus cabin',
+        ],
+        'intro' => [
+            'title' => 'Our Mission',
+            'paragraph1' => 'King Express Bus was founded with a mission to redefine the long-distance travel experience in Vietnam. We are not just a transport service, but a reliable companion connecting destinations and bringing passengers comfortable and absolutely safe journeys.',
+            'paragraph2' => 'By combining a modern fleet, superior amenities, and a smart online booking platform, we strive to eliminate all worries, helping you fully enjoy every moment on the road.',
+        ],
+        'strengths' => [
+            'title' => 'What Makes Us Different?',
+            'subtitle' => 'We are proud to deliver outstanding value, making your satisfaction the guiding principle for all our activities.',
+            'items' => [
+                [
+                    'icon' => 'fa-solid fa-bus-simple',
+                    'title' => 'Modern & Diverse Fleet',
+                    'description' => 'We operate a fleet of premium Limousine, Cabin, and Sleeper buses, regularly maintained to ensure the highest standards of safety and hygiene.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-wifi',
+                    'title' => 'Superior Amenities',
+                    'description' => 'Enjoy your private space with full amenities: high-speed Wi-Fi, USB charging ports, entertainment TV, warm blankets, and complimentary water.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-laptop-code',
+                    'title' => 'Smart Booking Platform',
+                    'description' => 'Our website allows you to search, compare, and book tickets in minutes. Easily manage your tickets and trip information right in your account.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-user-shield',
+                    'title' => 'Professional Driver Team',
+                    'description' => 'Our experienced drivers are well-trained in safe driving skills and provide dedicated, courteous service.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-headset',
+                    'title' => '24/7 Dedicated Support',
+                    'description' => 'Our call center is always ready to answer any questions and assist with ticket changes or cancellations quickly and professionally.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-handshake',
+                    'title' => 'Extensive Partner Network',
+                    'description' => 'We collaborate with reputable operators nationwide, offering you a wide range of choices for routes and schedules.',
+                ],
+            ],
+        ],
+        'stats' => [
+            'routes' => 'Routes',
+            'partners' => 'Partner Operators',
+            'customers' => 'Satisfied Customers',
+        ],
+        'vision' => [
+            'title' => 'Future Vision',
+            'description' => 'King Express Bus aims to become the most loved and trusted bus ticket booking platform in Vietnam. We will continuously apply new technology, expand our network, and enhance service quality to make every trip of yours a memorable experience.',
+        ],
+        'cta' => [
+            'title' => 'Ready for Your Next Journey?',
+            'subtitle' => 'Explore our routes and find the perfect trip for you today.',
+            'button' => 'Find Your Trip Now',
+        ],
     ],
 ];

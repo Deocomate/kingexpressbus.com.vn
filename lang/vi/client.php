@@ -414,10 +414,74 @@ return [
         ]
     ],
     'menu' => [
-        'Trang chủ' => 'Trang chủ',
-        'Giới thiệu' => 'Giới thiệu',
-        'Liên hệ' => 'Liên hệ',
-        'Tuyến đường' => 'Tuyến đường',
-        'Nhà xe' => 'Nhà xe',
+        'home' => 'Trang chủ',
+        'about' => 'Giới thiệu',
+        'contact' => 'Liên hệ',
+    ],
+    'about' => [
+        'meta' => [
+            'title' => 'Giới thiệu về King Express Bus',
+            'description' => 'Tìm hiểu về sứ mệnh, giá trị cốt lõi và cam kết của King Express Bus trong việc mang đến trải nghiệm di chuyển đẳng cấp và an toàn.',
+        ],
+        'hero' => [
+            'title' => 'Về King Express Bus',
+            'subtitle' => 'Đồng hành cùng bạn trên mọi hành trình với sự An toàn - Tiện nghi - Đẳng cấp.',
+            'image_alt' => 'Nội thất xe cabin King Express Bus',
+        ],
+        'intro' => [
+            'title' => 'Sứ Mệnh Của Chúng Tôi',
+            'paragraph1' => 'King Express Bus ra đời với sứ mệnh tái định nghĩa trải nghiệm di chuyển đường dài tại Việt Nam. Chúng tôi không chỉ là một dịch vụ vận tải, mà là người bạn đồng hành đáng tin cậy, kết nối các điểm đến và mang lại cho hành khách những hành trình thoải mái và an toàn tuyệt đối.',
+            'paragraph2' => 'Bằng cách kết hợp đội xe hiện đại, tiện nghi vượt trội và nền tảng đặt vé trực tuyến thông minh, chúng tôi nỗ lực loại bỏ mọi lo toan, giúp bạn tận hưởng trọn vẹn từng khoảnh khắc trên đường đi.',
+        ],
+        'strengths' => [
+            'title' => 'Điều Gì Làm Nên Sự Khác Biệt?',
+            'subtitle' => 'Chúng tôi tự hào mang đến những giá trị vượt trội, đặt sự hài lòng của bạn làm kim chỉ nam cho mọi hoạt động.',
+            'items' => [
+                [
+                    'icon' => 'fa-solid fa-bus-simple',
+                    'title' => 'Đội Xe Đời Mới & Đa Dạng',
+                    'description' => 'Sở hữu các dòng xe Limousine, Cabin và Giường nằm cao cấp, được bảo dưỡng định kỳ, đảm bảo tiêu chuẩn an toàn và vệ sinh cao nhất.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-wifi',
+                    'title' => 'Tiện Ích Vượt Trội',
+                    'description' => 'Tận hưởng không gian riêng tư với đầy đủ tiện nghi: Wifi tốc độ cao, cổng sạc USB, TV giải trí, chăn ấm và nước uống miễn phí.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-laptop-code',
+                    'title' => 'Nền Tảng Đặt Vé Thông Minh',
+                    'description' => 'Website cho phép tìm kiếm, so sánh và đặt vé chỉ trong vài phút. Quản lý vé và thông tin chuyến đi dễ dàng ngay trên tài khoản của bạn.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-user-shield',
+                    'title' => 'Đội Ngũ Lái Xe Chuyên Nghiệp',
+                    'description' => 'Các tài xế dày dạn kinh nghiệm, được đào tạo bài bản về kỹ năng lái xe an toàn và thái độ phục vụ tận tình, chu đáo.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-headset',
+                    'title' => 'Hỗ Trợ Tận Tâm 24/7',
+                    'description' => 'Tổng đài của chúng tôi luôn sẵn sàng giải đáp mọi thắc mắc, hỗ trợ thay đổi hoặc hủy vé một cách nhanh chóng và chuyên nghiệp.',
+                ],
+                [
+                    'icon' => 'fa-solid fa-handshake',
+                    'title' => 'Mạng Lưới Đối Tác Rộng Khắp',
+                    'description' => 'Hợp tác với các nhà xe uy tín trên toàn quốc, mang đến cho bạn nhiều lựa chọn về tuyến đường và giờ giấc.',
+                ],
+            ],
+        ],
+        'stats' => [
+            'routes' => 'Tuyến đường',
+            'partners' => 'Đối tác nhà xe',
+            'customers' => 'Khách hàng hài lòng',
+        ],
+        'vision' => [
+            'title' => 'Tầm Nhìn Tương Lai',
+            'description' => 'King Express Bus đặt mục tiêu trở thành nền tảng đặt vé xe khách được yêu thích và tin cậy hàng đầu tại Việt Nam. Chúng tôi sẽ không ngừng ứng dụng công nghệ mới, mở rộng mạng lưới và nâng cao chất lượng dịch vụ để mỗi chuyến đi của bạn đều là một trải nghiệm đáng nhớ.',
+        ],
+        'cta' => [
+            'title' => 'Sẵn Sàng Cho Hành Trình Tiếp Theo?',
+            'subtitle' => 'Khám phá các tuyến đường và tìm cho mình một chuyến đi hoàn hảo ngay hôm nay.',
+            'button' => 'Tìm Chuyến Xe Ngay',
+        ],
     ],
 ];

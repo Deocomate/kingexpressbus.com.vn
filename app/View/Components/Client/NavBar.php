@@ -5,6 +5,7 @@ namespace App\View\Components\Client;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Request;
 use Illuminate\View\Component;
 
 class NavBar extends Component
@@ -20,29 +21,54 @@ class NavBar extends Component
     public function __construct($webProfile = null, $mainMenu = [], $authUser = null, array $customerLinks = [])
     {
         $this->webProfile = $webProfile;
-        $this->mainMenu = $this->buildMenuTree(collect($mainMenu));
+        // Dữ liệu $mainMenu truyền vào đã là một cây hoàn chỉnh
+        // Chúng ta sẽ xử lý nó để thêm trạng thái active
+        $this->mainMenu = $this->processMenuItems($mainMenu);
         $this->authUser = $authUser;
         $this->customerLinks = $customerLinks;
     }
 
-    protected function buildMenuTree(Collection $menuItems, $parentId = null): array
+    /**
+     * Duyệt qua cây menu đã có và thêm trạng thái active.
+     * Đây là hàm đệ quy để xử lý các menu con.
+     */
+    protected function processMenuItems(array $menuItems): array
     {
-        $branch = [];
+        foreach ($menuItems as $item) {
+            // Chuyển đổi stdClass thành object có thể thêm thuộc tính
+            $item = (object)$item;
 
-        $items = $menuItems->where('parent_id', $parentId)->sortBy('priority')->values();
+            // Xử lý các mục con trước (post-order traversal)
+            $children = !empty($item->children) ? $this->processMenuItems((array)$item->children) : [];
 
-        foreach ($items as $item) {
-            // Dịch tên của mục menu
-            $item->name = __($item->name);
+            // Khởi tạo trạng thái
+            $item->isActive = false;
+            $item->isParentOfActive = false;
 
-            $children = $this->buildMenuTree($menuItems, $item->id);
+            $path = ltrim(parse_url($item->url ?? '', PHP_URL_PATH), '/');
+
             if (!empty($children)) {
+                // --- Xử lý cho mục menu CÓ con ---
                 $item->children = $children;
-            }
-            $branch[] = $item;
-        }
 
-        return $branch;
+                // Kiểm tra xem có mục con nào đang active không
+                if (collect($children)->some(fn($child) => $child->isActive || $child->isParentOfActive)) {
+                    $item->isParentOfActive = true;
+                }
+
+                // Mục cha chỉ active nếu URL của chính nó khớp và URL đó không phải là trang chủ
+                if ($path !== '' && Request::is($path)) {
+                    $item->isActive = true;
+                }
+            } else {
+                // --- Xử lý cho mục menu KHÔNG có con ---
+                // Chỉ active khi URL khớp chính xác (bao gồm cả trường hợp trang chủ "/")
+                if (($path === '' && Request::is('/')) || ($path !== '' && Request::is($path))) {
+                    $item->isActive = true;
+                }
+            }
+        }
+        return $menuItems;
     }
 
     public function render(): View|Closure|string

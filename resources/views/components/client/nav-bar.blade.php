@@ -29,30 +29,38 @@
             {{-- Desktop Navigation --}}
             <nav class="hidden lg:flex items-center space-x-1">
                 @foreach ($menuItems as $item)
+                    @php
+                        $isActive = $item->isActive ?? false;
+                        $isParentOfActive = $item->isParentOfActive ?? false;
+                    @endphp
                     @if (empty($item->children))
                         <a href="{{ url($item->url) }}"
-                           class="text-slate-700 hover:text-blue-600 font-semibold transition-colors duration-200 px-4 py-2 rounded-lg hover:bg-slate-100">
+                           class="font-semibold transition-colors duration-200 px-4 py-2 rounded-lg {{ $isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-100 hover:text-blue-600' }}">
                             {{ $item->name }}
                         </a>
                     @else
                         <div class="relative group">
                             <div
-                                class="flex items-center gap-1.5 cursor-pointer text-slate-700 hover:text-blue-600 font-semibold transition-colors duration-200 px-4 py-2 rounded-lg hover:bg-slate-100">
+                                class="flex items-center gap-1.5 cursor-pointer font-semibold transition-colors duration-200 px-4 py-2 rounded-lg {{ $isActive || $isParentOfActive ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-100 hover:text-blue-600' }}">
                                 <span>{{ $item->name }}</span>
                                 <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300 group-hover:rotate-180"></i>
                             </div>
                             <div
                                 class="absolute left-0 mt-2 w-64 bg-white border border-slate-100 rounded-xl shadow-lg py-2 z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                                 @foreach ($item->children as $child)
+                                    @php
+                                        $isChildActive = $child->isActive ?? false;
+                                        $isChildParentOfActive = $child->isParentOfActive ?? false;
+                                    @endphp
                                     @if (empty($child->children))
                                         <a href="{{ url($child->url) }}"
-                                           class="block px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-700 rounded-md mx-1">
+                                           class="block px-4 py-2 text-sm rounded-md mx-1 {{ $isChildActive ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-700' }}">
                                             {{ $child->name }}
                                         </a>
                                     @else
                                         <div class="relative group/submenu">
                                             <div
-                                                class="flex justify-between items-center px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-700 cursor-pointer rounded-md mx-1">
+                                                class="flex justify-between items-center px-4 py-2 text-sm cursor-pointer rounded-md mx-1 {{ $isChildActive || $isChildParentOfActive ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-700' }}">
                                                 <span>{{ $child->name }}</span>
                                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                                             </div>
@@ -60,7 +68,7 @@
                                                 class="absolute left-full top-0 -mt-1 ml-1 w-64 bg-white border border-slate-100 rounded-xl shadow-lg py-2 opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible transition-all duration-300">
                                                 @foreach ($child->children as $grandChild)
                                                     <a href="{{ url($grandChild->url) }}"
-                                                       class="block px-4 py-2 text-sm text-slate-500 hover:bg-blue-50 hover:text-blue-700 rounded-md mx-1">
+                                                       class="block px-4 py-2 text-sm rounded-md mx-1 {{ ($grandChild->isActive ?? false) ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-slate-500 hover:bg-blue-50 hover:text-blue-700' }}">
                                                         {{ $grandChild->name }}
                                                     </a>
                                                 @endforeach
@@ -102,7 +110,7 @@
                 {{-- Hotline --}}
                 @if ($hotline)
                     <a href="tel:{{ str_replace([' ', '.'], '', $hotline) }}"
-                       class="flex items-center gap-2 text-red-600 font-bold px-4 py-2 rounded-lg hover:bg-red-50 transition-colors duration-200">
+                       class="flex items-center gap-2 text-green-600 font-bold px-4 py-2 rounded-lg hover:bg-red-50 transition-colors duration-200">
                         <i class="fas fa-phone-alt text-lg"></i>
                         <span class="text-sm">{{ $hotline }}</span>
                     </a>
@@ -200,42 +208,31 @@
             {{-- Navigation --}}
             <nav class="flex-grow overflow-y-auto space-y-1">
                 @foreach ($menuItems as $item)
+                    @php
+                        $isActive = $item->isActive ?? false;
+                        $isParentOfActive = $item->isParentOfActive ?? false;
+                    @endphp
                     @if (empty($item->children))
                         <a href="{{ url($item->url) }}"
-                           class="block text-slate-700 hover:text-blue-600 font-semibold py-3 px-3 rounded-lg hover:bg-slate-100 transition-colors duration-200 text-base">
+                           class="block font-semibold py-3 px-3 rounded-lg transition-colors duration-200 text-base {{ $isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-100 hover:text-blue-600' }}">
                             {{ $item->name }}
                         </a>
                     @else
-                        <details class="group">
+                        <details class="group" @if($isParentOfActive) open @endif>
                             <summary
-                                class="flex justify-between items-center text-slate-700 hover:text-blue-600 font-semibold py-3 px-3 rounded-lg hover:bg-slate-100 transition-colors duration-200 text-base cursor-pointer">
+                                class="flex justify-between items-center font-semibold py-3 px-3 rounded-lg transition-colors duration-200 text-base cursor-pointer {{ $isActive || $isParentOfActive ? 'bg-slate-100 text-blue-600' : 'text-slate-700 hover:bg-slate-100 hover:text-blue-600' }}">
                                 <span>{{ $item->name }}</span>
                                 <i class="fa-solid fa-chevron-down text-sm transition-transform duration-300 group-open:rotate-180"></i>
                             </summary>
                             <div class="pl-5 mt-1 space-y-1 border-l-2 border-slate-200 ml-3">
                                 @foreach ($item->children as $child)
-                                    @if (empty($child->children))
-                                        <a href="{{ url($child->url) }}"
-                                           class="block text-slate-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors duration-200">
-                                            {{ $child->name }}
-                                        </a>
-                                    @else
-                                        <details class="group/submenu">
-                                            <summary
-                                                class="flex justify-between items-center text-slate-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors duration-200 cursor-pointer">
-                                                <span>{{ $child->name }}</span>
-                                                <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300 group-open/submenu:rotate-180"></i>
-                                            </summary>
-                                            <div class="pl-5 mt-1 space-y-1 border-l-2 border-slate-200 ml-3">
-                                                @foreach ($child->children as $grandChild)
-                                                    <a href="{{ url($grandChild->url) }}"
-                                                       class="block text-slate-500 hover:text-blue-600 font-normal py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors duration-200">
-                                                        {{ $grandChild->name }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </details>
-                                    @endif
+                                    @php
+                                        $isChildActive = $child->isActive ?? false;
+                                    @endphp
+                                    <a href="{{ url($child->url) }}"
+                                       class="block font-medium py-2 px-3 rounded-lg transition-colors duration-200 {{ $isChildActive ? 'text-blue-600 font-semibold' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-100' }}">
+                                        {{ $child->name }}
+                                    </a>
                                 @endforeach
                             </div>
                         </details>

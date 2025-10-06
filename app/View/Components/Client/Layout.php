@@ -12,36 +12,30 @@ use Illuminate\View\Component;
 class Layout extends Component
 {
     public ?object $webProfile;
-
     public array $mainMenu;
-
     public ?string $title;
-
     public ?string $description;
-
     public ?string $favicon;
-
     public string $bodyClass;
+    public $authUser;
+    public array $customerLinks;
 
     public function __construct(
-        $webProfile = null,
-        $mainMenu = [],
         ?string $title = null,
         ?string $description = null,
         ?string $favicon = null,
         ?string $bodyClass = null
-    ) {
+    )
+    {
         $this->title = $title;
         $this->description = $description;
         $this->favicon = $favicon;
         $this->bodyClass = $bodyClass ?? 'bg-gray-50';
 
-        $this->webProfile = $webProfile ?: $this->resolveWebProfile();
-        $this->mainMenu = $this->normalizeMenu($mainMenu);
-
-        if (empty($this->mainMenu)) {
-            $this->mainMenu = $this->resolveMainMenu();
-        }
+        $this->webProfile = $this->resolveWebProfile();
+        $this->mainMenu = $this->resolveMainMenu();
+        $this->authUser = auth()->user();
+        $this->customerLinks = $this->resolveCustomerLinks();
     }
 
     protected function resolveWebProfile(): ?object
@@ -49,10 +43,26 @@ class Layout extends Component
         if (!Schema::hasTable('web_profiles')) {
             return null;
         }
+        return DB::table('web_profiles')->where('is_default', true)->first();
+    }
 
-        return DB::table('web_profiles')
-            ->where('is_default', true)
-            ->first();
+    protected function resolveCustomerLinks(): array
+    {
+        if ($this->authUser && ($this->authUser->role ?? null) === 'customer') {
+            return [
+                [
+                    'label' => __('client.layout.profile'),
+                    'url' => route('client.profile.index'),
+                    'icon' => 'fa-solid fa-user',
+                ],
+                [
+                    'label' => __('client.layout.my_bookings'),
+                    'url' => route('client.profile.index') . '#history',
+                    'icon' => 'fa-solid fa-ticket',
+                ],
+            ];
+        }
+        return [];
     }
 
     protected function resolveMainMenu(): array
@@ -61,50 +71,51 @@ class Layout extends Component
             return [];
         }
 
-        $menus = DB::table('menus')
-            ->orderBy('parent_id')
-            ->orderBy('priority')
-            ->get();
+        $staticMenuItems = [
+            'home' => (object)[
+                'id' => 'static_home', 'name' => __('client.menu.home'), 'url' => url('/'),
+                'parent_id' => null, 'children' => []
+            ],
+            'about' => (object)[
+                'id' => 'static_about', 'name' => __('client.menu.about'), 'url' => url('/gioi-thieu'),
+                'parent_id' => null, 'children' => []
+            ],
+            'contact' => (object)[
+                'id' => 'static_contact', 'name' => __('client.menu.contact'), 'url' => url('/lien-he'),
+                'parent_id' => null, 'children' => []
+            ],
+        ];
 
-        return $this->buildMenuTree($menus);
+        $staticUrls = [url('/'), url('/gioi-thieu'), url('/lien-he')];
+
+        $dbMenuItems = DB::table('menus')->orderBy('parent_id')->orderBy('priority')->get()
+            ->filter(function ($item) use ($staticUrls) {
+                return !in_array(url($item->url), $staticUrls, true);
+            });
+
+        $dynamicMenuTree = $this->buildMenuTree($dbMenuItems);
+
+        return [
+            $staticMenuItems['home'],
+            $staticMenuItems['about'],
+            ...$dynamicMenuTree,
+            $staticMenuItems['contact']
+        ];
     }
 
-    protected function normalizeMenu($menu): array
-    {
-        if (!$menu) {
-            return [];
-        }
-
-        if ($menu instanceof Collection) {
-            return $menu->values()->all();
-        }
-
-        if (is_array($menu)) {
-            return array_values($menu);
-        }
-
-        if (is_iterable($menu)) {
-            return collect($menu)->values()->all();
-        }
-
-        return [];
-    }
-
-    protected function buildMenuTree($menus, $parentId = null): array
+    protected function buildMenuTree(Collection $menus, $parentId = null): array
     {
         $branch = [];
+        $items = $menus->where('parent_id', $parentId)->sortBy('priority');
 
-        foreach ($menus as $menu) {
-            $currentParentId = $menu->parent_id ?? null;
-            if ($currentParentId == $parentId) {
-                $children = $this->buildMenuTree($menus, $menu->id);
-                if (!empty($children)) {
-                    $menu->children = $children;
-                }
-                $branch[] = $menu;
+        foreach ($items as $item) {
+            $item->name = __($item->name);
+            $children = $this->buildMenuTree($menus, $item->id);
+            if (!empty($children)) {
+                $item->children = $children;
             }
+            $branch[] = $item;
         }
-
         return $branch;
     }
 

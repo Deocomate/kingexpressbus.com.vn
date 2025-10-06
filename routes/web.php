@@ -85,6 +85,8 @@ Route::name('client.')->group(function () {
     Route::post('/dang-ky', [ClientAuthController::class, 'register'])->name('register.submit');
     Route::post('/dang-xuat', [ClientAuthController::class, 'logout'])->name('logout');
 
+    Route::get('/gioi-thieu', [PageController::class, 'about'])->name('about');
+
     Route::middleware(CustomerAuthMiddleware::class)->group(function () {
         Route::get('/tai-khoan', [ClientProfileController::class, 'index'])->name('profile.index');
     });

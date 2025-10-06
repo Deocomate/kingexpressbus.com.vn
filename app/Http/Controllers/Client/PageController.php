@@ -42,8 +42,8 @@ class PageController extends Controller
 
         $fallbacks = [
             'gioi-thieu' => [
-                'title' => 'Giới thiệu King Express Bus',
-                'description' => 'Thông tin giới thiệu về lịch sử và dịch vụ của King Express Bus.',
+                'title' => __('client.about.meta.title'),
+                'description' => __('client.about.meta.description'),
                 'content' => $webProfile->introduction_content,
                 'updated_at' => $webProfile->updated_at ?? null,
             ],
@@ -64,7 +64,7 @@ class PageController extends Controller
             return null;
         }
 
-        return (object) [
+        return (object)[
             'title' => $config['title'],
             'slug' => $slug,
             'description' => $config['description'],
@@ -77,5 +77,21 @@ class PageController extends Controller
     {
         $plain = trim(strip_tags($content));
         return $plain === '' ? 'Nội dung tổng hợp của King Express Bus.' : $plain;
+    }
+
+    public function about()
+    {
+        // Lấy các số liệu thống kê để hiển thị trên trang
+        $stats = [
+            'route_count' => DB::table('routes')->count(),
+            'company_count' => DB::table('companies')->count(),
+            'customer_count' => DB::table('users')->where('role', 'customer')->count(),
+        ];
+
+        return view('client.about.index', [
+            'stats' => $stats,
+            'title' => __('client.about.meta.title'),
+            'description' => __('client.about.meta.description'),
+        ]);
     }
 }
