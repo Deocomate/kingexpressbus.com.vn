@@ -32,6 +32,9 @@ class NavBar extends Component
         $items = $menuItems->where('parent_id', $parentId)->sortBy('priority')->values();
 
         foreach ($items as $item) {
+            // Dịch tên của mục menu
+            $item->name = __($item->name);
+
             $children = $this->buildMenuTree($menuItems, $item->id);
             if (!empty($children)) {
                 $item->children = $children;

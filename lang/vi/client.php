@@ -380,4 +380,44 @@ return [
             'other_routes_title' => 'Tuyến xe khác bạn có thể thích',
         ],
     ],
+    'contact' => [
+        'meta' => [
+            'title' => 'Liên hệ King Express Bus',
+            'description' => 'Thông tin dịch vụ khách hàng, tổng đài và hệ thống văn phòng của King Express Bus.',
+        ],
+        'headings' => [
+            'support_channels' => 'Kênh hỗ trợ',
+            'working_hours' => 'Giờ làm việc',
+            'offices' => 'Hệ thống văn phòng',
+            'faq' => 'Câu hỏi thường gặp',
+            'map' => 'Vị trí trên bản đồ',
+        ],
+        'channels' => [
+            'hotline' => 'Hotline đặt vé',
+            'care' => 'Tổng đài chăm sóc',
+            'email' => 'Email hỗ trợ',
+            'messenger' => 'Messenger',
+            'facebook' => 'Facebook fanpage',
+            'zalo' => 'Zalo',
+        ],
+        'hours' => [
+            'weekday_label' => 'Ngày thường',
+            'weekend_label' => 'Cuối tuần',
+        ],
+        'faq' => [
+            'q1' => 'Làm sao để kiểm tra tình trạng đặt vé?',
+            'a1' => 'Đăng nhập tài khoản King Express Bus, vào trang Tài khoản > Đặt vé của tôi để xem chi tiết mã vé và trạng thái.',
+            'q2' => 'Thời gian hỗ trợ của tổng đài?',
+            'a2' => 'Tổng đài hỗ trợ khách hàng từ 07:00 đến 22:00 mỗi ngày, kể cả cuối tuần và ngày lễ.',
+            'q3' => 'Có thể đổi lịch khởi hành không?',
+            'a3' => 'Bạn có thể liên hệ tổng đài trước giờ khởi hành 12 giờ để được tư vấn đổi lịch hoặc hủy vé theo quy định.',
+        ]
+    ],
+    'menu' => [
+        'Trang chủ' => 'Trang chủ',
+        'Giới thiệu' => 'Giới thiệu',
+        'Liên hệ' => 'Liên hệ',
+        'Tuyến đường' => 'Tuyến đường',
+        'Nhà xe' => 'Nhà xe',
+    ],
 ];

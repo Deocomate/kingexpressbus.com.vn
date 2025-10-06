@@ -380,4 +380,44 @@ return [
             'other_routes_title' => 'Other Routes You Might Like',
         ],
     ],
+    'contact' => [
+        'meta' => [
+            'title' => 'Contact King Express Bus',
+            'description' => 'Customer service information, hotline, and office system of King Express Bus.',
+        ],
+        'headings' => [
+            'support_channels' => 'Support Channels',
+            'working_hours' => 'Working Hours',
+            'offices' => 'Office System',
+            'faq' => 'Frequently Asked Questions',
+            'map' => 'Location on Map',
+        ],
+        'channels' => [
+            'hotline' => 'Booking Hotline',
+            'care' => 'Customer Care Center',
+            'email' => 'Support Email',
+            'messenger' => 'Messenger',
+            'facebook' => 'Facebook Fanpage',
+            'zalo' => 'Zalo',
+        ],
+        'hours' => [
+            'weekday_label' => 'Weekdays',
+            'weekend_label' => 'Weekends',
+        ],
+        'faq' => [
+            'q1' => 'How can I check my booking status?',
+            'a1' => 'Log in to your King Express Bus account, go to Account > My Bookings to see ticket details and status.',
+            'q2' => 'What are the support hours for the call center?',
+            'a2' => 'The call center supports customers from 07:00 to 22:00 every day, including weekends and holidays.',
+            'q3' => 'Can I change my departure schedule?',
+            'a3' => 'You can contact the call center 12 hours before departure to get advice on changing your schedule or canceling your ticket according to regulations.',
+        ]
+    ],
+    'menu' => [
+        'Trang chủ' => 'Home',
+        'Giới thiệu' => 'About Us',
+        'Liên hệ' => 'Contact',
+        'Tuyến đường' => 'Routes',
+        'Nhà xe' => 'Operators',
+    ],
 ];

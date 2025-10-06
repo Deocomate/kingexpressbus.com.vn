@@ -28,37 +28,37 @@ class ContactController extends Controller
         $supportChannels = array_values(array_filter([
             [
                 'icon' => 'fa-solid fa-phone',
-                'label' => 'Hotline đặt vé',
+                'label' => __('client.contact.channels.hotline'),
                 'value' => $webProfile->hotline ?? null,
                 'href' => isset($webProfile->hotline) ? 'tel:' . preg_replace('/[^\d+]/', '', $webProfile->hotline) : null,
             ],
             [
                 'icon' => 'fa-solid fa-headset',
-                'label' => 'Tổng đài chăm sóc',
+                'label' => __('client.contact.channels.care'),
                 'value' => $webProfile->phone ?? null,
                 'href' => isset($webProfile->phone) ? 'tel:' . preg_replace('/[^\d+]/', '', $webProfile->phone) : null,
             ],
             [
                 'icon' => 'fa-regular fa-envelope',
-                'label' => 'Email hỗ trợ',
+                'label' => __('client.contact.channels.email'),
                 'value' => $webProfile->email ?? null,
                 'href' => isset($webProfile->email) ? 'mailto:' . $webProfile->email : null,
             ],
             [
                 'icon' => 'fa-brands fa-facebook-messenger',
-                'label' => 'Messenger',
+                'label' => __('client.contact.channels.messenger'),
                 'value' => $webProfile->facebook_url ?? null,
                 'href' => $webProfile->facebook_url ?? null,
             ],
             [
                 'icon' => 'fa-brands fa-facebook',
-                'label' => 'Facebook fanpage',
+                'label' => __('client.contact.channels.facebook'),
                 'value' => $webProfile->facebook_url ?? null,
                 'href' => $webProfile->facebook_url ?? null,
             ],
             [
                 'icon' => 'fa-solid fa-comment-dots',
-                'label' => 'Zalo',
+                'label' => __('client.contact.channels.zalo'),
                 'value' => $webProfile->zalo_url ?? null,
                 'href' => $webProfile->zalo_url ?? null,
             ],
@@ -68,22 +68,24 @@ class ContactController extends Controller
 
         $faqs = [
             [
-                'question' => 'Làm sao để kiểm tra tình trạng đặt vé?',
-                'answer' => 'Đăng nhập tài khoản King Express Bus, vào trang Tài khoản > Đặt vé của tôi để xem chi tiết mã vé và trạng thái.',
+                'question' => __('client.contact.faq.q1'),
+                'answer' => __('client.contact.faq.a1'),
             ],
             [
-                'question' => 'Thời gian hỗ trợ của tổng đài?',
-                'answer' => 'Tổng đài hỗ trợ khách hàng từ 07:00 đến 22:00 mỗi ngày, kể cả cuối tuần và ngày lễ.',
+                'question' => __('client.contact.faq.q2'),
+                'answer' => __('client.contact.faq.a2'),
             ],
             [
-                'question' => 'Có thể đổi lịch khởi hành không?',
-                'answer' => 'Bạn có thể liên hệ tổng đài trước giờ khởi hành 12 giờ để được tư vấn đổi lịch hoặc hủy vé theo quy định.',
+                'question' => __('client.contact.faq.q3'),
+                'answer' => __('client.contact.faq.a3'),
             ],
         ];
 
         $workingHours = [
-            'weekday' => '07:00 - 22:00 (thứ Hai - thứ Sáu)',
-            'weekend' => '08:00 - 21:00 (thứ Bảy, Chủ Nhật)',
+            'weekday_label' => __('client.contact.hours.weekday_label'),
+            'weekday_hours' => '07:00 - 22:00',
+            'weekend_label' => __('client.contact.hours.weekend_label'),
+            'weekend_hours' => '08:00 - 21:00',
         ];
 
         $mapEmbed = $webProfile->map_embedded ?? null;
@@ -95,8 +97,8 @@ class ContactController extends Controller
             'faqs' => $faqs,
             'workingHours' => $workingHours,
             'mapEmbed' => $mapEmbed,
-            'title' => 'Liên hệ King Express Bus',
-            'description' => 'Thông tin dịch vụ khách hàng, tổng đài và hệ thống văn phòng của King Express Bus.',
+            'title' => __('client.contact.meta.title'),
+            'description' => __('client.contact.meta.description'),
         ]);
     }
 }
