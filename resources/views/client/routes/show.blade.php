@@ -1,24 +1,25 @@
+{{-- ===== resources\views\client\routes\show.blade.php ===== --}}
 <x-client.layout :web-profile="$web_profile ?? null" :main-menu="$mainMenu ?? []"
-                 :title="$title ?? 'Thông tin tuyến xe'" :description="$description ?? ''">
+                 :title="$title ?? __('client.route_show.meta_title')" :description="$description ?? ''">
     @php
         $heroImage = $route->banner_url ?? ($route->thumbnail_url ?? '/userfiles/files/city_imgs/ha-noi.jpg');
         $minPrice = (int) ($route->min_price ?? 0);
-        $priceDisplay = $minPrice > 0 ? 'Từ ' . number_format($minPrice) . 'đ' : 'Giá liên hệ';
+        $priceDisplay = $minPrice > 0 ? __('client.route_show.price_from', ['price' => number_format($minPrice) . 'đ']) : __('client.route_show.price_contact');
         $routeHighlights = [
             [
                 'icon' => 'fa-solid fa-location-dot',
-                'label' => 'Điểm xuất phát',
+                'label' => __('client.route_show.hero_origin'),
                 'value' => $route->start_province_name,
             ],
             [
                 'icon' => 'fa-solid fa-map-marker-alt',
-                'label' => 'Điểm đến',
+                'label' => __('client.route_show.hero_destination'),
                 'value' => $route->end_province_name,
             ],
             [
                 'icon' => 'fa-solid fa-bus',
-                'label' => 'Nhà xe khai thác',
-                'value' => ($route->company_count ?? $companyRoutes->count()) . ' đơn vị',
+                'label' => __('client.route_show.hero_operators'),
+                'value' => __('client.route_show.hero_operator_count', ['count' => $route->company_count ?? $companyRoutes->count()]),
             ],
         ];
 
@@ -73,12 +74,12 @@
         $timeRangeOptions = collect($filters['time_ranges'] ?? []);
         $priceRange = $filters['price'] ?? ['min' => null, 'max' => null];
         $sortOptions = [
-            'recommended' => 'Mặc định',
-            'earliest' => 'Giờ khởi hành sớm nhất',
-            'latest' => 'Giờ khởi hành muộn nhất',
-            'price_low' => 'Giá thấp đến cao',
-            'price_high' => 'Giá cao đến thấp',
-            'seats_available' => 'Nhiều ghế trống',
+            'recommended' => __('client.route_show.filters.sort_recommended'),
+            'earliest' => __('client.route_show.filters.sort_earliest'),
+            'latest' => __('client.route_show.filters.sort_latest'),
+            'price_low' => __('client.route_show.filters.sort_price_low'),
+            'price_high' => __('client.route_show.filters.sort_price_high'),
+            'seats_available' => __('client.route_show.filters.sort_seats'),
         ];
         $galleryFallback = '/userfiles/files/king/sleeper/5.jpg';
     @endphp
@@ -289,11 +290,11 @@
                 }
 
                 .trip-card-media {
-                    width: 32%;
+                    width: 25%;
                 }
 
                 .trip-card-body {
-                    width: 68%;
+                    width: 75%;
                 }
             }
 
@@ -318,8 +319,7 @@
             <div class="max-w-3xl space-y-5">
                 <span
                     class="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-yellow-300">
-                    <i class="fa-solid fa-map-location-dot"></i>
-                    Tuyến xe King Express Bus
+                    <i class="fa-solid fa-map-location-dot"></i>{{ __('client.route_show.hero_brand') }}
                 </span>
                 <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">{{ $route->name }}</h1>
                 <p class="text-lg text-white/85 max-w-2xl">{{ $route->description }}</p>
@@ -339,7 +339,7 @@
                     class="rounded-2xl bg-white/10 backdrop-blur p-4 text-center sm:text-left sm:flex sm:items-center sm:gap-4">
                     <i class="fa-solid fa-tag text-yellow-300 text-2xl"></i>
                     <div>
-                        <div class="font-semibold">Giá vé tham khảo</div>
+                        <div class="font-semibold">{{ __('client.route_show.hero_price_label') }}</div>
                         <div class="text-white/80 text-sm">{{ $priceDisplay }}</div>
                     </div>
                 </div>
@@ -350,7 +350,8 @@
     <div id="search-section" class="bg-gray-100 py-6">
         <section class="container mx-auto px-4">
             <div class="bg-white shadow-lg rounded-3xl p-4 md:p-5 border border-gray-200">
-                <x-client.search-bar :search-data="$searchData" submit-label="Đổi và tìm lại"/>
+                <x-client.search-bar :search-data="$searchData"
+                                     :submit-label="__('client.route_show.search_submit_label')"/>
             </div>
         </section>
     </div>
@@ -360,15 +361,14 @@
             <div class="container mx-auto px-4 space-y-8">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                     <div class="space-y-2">
-                        <h2 class="text-3xl font-bold text-gray-900">Chuyến xe đang mở bán</h2>
-                        <p class="text-gray-600">Hiển thị {{ $tripStats['filtered'] }} / {{ $tripStats['total'] }}
-                            chuyến cho ngày {{ $departureDate }}</p>
+                        <h2 class="text-3xl font-bold text-gray-900">{{ __('client.route_show.results_title') }}</h2>
+                        <p class="text-gray-600">{{ __('client.route_show.results_subtitle', ['filtered' => $tripStats['filtered'], 'total' => $tripStats['total'], 'date' => $departureDate]) }}</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button data-filter-toggle
                                 class="lg:hidden inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition">
                             <i class="fa-solid fa-filter"></i>
-                            <span>Lọc kết quả</span>
+                            <span>{{ __('client.route_show.filters.mobile_button') }}</span>
                             @if ($hasActiveFilters)
                                 <span class="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
                             @endif
@@ -383,7 +383,7 @@
                         <div id="filter-panel"
                              class="filters-card fixed inset-0 z-[110] transform -translate-x-full transition-transform duration-300 ease-in-out lg:static lg:transform-none lg:z-auto lg:inset-auto bg-white p-6 lg:p-0 overflow-y-auto lg:overflow-visible">
                             <div class="flex justify-between items-center lg:hidden mb-5">
-                                <h3 class="text-xl font-bold">Lọc kết quả</h3>
+                                <h3 class="text-xl font-bold">{{ __('client.route_show.filters.mobile_title') }}</h3>
                                 <button data-filter-close
                                         class="text-gray-500 hover:text-gray-700 text-2xl">&times;
                                 </button>
@@ -394,8 +394,7 @@
                                     <div>
                                         <h3
                                             class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                            <i class="fa-solid fa-arrow-down-wide-short text-blue-500"></i>
-                                            Sắp xếp
+                                            <i class="fa-solid fa-arrow-down-wide-short text-blue-500"></i>{{ __('client.route_show.filters.sort_title') }}
                                         </h3>
                                         <div class="space-y-2">
                                             @foreach ($sortOptions as $value => $label)
@@ -412,22 +411,22 @@
                                     <div class="pt-5 border-t border-gray-200">
                                         <h3
                                             class="text-sm font-semibold text-emerald-600 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                            <i class="fa-solid fa-money-bill-wave text-emerald-500"></i>
-                                            Giá vé
+                                            <i class="fa-solid fa-money-bill-wave text-emerald-500"></i>{{ __('client.route_show.filters.price_title') }}
                                         </h3>
                                         <div class="flex items-center gap-3">
                                             <input type="number" name="price_min"
                                                    value="{{ $filterState['price_min'] }}"
-                                                   placeholder="{{ $priceRange['min'] ? number_format($priceRange['min']) : 'Từ' }}"
+                                                   placeholder="{{ $priceRange['min'] ? number_format($priceRange['min']) : __('client.route_show.filters.price_from') }}"
                                                    class="filter-input text-sm" min="0" inputmode="numeric">
                                             <span class="text-gray-400 text-sm">-</span>
                                             <input type="number" name="price_max"
                                                    value="{{ $filterState['price_max'] }}"
-                                                   placeholder="{{ $priceRange['max'] ? number_format($priceRange['max']) : 'Đến' }}"
+                                                   placeholder="{{ $priceRange['max'] ? number_format($priceRange['max']) : __('client.route_show.filters.price_to') }}"
                                                    class="filter-input text-sm" min="0" inputmode="numeric">
                                         </div>
                                         @if ($priceRange['min'] && $priceRange['max'])
-                                            <div class="text-xs text-gray-500 mt-2">Khoảng giá tham khảo:
+                                            <div
+                                                class="text-xs text-gray-500 mt-2">{{ __('client.route_show.filters.price_range_note') }}
                                                 {{ number_format($priceRange['min']) }}đ -
                                                 {{ number_format($priceRange['max']) }}đ
                                             </div>
@@ -438,8 +437,7 @@
                                         <div class="pt-5 border-t border-gray-200">
                                             <h3
                                                 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                <i class="fa-solid fa-clock text-amber-500"></i>
-                                                Khung giờ
+                                                <i class="fa-solid fa-clock text-amber-500"></i>{{ __('client.route_show.filters.time_range_title') }}
                                             </h3>
                                             <div class="flex flex-wrap gap-2">
                                                 @foreach ($timeRangeOptions as $key => $range)
@@ -457,8 +455,7 @@
                                         <div class="pt-5 border-t border-gray-200">
                                             <h3
                                                 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                <i class="fa-solid fa-star text-yellow-500"></i>
-                                                Tiện ích
+                                                <i class="fa-solid fa-star text-yellow-500"></i>{{ __('client.route_show.filters.services_title') }}
                                             </h3>
                                             <div class="flex flex-wrap gap-2">
                                                 @foreach ($availableServices as $service)
@@ -476,8 +473,7 @@
                                         <div class="pt-5 border-t border-gray-200">
                                             <h3
                                                 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                <i class="fa-solid fa-van-shuttle text-purple-500"></i>
-                                                Dòng xe
+                                                <i class="fa-solid fa-van-shuttle text-purple-500"></i>{{ __('client.route_show.filters.bus_type_title') }}
                                             </h3>
                                             <div class="space-y-2">
                                                 @foreach ($busCategoryOptions as $category)
@@ -497,8 +493,7 @@
                                         <div class="pt-5 border-t border-gray-200">
                                             <h3
                                                 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                <i class="fa-solid fa-location-dot text-rose-500"></i>
-                                                Điểm đón
+                                                <i class="fa-solid fa-location-dot text-rose-500"></i>{{ __('client.route_show.filters.pickup_title') }}
                                             </h3>
                                             <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
                                                 @foreach ($pickupOptions as $pickup)
@@ -518,8 +513,7 @@
                                         <div class="pt-5 border-t border-gray-200">
                                             <h3
                                                 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                <i class="fa-solid fa-flag-checkered text-green-500"></i>
-                                                Điểm trả
+                                                <i class="fa-solid fa-flag-checkered text-green-500"></i>{{ __('client.route_show.filters.dropoff_title') }}
                                             </h3>
                                             <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
                                                 @foreach ($dropoffOptions as $dropoff)
@@ -539,13 +533,11 @@
                                 <div class="pt-5 border-t border-gray-200 space-y-3 p-4">
                                     <button type="submit"
                                             class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition">
-                                        <i class="fa-solid fa-check"></i>
-                                        Áp dụng lọc
+                                        <i class="fa-solid fa-check"></i>{{ __('client.route_show.filters.apply_button') }}
                                     </button>
                                     <a href="{{ $clearFiltersUrl }}"
                                        class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition">
-                                        <i class="fa-solid fa-rotate-left"></i>
-                                        Xóa bộ lọc
+                                        <i class="fa-solid fa-rotate-left"></i>{{ __('client.route_show.filters.clear_button') }}
                                     </a>
                                 </div>
                             </form>
@@ -572,8 +564,8 @@
                                 $durationMinutes = $trip->duration_minutes ?? 0;
                                 $durationLabel =
                                     $durationMinutes > 0
-                                        ? intdiv($durationMinutes, 60) . ' giờ ' . $durationMinutes % 60 . ' phút'
-                                        : $tripStart->diff($tripEnd)->format('%h giờ %i phút');
+                                        ? __('client.route_show.trip_card.duration_format', ['hours' => intdiv($durationMinutes, 60), 'minutes' => $durationMinutes % 60])
+                                        : __('client.route_show.trip_card.duration_format', ['hours' => (int) $tripStart->diff($tripEnd)->format('%h'), 'minutes' => (int) $tripStart->diff($tripEnd)->format('%i')]);
                                 $serviceList = collect($trip->services ?? [])
                                     ->filter()
                                     ->values();
@@ -600,7 +592,8 @@
                                                 <h3 class="text-lg font-bold text-gray-900">{{ $trip->company_name }}
                                                 </h3>
                                                 <p class="text-sm text-gray-500">{{ $trip->bus_name }}</p>
-                                                <p class="text-xs text-gray-400 mt-1">Mã chuyến:
+                                                <p class="text-xs text-gray-400 mt-1">{{ __('client.route_show.trip_card.trip_code') }}
+                                                    :
                                                     {{ $trip->bus_route_id }}</p>
                                             </div>
                                         </div>
@@ -611,10 +604,10 @@
                                                 <span
                                                     class="availability-badge {{ $trip->seats_available > 0 ? 'availability-badge--available' : 'availability-badge--unavailable' }}">
                                                     <i class="fa-solid fa-circle text-xs"></i>
-                                                    <span>{{ $trip->seats_available > 0 ? 'Còn chỗ' : 'Hết chỗ' }}</span>
+                                                    <span>{{ $trip->seats_available > 0 ? __('client.route_show.trip_card.seats_available') : __('client.route_show.trip_card.seats_full') }}</span>
                                                 </span>
                                             @else
-                                                <p class="text-lg font-bold text-blue-600">Giá liên hệ</p>
+                                                <p class="text-lg font-bold text-blue-600">{{ __('client.route_show.price_contact') }}</p>
                                             @endif
                                         </div>
                                     </div>
@@ -624,12 +617,11 @@
                                             <p class="text-2xl font-bold text-gray-900">
                                                 {{ $tripStart->format('H:i') }}</p>
                                             <p class="text-sm text-gray-500"
-                                               title="{{ $firstPickup->name ?? 'Diem don' }}">
-                                                {{ $firstPickup->name ?? 'Diem don' }}</p>
+                                               title="{{ $firstPickup->name ?? __('client.route_show.trip_card.pickup_point') }}">
+                                                {{ $firstPickup->name ?? __('client.route_show.trip_card.pickup_point') }}</p>
                                         </div>
                                         <div class="text-center space-y-1">
-                                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Thời
-                                                gian di chuyển</p>
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('client.route_show.trip_card.duration_label') }}</p>
                                             <p class="text-sm text-gray-700 font-semibold">{{ $durationLabel }}</p>
                                             <div class="relative h-px bg-gray-300">
                                                 <i
@@ -640,42 +632,40 @@
                                             <p class="text-2xl font-bold text-gray-900">{{ $tripEnd->format('H:i') }}
                                             </p>
                                             <p class="text-sm text-gray-500"
-                                               title="{{ $firstDropoff->name ?? 'Diem tra' }}">
-                                                {{ $firstDropoff->name ?? 'Diem tra' }}</p>
+                                               title="{{ $firstDropoff->name ?? __('client.route_show.trip_card.dropoff_point') }}">
+                                                {{ $firstDropoff->name ?? __('client.route_show.trip_card.dropoff_point') }}</p>
                                         </div>
                                     </div>
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                                         <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2">
-                                            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">
-                                                Điểm đón nổi bật</h4>
+                                            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">{{ __('client.route_show.trip_card.featured_pickup') }}</h4>
                                             @forelse ($pickupPoints->take(2) as $pickup)
                                                 <p class="flex items-start gap-2">
                                                     <i class="fa-solid fa-location-dot mt-1 text-blue-500"></i>
                                                     <span>{{ $pickup->name }}</span>
                                                 </p>
                                             @empty
-                                                <p class="text-xs text-gray-400">Chưa cập nhật</p>
+                                                <p class="text-xs text-gray-400">{{ __('client.route_show.trip_card.not_updated') }}</p>
                                             @endforelse
                                             @if ($pickupPoints->count() > 2)
                                                 <p class="text-xs text-blue-600">+{{ $pickupPoints->count() - 2 }}
-                                                    điểm đón khác</p>
+                                                    {{ __('client.route_show.trip_card.more_pickup_points') }}</p>
                                             @endif
                                         </div>
                                         <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2">
-                                            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">
-                                                Điểm trả nổi bật</h4>
+                                            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">{{ __('client.route_show.trip_card.featured_dropoff') }}</h4>
                                             @forelse ($dropoffPoints->take(2) as $dropoff)
                                                 <p class="flex items-start gap-2">
                                                     <i class="fa-solid fa-flag-checkered mt-1 text-emerald-500"></i>
                                                     <span>{{ $dropoff->name }}</span>
                                                 </p>
                                             @empty
-                                                <p class="text-xs text-gray-400">Chưa cập nhật</p>
+                                                <p class="text-xs text-gray-400">{{ __('client.route_show.trip_card.not_updated') }}</p>
                                             @endforelse
                                             @if ($dropoffPoints->count() > 2)
                                                 <p class="text-xs text-blue-600">+{{ $dropoffPoints->count() - 2 }}
-                                                    điểm trả khác</p>
+                                                    {{ __('client.route_show.trip_card.more_dropoff_points') }}</p>
                                             @endif
                                         </div>
                                     </div>
@@ -686,7 +676,9 @@
                                                 <button type="button" data-image-trigger
                                                         data-target="#trip-image-{{ $trip->bus_route_id }}"
                                                         data-image="{{ $image }}">
-                                                    <img src="{{ $image }}" alt="Hinh xe" loading="lazy">
+                                                    <img src="{{ $image }}"
+                                                         alt="{{__('client.route_show.trip_card.bus_image_alt')}}"
+                                                         loading="lazy">
                                                 </button>
                                             @endforeach
                                         </div>
@@ -700,21 +692,20 @@
                                                 {{ $service }}
                                             </span>
                                         @empty
-                                            <span class="text-sm text-gray-500">Chưa cập nhật tiện ích.</span>
+                                            <span
+                                                class="text-sm text-gray-500">{{ __('client.route_show.trip_card.no_services_updated') }}</span>
                                         @endforelse
                                     </div>
 
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <a href="{{ route('client.booking.create', ['bus_route_id' => $trip->bus_route_id, 'date' => $departureDate]) }}"
                                            class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-yellow-400 text-gray-900 rounded-xl font-semibold hover:bg-yellow-500 transition shadow-sm">
-                                            <i class="fa-solid fa-ticket"></i>
-                                            Chọn chuyến
+                                            <i class="fa-solid fa-ticket"></i>{{ __('client.route_show.trip_card.select_trip_button') }}
                                         </a>
                                         <button type="button"
                                                 class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition view-trip-details-btn"
                                                 data-trip='{{ json_encode($trip) }}'>
-                                            <i class="fa-solid fa-circle-info"></i>
-                                            Xem chi tiết
+                                            <i class="fa-solid fa-circle-info"></i>{{ __('client.route_show.trip_card.details_button') }}
                                         </button>
                                     </div>
                                 </div>
@@ -728,20 +719,20 @@
         <section class="py-16 bg-gray-50 text-center">
             <div class="container mx-auto px-4 space-y-4">
                 <i class="fa-solid fa-calendar-times text-5xl text-gray-400"></i>
-                <h2 class="text-2xl font-bold text-gray-800">Không tìm thấy chuyến xe phù hợp</h2>
-                <p class="text-gray-600">Vui lòng thay đổi ngày khởi hành hoặc điều chỉnh bộ lọc để xem thêm tùy chọn.
+                <h2 class="text-2xl font-bold text-gray-800">{{ __('client.route_show.no_trips.title') }}</h2>
+                <p class="text-gray-600">{{ __('client.route_show.no_trips.description') }}
                 </p>
                 <div class="flex justify-center gap-3">
                     <a href="#search-section"
                        class="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Tìm kiếm lại</span>
+                        <span>{{ __('client.route_show.no_trips.research_button') }}</span>
                     </a>
                     @if ($hasActiveFilters ?? false)
                         <a href="{{ $clearFiltersUrl }}"
                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition">
                             <i class="fa-solid fa-xmark"></i>
-                            <span>Xóa bộ lọc</span>
+                            <span>{{ __('client.route_show.no_trips.clear_filters_button') }}</span>
                         </a>
                     @endif
                 </div>
@@ -753,7 +744,7 @@
             <div class="container mx-auto px-4 space-y-8">
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-lightbulb text-yellow-500 text-3xl"></i>
-                    <h2 class="text-3xl font-bold text-gray-900">Kinh nghiệm dành cho bạn</h2>
+                    <h2 class="text-3xl font-bold text-gray-900">{{ __('client.route_show.tips.title') }}</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach ($travelTips as $tip)
@@ -771,72 +762,72 @@
          class="hidden fixed inset-0 bg-black bg-opacity-60 z-[120] flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] flex flex-col">
             <div class="flex justify-between items-center p-5 border-b">
-                <h3 class="text-xl font-bold text-gray-900">Chi tiết chuyến xe</h3>
+                <h3 class="text-xl font-bold text-gray-900">{{ __('client.route_show.details_modal.title') }}</h3>
                 <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             <div class="p-6 overflow-y-auto space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <h4 class="font-semibold text-gray-800 mb-3">Thông tin xe</h4>
-                        <img id="modal-bus-image" src="" alt="Hinh xe"
+                        <h4 class="font-semibold text-gray-800 mb-3">{{ __('client.route_show.details_modal.bus_info_title') }}</h4>
+                        <img id="modal-bus-image" src="" alt="{{__('client.route_show.details_modal.bus_image_alt')}}"
                              class="w-full h-48 object-cover rounded-lg mb-4">
                         <div id="modal-gallery" class="modal-gallery"></div>
                         <ul class="space-y-2 text-base mt-4">
-                            <li><strong>Nhà xe:</strong> <span id="modal-company-name"></span></li>
-                            <li><strong>Dòng xe:</strong> <span id="modal-bus-category"></span></li>
-                            <li><strong>Thông tin:</strong> <span id="modal-bus-name"></span> (<span
+                            <li><strong>{{ __('client.route_show.details_modal.company') }}</strong> <span
+                                    id="modal-company-name"></span></li>
+                            <li><strong>{{ __('client.route_show.details_modal.bus_type') }}</strong> <span
+                                    id="modal-bus-category"></span></li>
+                            <li><strong>{{ __('client.route_show.details_modal.bus_details') }}</strong> <span
+                                    id="modal-bus-name"></span> (<span
                                     id="modal-bus-model"></span>)
                             </li>
                         </ul>
-                        <h4 class="font-semibold text-gray-800 mt-4 mb-2">Tiện ích</h4>
+                        <h4 class="font-semibold text-gray-800 mt-4 mb-2">{{ __('client.route_show.details_modal.services_title') }}</h4>
                         <div id="modal-services" class="flex flex-wrap gap-2"></div>
                     </div>
                     <div class="space-y-4">
-                        <h4 class="font-semibold text-gray-800">Sơ đồ ghế</h4>
+                        <h4 class="font-semibold text-gray-800">{{ __('client.route_show.details_modal.seat_map_title') }}</h4>
                         <div id="seat-map-container" class="space-y-4">
                             <div class="flex flex-wrap gap-4 mb-4 text-sm">
                                 <div class="flex items-center gap-2">
                                     <div class="w-5 h-5 rounded bg-white border border-gray-300"></div>
-                                    <span>Còn
-                                        trống</span>
+                                    <span>{{ __('client.route_show.details_modal.seat_available') }}</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-5 h-5 rounded bg-gray-400 text-white flex items-center justify-center">
                                         <i class="fa-solid fa-lock text-xs"></i>
                                     </div>
-                                    <span>Đã đặt</span>
+                                    <span>{{ __('client.route_show.details_modal.seat_booked') }}</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div class="w-5 h-5 rounded bg-blue-500 border border-blue-600"></div>
-                                    <span>Đang
-                                        chọn</span>
+                                    <span>{{ __('client.route_show.details_modal.seat_selected') }}</span>
                                 </div>
                             </div>
                             <div class="grid grid-cols-4 gap-2">
-                                <!-- Seat map will be generated here -->
                             </div>
                         </div>
-                        <h4 class="font-semibold text-gray-800">Thông tin điểm đón/trả</h4>
+                        <h4 class="font-semibold text-gray-800">{{ __('client.route_show.details_modal.stops_info_title') }}</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <h5 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Điểm đón</h5>
+                                <h5 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">{{ __('client.route_show.details_modal.pickup_points_title') }}</h5>
                                 <ul id="modal-pickup-points" class="space-y-1 text-sm text-gray-600"></ul>
                             </div>
                             <div>
-                                <h5 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Điểm trả</h5>
+                                <h5 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">{{ __('client.route_show.details_modal.dropoff_points_title') }}</h5>
                                 <ul id="modal-dropoff-points" class="space-y-1 text-sm text-gray-600"></ul>
                             </div>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Trạng thái: <span id="modal-availability"
-                                                                               class="font-semibold text-emerald-600"></span>
+                            <p class="text-sm text-gray-500">{{ __('client.route_show.details_modal.status') }} <span
+                                    id="modal-availability"
+                                    class="font-semibold text-emerald-600"></span>
                             </p>
                         </div>
                         <div class="pt-4 border-t">
                             <a id="modal-booking-link" href="#"
-                               class="w-full text-center px-5 py-3 bg-yellow-400 text-gray-900 font-bold rounded-full hover:bg-yellow-500 transition block">
-                                Đặt vé ngay
+                               class="w-full text-center px-5 py-3 bg-yellow-400 text-gray-900 font-bold rounded-full hover:bg-yellow-500 transition block">{{ __('client.route_show.details_modal.book_now_button') }}
                             </a>
                         </div>
                     </div>
@@ -844,7 +835,6 @@
             </div>
         </div>
     </div>
-
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -960,7 +950,7 @@
                         modalCompanyName.textContent = tripData.company_name || '';
                         modalBusName.textContent = tripData.bus_name || '';
                         modalBusModel.textContent = tripData.bus_model || '';
-                        modalBusCategory.textContent = tripData.bus_category || 'Đang cập nhật';
+                        modalBusCategory.textContent = tripData.bus_category || "{{__('client.route_show.details_modal.not_updated')}}";
 
                         const galleryImages = Array.isArray(tripData.image_gallery) ? tripData
                             .image_gallery : [];
@@ -975,7 +965,7 @@
                                 const thumbBtn = document.createElement('button');
                                 thumbBtn.type = 'button';
                                 thumbBtn.className = 'modal-thumb';
-                                thumbBtn.innerHTML = '<img src="' + src + '" alt="Hinh xe">';
+                                thumbBtn.innerHTML = '<img src="' + src + '" alt="{{__('client.route_show.details_modal.bus_image_alt')}}">';
                                 if (src === initialImage) {
                                     thumbBtn.classList.add('is-active');
                                     activeThumb = thumbBtn;
@@ -996,7 +986,7 @@
                             });
                         } else {
                             modalGallery.innerHTML =
-                                '<p class="text-sm text-gray-500">Chưa có hình ảnh chi tiết.</p>';
+                                '<p class="text-sm text-gray-500">' + "{{__('client.route_show.details_modal.no_gallery')}}" + '</p>';
                         }
 
                         modalServices.innerHTML = '';
@@ -1010,7 +1000,7 @@
                             });
                         } else {
                             modalServices.innerHTML =
-                                '<p class="text-sm text-gray-500">Chưa cập nhật tiện ích.</p>';
+                                '<p class="text-sm text-gray-500">' + "{{__('client.route_show.details_modal.no_services')}}" + '</p>';
                         }
 
                         modalPickupPoints.innerHTML = '';
@@ -1032,7 +1022,7 @@
                         }
 
                         const seatsAvailable = Number(tripData.seats_available ?? 0);
-                        modalAvailability.textContent = seatsAvailable > 0 ? 'Còn chỗ' : 'Hết chỗ';
+                        modalAvailability.textContent = seatsAvailable > 0 ? "{{__('client.route_show.trip_card.seats_available')}}" : "{{__('client.route_show.trip_card.seats_full')}}";
 
                         const bookedSeats = Array.isArray(tripData.booked_seats) ? tripData
                             .booked_seats : [];
@@ -1052,7 +1042,7 @@
                     seatMapContainer.innerHTML = '';
                     if (!seatMapData) {
                         seatMapContainer.innerHTML =
-                            '<p class="text-center text-gray-500">Sơ đồ ghế chưa được cập nhật.</p>';
+                            '<p class="text-center text-gray-500">' + "{{__('client.route_show.details_modal.no_seat_map')}}" + '</p>';
                         return;
                     }
 
@@ -1066,51 +1056,50 @@
                             seatMap.floors.forEach(function (floor) {
                                 const deckDiv = document.createElement('div');
                                 deckDiv.className = 'seat-deck';
-                                deckDiv.innerHTML = '<h5 class="seat-deck-title">' + (floor.label || 'Tầng') +
-                                    '</h5>';
+                                deckDiv.innerHTML = '<h5 class="seat-deck-title">' + (floor.label || "{{__('client.route_show.details_modal.deck')}}") + '</h5>';
 
                                 const rows = {};
                                 floor.seats.forEach(function (seat) {
-                                    const rowKey = seat.row;
-                                    if (!rows[rowKey]) {
-                                        rows[rowKey] = [];
+                            const rowKey = seat.row;
+                            if (!rows[rowKey]) {
+                                rows[rowKey] = [];
+                            }
+                            rows[rowKey].push(seat);
+                        });
+
+                        Object.keys(rows).sort().forEach(function (rowKey) {
+                            const rowDiv = document.createElement('div');
+                            rowDiv.className = 'seat-row';
+                            rows[rowKey].sort(function (a, b) {
+                                return a.col - b.col;
+                            }).forEach(function (seat) {
+                                const seatEl = document.createElement('div');
+                                if (seat.type === 'aisle') {
+                                    seatEl.className = 'seat-aisle';
+                                } else {
+                                    seatEl.className = 'seat';
+                                    seatEl.textContent = seat.code;
+                                    const seatCode = String(seat.code).toUpperCase();
+                                    if (booked.includes(seatCode)) {
+                                        seatEl.classList.add('booked');
+                                    } else if (seat.status === 'disabled') {
+                                        seatEl.classList.add('disabled');
+                                    } else {
+                                        seatEl.classList.add('available');
                                     }
-                                    rows[rowKey].push(seat);
-                                });
-
-                                Object.keys(rows).sort().forEach(function (rowKey) {
-                                    const rowDiv = document.createElement('div');
-                                    rowDiv.className = 'seat-row';
-                                    rows[rowKey].sort(function (a, b) {
-                                        return a.col - b.col;
-                                    }).forEach(function (seat) {
-                                        const seatEl = document.createElement('div');
-                                        if (seat.type === 'aisle') {
-                                            seatEl.className = 'seat-aisle';
-                                        } else {
-                                            seatEl.className = 'seat';
-                                            seatEl.textContent = seat.code;
-                                            const seatCode = String(seat.code).toUpperCase();
-                                            if (booked.includes(seatCode)) {
-                                                seatEl.classList.add('booked');
-                                            } else if (seat.status === 'disabled') {
-                                                seatEl.classList.add('disabled');
-                                            } else {
-                                                seatEl.classList.add('available');
-                                            }
-                                        }
-                                        rowDiv.appendChild(seatEl);
-                                    });
-                                    deckDiv.appendChild(rowDiv);
-                                });
-
-                                seatMapContainer.appendChild(deckDiv);
+                                }
+                                rowDiv.appendChild(seatEl);
                             });
-                        }
-                    } catch (error) {
-                        seatMapContainer.innerHTML =
-                            '<p class="text-center text-gray-500">Không thể hiển thị sơ đồ ghế.</p>';
-                    }
+                            deckDiv.appendChild(rowDiv);
+                        });
+
+                        seatMapContainer.appendChild(deckDiv);
+                    });
+                }
+            } catch (error) {
+                seatMapContainer.innerHTML =
+                    '<p class="text-center text-gray-500">' + "{{__('client.route_show.details_modal.seat_map_error')}}" + '</p>';
+            }
                 }
             });
         </script>

@@ -433,11 +433,11 @@
                 <div class="ksb-field__body">
                     <div class="ksb-icon">
                         <img src="{{asset("/client/icons/pickup.svg")}}"
-                             alt="Điểm xuất phát" loading="lazy">
+                             alt="{{ __('client.search.origin_icon_alt') }}" loading="lazy">
                     </div>
                     <div class="ksb-content">
-                        <span class="ksb-label">Nơi xuất phát</span>
-                        <input type="text" id="ksb-origin-input" class="ksb-input" placeholder="Chọn điểm đón"
+                        <span class="ksb-label">{{ __('client.search.origin_label') }}</span>
+                        <input type="text" id="ksb-origin-input" class="ksb-input" placeholder="{{ __('client.search.origin_placeholder') }}"
                                autocomplete="off" spellcheck="false" inputmode="search"
                                value="{{ old('origin_label', data_get($defaults, 'origin.name')) }}">
                         <span class="ksb-caption"
@@ -447,7 +447,7 @@
                 <div class="ksb-dropdown" data-dropdown="origin"></div>
             </div>
             <div class="ksb-field ksb-field--swap">
-                <button type="button" id="ksb-swap-button" aria-label="Đổi chiều">
+                <button type="button" id="ksb-swap-button" aria-label="{{ __('client.search.swap_aria') }}">
                     <span class="material-icons-outlined">import_export</span>
                 </button>
             </div>
@@ -455,12 +455,12 @@
                  data-role="destination">
                 <div class="ksb-field__body">
                     <div class="ksb-icon">
-                        <img src="{{asset("/client/icons/dropoff.svg")}}" alt="Điểm đến"
+                        <img src="{{asset("/client/icons/dropoff.svg")}}" alt="{{ __('client.search.destination_icon_alt') }}"
                              loading="lazy">
                     </div>
                     <div class="ksb-content">
-                        <span class="ksb-label">Nơi đến</span>
-                        <input type="text" id="ksb-destination-input" class="ksb-input" placeholder="Chọn điểm đến"
+                        <span class="ksb-label">{{ __('client.search.destination_label') }}</span>
+                        <input type="text" id="ksb-destination-input" class="ksb-input" placeholder="{{ __('client.search.destination_placeholder') }}"
                                autocomplete="off" spellcheck="false" inputmode="search"
                                value="{{ old('destination_label', data_get($defaults, 'destination.name')) }}">
                         <span class="ksb-caption"
@@ -473,12 +473,12 @@
                 <div class="ksb-field__body">
                     <div class="ksb-icon">
                         <img src="{{asset("client/icons/date.svg")}}"
-                             alt="Ngày đi" loading="lazy">
+                             alt="{{ __('client.search.departure_icon_alt') }}" loading="lazy">
                     </div>
                     <div class="ksb-content">
-                        <span class="ksb-label">Ngày đi</span>
+                        <span class="ksb-label">{{ __('client.search.departure_label') }}</span>
                         <input type="text" id="ksb-departure-display" class="ksb-value-input"
-                               placeholder="Chọn ngày"
+                               placeholder="{{ __('client.search.date_placeholder') }}"
                                value="{{ old('departure_date', data_get($defaults, 'departure_date')) }}" readonly>
                     </div>
                 </div>
@@ -488,34 +488,47 @@
                 data-role="return">
                 <div class="ksb-return-empty" id="ksb-return-empty">
                     <span class="material-icons-round">add</span>
-                    <button type="button" id="ksb-add-return" class="ksb-return-add">Thêm ngày về</button>
+                    <button type="button" id="ksb-add-return" class="ksb-return-add">{{ __('client.search.add_return') }}</button>
                 </div>
                 <div class="ksb-return-selected" id="ksb-return-selected">
                     <div class="ksb-field__body">
                         <div class="ksb-icon">
                             <img src="https://storage.googleapis.com/fe-production/svgIcon/event_vex_blue_24dp.svg"
-                                 alt="Ngày về" loading="lazy">
+                                 alt="{{ __('client.search.return_icon_alt') }}" loading="lazy">
                         </div>
                         <div class="ksb-content">
-                            <span class="ksb-label">Ngày về</span>
+                        <span class="ksb-label">{{ __('client.search.return_label') }}</span>
                             <input type="text" id="ksb-return-display" class="ksb-value-input"
-                                   placeholder="Chọn ngày"
+                                  placeholder="{{ __('client.search.date_placeholder') }}"
                                    value="{{ old('return_date', data_get($defaults, 'return_date')) }}" readonly>
                         </div>
                     </div>
-                    <button type="button" class="ksb-return-clear" id="ksb-clear-return" aria-label="Xóa ngày về">
+                    <button type="button" class="ksb-return-clear" id="ksb-clear-return" aria-label="{{ __('client.search.remove_return_aria') }}">
                         <span class="material-icons-outlined">close</span>
                     </button>
                 </div>
             </div>
         </div>
-        <button type="submit" class="ksb-submit">{{ $submitLabel }}</button>
+        <button type="submit" class="ksb-submit">{{ $submitLabel ?? __('client.search.submit') }}</button>
     </div>
 </form>
 
 @push('scripts')
+    @php
+        $searchTranslations = [
+            'noResults' => __('client.search.no_results'),
+            'selectSuggestion' => __('client.search.validation.select_suggestion'),
+            'loading' => __('client.search.loading'),
+            'types' => [
+                'province' => __('client.search.types.province'),
+                'district' => __('client.search.types.district'),
+                'stop' => __('client.search.types.stop'),
+            ],
+        ];
+    @endphp
     <script>
         window.addEventListener('DOMContentLoaded', function () {
+            const translations = @json($searchTranslations);
             const form = document.getElementById('client-search-form');
             if (!form) {
                 return;
@@ -523,11 +536,7 @@
 
             const searchData = @json($searchData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-            const typeLabels = {
-                province: 'Tỉnh/Thành phố',
-                district: 'Quận/Huyện',
-                stop: 'Điểm đón/trả'
-            };
+            const typeLabels = translations.types;
 
             const typeOrder = {
                 province: 0,
@@ -863,7 +872,7 @@
                 let html = '';
 
                 if (!suggestions.length) {
-                    html += '<div class="ksb-dropdown-empty">Không tìm thấy địa điểm phù hợp.</div>';
+                    html += '<div class="ksb-dropdown-empty">' + translations.noResults + '</div>';
                 } else {
                     html += '<ul class="ksb-option-list">';
 
@@ -1069,8 +1078,7 @@
                     }, 150);
 
                     if (!state[fieldName]) {
-                        refs.input.setCustomValidity(
-                            'Vui lòng chọn địa điểm trong danh sách gợi ý.');
+                        refs.input.setCustomValidity(translations.selectSuggestion);
                     } else {
                         refs.input.setCustomValidity('');
                     }
@@ -1377,8 +1385,7 @@
                     if (!state[fieldName]) {
                         const refs = fields[fieldName];
                         if (refs && refs.input) {
-                            refs.input.setCustomValidity(
-                                'Vui lòng chọn địa điểm trong danh sách gợi ý.');
+                            refs.input.setCustomValidity(translations.selectSuggestion);
                             refs.input.reportValidity();
                         }
                         isValid = false;
@@ -1403,7 +1410,7 @@
                         submitButton.dataset.originalText = submitButton.textContent;
                     }
                     submitButton.disabled = true;
-                    submitButton.textContent = 'Đang tìm...';
+                    submitButton.textContent = translations.loading;
                 }
             });
 

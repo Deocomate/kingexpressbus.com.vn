@@ -12,7 +12,6 @@ class HomeController extends Controller
     public function index()
     {
         $searchData = SearchDataBuilder::make();
-
         $popularRoutes = DB::table('routes as r')
             ->select([
                 'r.id',
@@ -28,7 +27,6 @@ class HomeController extends Controller
             ->orderByDesc('r.priority')
             ->limit(8)
             ->get();
-
         $featuredCompanies = DB::table('companies as c')
             ->select([
                 'c.id',
@@ -41,7 +39,6 @@ class HomeController extends Controller
             ->orderByDesc('c.priority')
             ->limit(8)
             ->get();
-
         $busHighlights = DB::table('buses as b')
             ->select([
                 'b.id',
@@ -58,7 +55,6 @@ class HomeController extends Controller
                 $bus->services = $bus->services ? json_decode($bus->services, true) : [];
                 return $bus;
             });
-
         $stats = [
             'route_count' => DB::table('routes')->count(),
             'company_count' => DB::table('companies')->count(),
@@ -71,7 +67,6 @@ class HomeController extends Controller
         $galleryImages = $this->galleryImages();
         $testimonials = $this->testimonials();
         $partnerLogos = $this->partnerLogos();
-
         return view('client.home.index', compact(
             'searchData',
             'popularRoutes',
@@ -92,21 +87,18 @@ class HomeController extends Controller
         if (!Schema::hasTable('bus_services')) {
             return $this->defaultServiceHighlights();
         }
-
         $services = DB::table('bus_services')
             ->orderByDesc(DB::raw('priority'))
             ->orderBy('name')
             ->limit(6)
             ->get();
-
         if ($services->isEmpty()) {
             return $this->defaultServiceHighlights();
         }
-
         return $services->map(function ($service) {
             return [
                 'title' => $service->name,
-                'description' => 'Tiện ích tiêu chuẩn trên toàn bộ xe King Express Bus.',
+                'description' => __('client.home.service_highlights.item_description_default'),
                 'icon' => $service->icon ?: 'fa-solid fa-circle-check',
                 'image' => '/userfiles/files/kingexpressbus/cabin/2.jpg',
             ];
@@ -117,20 +109,20 @@ class HomeController extends Controller
     {
         return [
             [
-                'title' => 'Cabin riêng tư',
-                'description' => 'Không gian cabin kín đáo, khởi động êm và đầy đủ tiện nghi.',
+                'title' => __('client.home.default_services.item_1_title'),
+                'description' => __('client.home.default_services.item_1_description'),
                 'icon' => 'fa-solid fa-bed',
                 'image' => '/userfiles/files/kingexpressbus/cabin/4.jpg',
             ],
             [
-                'title' => 'Tiện ích thông minh',
-                'description' => 'Chăn ấm, sạc điện, TV, điều hòa tự động trên mỗi chuyến.',
+                'title' => __('client.home.default_services.item_2_title'),
+                'description' => __('client.home.default_services.item_2_description'),
                 'icon' => 'fa-solid fa-plug',
                 'image' => '/userfiles/files/kingexpressbus/sleeper/2.jpg',
             ],
             [
-                'title' => 'Hỗ trợ 24/7',
-                'description' => 'Tổng đài luôn sẵn sàng đồng hành trong mọi hành trình.',
+                'title' => __('client.home.default_services.item_3_title'),
+                'description' => __('client.home.default_services.item_3_description'),
                 'icon' => 'fa-solid fa-headset',
                 'image' => '/userfiles/files/kingexpressbus/sleeper/5.jpg',
             ],
@@ -140,30 +132,28 @@ class HomeController extends Controller
     private function heroSlides(): array
     {
         $today = now()->format('d/m/Y');
-
         $routeHaNoiSapa = DB::table('routes')->where('slug', 'ha-noi-sapa')->first();
         $routeHueHoiAn = DB::table('routes')->where('slug', 'hue-hoi-an')->first();
-
         return array_filter([
             [
-                'title' => 'Hành trình cao cấp Hà Nội - Sa Pa',
-                'subtitle' => 'Cabin riêng tư, khởi hành mỗi ngày, trả tận nơi trung tâm Sa Pa.',
+                'title' => __('client.home.hero.slide_1_title'),
+                'subtitle' => __('client.home.hero.slide_1_subtitle'),
                 'image' => '/userfiles/files/city_imgs/lao-cai-sa-pa.jpg',
-                'cta_text' => 'Đặt vé ngay',
+                'cta_text' => __('client.home.hero.slide_1_cta'),
                 'cta_url' => $routeHaNoiSapa ? route('client.routes.show', ['slug' => $routeHaNoiSapa->slug, 'departure_date' => $today]) : route('client.routes.search'),
             ],
             [
-                'title' => 'Trải nghiệm Ninh Bình trở nên dễ dàng',
-                'subtitle' => 'Phù hợp tham quan Tam Cốc, Tràng An, thời gian linh hoạt.',
+                'title' => __('client.home.hero.slide_2_title'),
+                'subtitle' => __('client.home.hero.slide_2_subtitle'),
                 'image' => '/userfiles/files/city_imgs/ninh-binh.jpg',
-                'cta_text' => 'Xem lịch chạy',
+                'cta_text' => __('client.home.hero.slide_2_cta'),
                 'cta_url' => route('client.routes.search'),
             ],
             [
-                'title' => 'Huế - Hội An sang trọng',
-                'subtitle' => 'Xe limousine 9 chỗ và giường nằm giúp bạn nghỉ ngơi thoải mái.',
+                'title' => __('client.home.hero.slide_3_title'),
+                'subtitle' => __('client.home.hero.slide_3_subtitle'),
                 'image' => '/userfiles/files/city_imgs/hoi-an.jpg',
-                'cta_text' => 'Khám phá ngay',
+                'cta_text' => __('client.home.hero.slide_3_cta'),
                 'cta_url' => $routeHueHoiAn ? route('client.routes.show', ['slug' => $routeHueHoiAn->slug, 'departure_date' => $today]) : route('client.routes.search'),
             ],
         ]);
@@ -174,20 +164,20 @@ class HomeController extends Controller
         return [
             [
                 'type' => 'image',
-                'title' => 'Không gian cabin limousine',
-                'description' => 'Cabin riêng tư, rèm che và ghế nâng cấp.',
+                'title' => __('client.home.media_showcase.item_1_title'),
+                'description' => __('client.home.media_showcase.item_1_description'),
                 'asset' => '/userfiles/files/kingexpressbus/cabin/5.jpg',
             ],
             [
                 'type' => 'image',
-                'title' => 'Giường nằm thông minh',
-                'description' => 'Sắp xếp hợp lý, lên xuống an toàn, phù hợp du lịch đêm.',
+                'title' => __('client.home.media_showcase.item_2_title'),
+                'description' => __('client.home.media_showcase.item_2_description'),
                 'asset' => '/userfiles/files/kingexpressbus/sleeper/6.jpg',
             ],
             [
                 'type' => 'image',
-                'title' => 'Bến xe trung tâm',
-                'description' => 'Điểm đón trả nằm ngay trung tâm thành phố, di chuyển thuận tiện.',
+                'title' => __('client.home.media_showcase.item_3_title'),
+                'description' => __('client.home.media_showcase.item_3_description'),
                 'asset' => '/userfiles/files/city_imgs/ha-noi.jpg',
             ],
         ];
@@ -197,19 +187,19 @@ class HomeController extends Controller
     {
         return [
             [
-                'title' => 'Phòng chờ khách sang trọng',
+                'title' => __('client.home.gallery.item_1_title'),
                 'url' => '/userfiles/files/kingexpressbus/sleeper/8.jpg',
             ],
             [
-                'title' => 'Quảng cảnh Hội An',
+                'title' => __('client.home.gallery.item_2_title'),
                 'url' => '/userfiles/files/city_imgs/hoi-an.jpg',
             ],
             [
-                'title' => 'Ninh Bình trong xanh',
+                'title' => __('client.home.gallery.item_3_title'),
                 'url' => '/userfiles/files/city_imgs/ninh-binh.jpg',
             ],
             [
-                'title' => 'Hà Nội về đêm',
+                'title' => __('client.home.gallery.item_4_title'),
                 'url' => '/userfiles/files/city_imgs/ha-noi.jpg',
             ],
         ];
@@ -220,21 +210,21 @@ class HomeController extends Controller
         return [
             [
                 'name' => 'Nguyễn Minh Anh',
-                'route' => 'Hà Nội - Sa Pa',
+                'route' => __('client.home.testimonials.item_1_route'),
                 'avatar' => null,
-                'quote' => 'Lịch trình rõ ràng, nhân viên hỗ trợ nhiệt tình và chu đáo.',
+                'quote' => __('client.home.testimonials.item_1_quote'),
             ],
             [
                 'name' => 'Trần Quang Huy',
-                'route' => 'Huế - Hội An',
+                'route' => __('client.home.testimonials.item_2_route'),
                 'avatar' => null,
-                'quote' => 'Xe đẹp, sạch sẽ, giường nằm thoải mái. Tôi sẽ giới thiệu cho bạn bè.',
+                'quote' => __('client.home.testimonials.item_2_quote'),
             ],
             [
                 'name' => 'Lê Thu Hiền',
-                'route' => 'Hà Nội - Ninh Bình',
+                'route' => __('client.home.testimonials.item_3_route'),
                 'avatar' => null,
-                'quote' => 'Phù hợp cho gia đình, đường đi an toàn, đón trả đúng điểm hẹn.',
+                'quote' => __('client.home.testimonials.item_3_quote'),
             ],
         ];
     }

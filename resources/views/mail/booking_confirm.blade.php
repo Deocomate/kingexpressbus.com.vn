@@ -29,7 +29,8 @@
                         <h2 style="margin: 0 0 15px 0; font-size: 22px; color: #1e88e5; text-align: center;">Xác nhận
                             yêu cầu đặt vé</h2>
                         <p style="margin: 10px 0; font-size: 15px;">
-                            Kính gửi Quý khách <strong>{{ $bookingDetails['customer_name'] ?? 'N/A' }}</strong>,
+                            Kính gửi Quý khách <strong>{{ $bookingDetails['customer_name'] ?? 'N/A' }}</strong> (SĐT:
+                            <strong>{{ $bookingDetails['customer_phone'] ?? 'N/A' }}</strong>),
                         </p>
                         <p style="margin: 10px 0; font-size: 15px;">
                             Cảm ơn Quý khách đã tin tưởng và sử dụng dịch vụ
@@ -71,6 +72,12 @@
                                 <td style="padding: 12px; border: 1px solid #e0e0e0;">{{ $bookingDetails['pickup_info'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
+                                <td style="padding: 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #555;">
+                                    Số điện thoại (Phone)
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #e0e0e0;">{{ $bookingDetails['customer_phone'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr style="background-color:#f5faff;">
                                 <td style="padding: 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #555;">Số
                                     lượng (Quantity)
                                 </td>
@@ -78,13 +85,13 @@
                                     vé
                                 </td>
                             </tr>
-                            <tr style="background-color:#f5faff;">
+                            <tr>
                                 <td style="padding: 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #555;">
                                     Tổng tiền (Price)
                                 </td>
                                 <td style="padding: 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #2e7d32;">{{ isset($bookingDetails['total_price']) ? number_format($bookingDetails['total_price']) . 'đ' : 'Liên hệ' }}</td>
                             </tr>
-                            <tr>
+                            <tr style="background-color:#f5faff;">
                                 <td style="padding: 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #555;">
                                     Thanh toán (Payment)
                                 </td>

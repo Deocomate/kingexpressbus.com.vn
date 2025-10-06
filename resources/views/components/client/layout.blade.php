@@ -23,12 +23,12 @@
     if ($authUser && ($authUser->role ?? null) === 'customer') {
         $customerNavLinks = [
             [
-                'label' => 'Trang ca nhan',
+                'label' => __('client.layout.profile'),
                 'url' => route('client.profile.index'),
                 'icon' => 'fa-solid fa-user',
             ],
             [
-                'label' => 'Dat ve cua toi',
+                'label' => __('client.layout.my_bookings'),
                 'url' => route('client.profile.index') . '#history',
                 'icon' => 'fa-solid fa-ticket',
             ],

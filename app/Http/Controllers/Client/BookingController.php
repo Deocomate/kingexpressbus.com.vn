@@ -62,7 +62,7 @@ class BookingController extends Controller
             ->where('br.id', $busRouteId)
             ->first();
 
-        abort_if(!$trip || !$trip->is_active, 404, 'Chuyến xe không tồn tại hoặc đã tạm dừng.');
+        abort_if(!$trip || !$trip->is_active, 404, __('client.booking.create.trip_not_found'));
 
         $bookedTicketsCount = DB::table('bookings')
             ->where('bus_route_id', $busRouteId)
@@ -94,28 +94,30 @@ class BookingController extends Controller
         $paymentMethods = [
             [
                 'key' => 'online_banking',
-                'label' => 'Thanh toán chuyển khoản',
-                'description' => 'Thông tin tài khoản sẽ được gửi qua email sau khi xác nhận.',
+                'label' => __('client.booking.create.payment_online_label'),
+                'description' => __('client.booking.create.payment_online_desc'),
             ],
             [
                 'key' => 'cash_on_pickup',
-                'label' => 'Thanh toán khi lên xe',
-                'description' => 'Thanh toán trực tiếp cho tài xế hoặc nhân viên phụ xe khi đón.',
+                'label' => __('client.booking.create.payment_cash_label'),
+                'description' => __('client.booking.create.payment_cash_desc'),
             ],
         ];
 
         $user = Auth::user();
 
-        return view('client.booking.create', compact(
-            'trip',
-            'bookingDate',
-            'stops',
-            'services',
-            'busImages',
-            'paymentMethods',
-            'availableSeats',
-            'user'
-        ));
+        return view('client.booking.create', [
+            'trip' => $trip,
+            'bookingDate' => $bookingDate,
+            'stops' => $stops,
+            'services' => $services,
+            'busImages' => $busImages,
+            'paymentMethods' => $paymentMethods,
+            'availableSeats' => $availableSeats,
+            'user' => $user,
+            'title' => __('client.booking.create.meta_title'),
+            'description' => __('client.booking.create.meta_description')
+        ]);
     }
 
     public function store(Request $request)
@@ -173,7 +175,7 @@ class BookingController extends Controller
             $requestedQuantity = (int)$validated['quantity'];
 
             if ($requestedQuantity > $availableSeats) {
-                return back()->with('error', 'Chuyến xe không còn đủ ' . $requestedQuantity . ' vé. Chỉ còn lại ' . $availableSeats . ' vé.')->withInput();
+                return back()->with('error', __('client.booking.store.not_enough_seats', ['requested' => $requestedQuantity, 'available' => $availableSeats]))->withInput();
             }
 
             $bookingNotes = isset($validated['notes']) ? strip_tags($validated['notes']) : null;
@@ -230,7 +232,7 @@ class BookingController extends Controller
             DB::rollBack();
             dd($exception);
             Log::error('Đặt vé phía client thất bại', ['error' => $exception->getMessage()]);
-            return back()->with('error', 'Hệ thống đang quá tải, vui lòng thử lại sau.')->withInput();
+            return back()->with('error', __('client.booking.store.system_error'))->withInput();
         }
     }
 
@@ -268,7 +270,7 @@ class BookingController extends Controller
 
         $result['departure_date'] = Carbon::parse($result['booking_date'])->format('d/m/Y');
         $result['start_time'] = Carbon::parse($result['start_time'])->format('H:i');
-        $result['bus_type_name'] = $result['bus_model_name'] ?? 'Đang cập nhật';
+        $result['bus_type_name'] = $result['bus_model_name'] ?? __('client.booking.common.updating');
 
         if (is_null($result['pickup_stop_id']) && Str::contains($result['notes'], '[Đón tại khách sạn]')) {
             $result['pickup_info'] = Str::after($result['notes'], '[Đón tại khách sạn]: ');
@@ -325,8 +327,8 @@ class BookingController extends Controller
 
         return view('client.booking.success', [
             'booking' => $booking,
-            'title' => 'Đặt vé thành công',
-            'description' => 'Thông tin xác nhận đặt vé của bạn tại King Express Bus.',
+            'title' => __('client.booking.success.meta_title'),
+            'description' => __('client.booking.success.meta_description'),
         ]);
     }
 
@@ -343,7 +345,7 @@ class BookingController extends Controller
         try {
             return Carbon::parse($value)->startOfDay();
         } catch (\Throwable $exception) {
-            abort(400, 'Ngày khởi hành không hợp lệ.');
+            abort(400, __('client.booking.create.invalid_date'));
         }
     }
 }

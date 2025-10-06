@@ -3,6 +3,7 @@
 use App\Http\Controllers\System\CkFinderController;
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Http\Request;
 // Import Middleware
 use App\Http\Middleware\Roles\AdminAuthMiddleware;
 use App\Http\Middleware\Roles\CompanyAuthMiddleware;
@@ -50,6 +51,19 @@ use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 |--------------------------------------------------------------------------
 */
 Route::name('client.')->group(function () {
+    Route::get('/locale/{locale}', function (string $locale, Request $request) {
+        $availableLocales = ['en', 'vi'];
+
+        if (! in_array($locale, $availableLocales, true)) {
+            abort(404);
+        }
+
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+
+        return back(fallback: route('client.home'));
+    })->name('locale.switch');
+
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
     Route::get('/tim-kiem', [ClientRouteController::class, 'search'])->name('routes.search');

@@ -1,5 +1,5 @@
 <x-client.layout :web-profile="$web_profile ?? null" :main-menu="$mainMenu ?? []"
-                 :title="$title ?? 'Đặt vé King Express Bus'" :description="$description ?? ''">
+                 :title="$title ?? __('client.booking.create.meta_title')" :description="$description ?? ''">
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -69,7 +69,7 @@
                 <div class="space-y-4 lg:col-span-2">
                     <span class="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-yellow-300">
                         <i class="fa-solid fa-ticket"></i>
-                        Đặt vé trực tuyến
+                        {{ __('client.booking.create.header_subtitle') }}
                     </span>
                     <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
                         {{ $trip->route_name }} · {{ $trip->company_name }}
@@ -78,7 +78,7 @@
                         <span class="inline-flex items-center gap-2"><i class="fa-solid fa-clock w-4 text-center"></i> {{ \Carbon\Carbon::parse($trip->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($trip->end_time)->format('H:i') }}</span>
                         <span class="inline-flex items-center gap-2"><i
                                 class="fa-solid fa-calendar-day w-4 text-center"></i> {{ $bookingDate->format('d/m/Y') }}</span>
-                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-couch w-4 text-center"></i> {{ $trip->bus_name }} ({{ $trip->bus_model ?? 'Đang cập nhật' }})</span>
+                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-couch w-4 text-center"></i> {{ $trip->bus_name }} ({{ $trip->bus_model ?? __('client.booking.common.updating') }})</span>
                     </div>
                 </div>
                 <div class="relative h-48 lg:h-56 rounded-3xl overflow-hidden shadow-xl">
@@ -87,7 +87,7 @@
                     <span
                         class="absolute bottom-4 left-4 inline-flex items-center gap-2 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold">
                         <i class="fa-solid fa-shield-heart text-blue-600"></i>
-                        Bảo hiểm chuyến đi
+                        {{ __('client.booking.create.insurance_badge') }}
                     </span>
                 </div>
             </div>
@@ -100,14 +100,14 @@
                   id="booking-form">
                 @if (session('error'))
                     <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl" role="alert">
-                        <strong class="font-bold">Đã có lỗi xảy ra!</strong>
+                        <strong class="font-bold">{{ __('client.booking.create.error_title') }}</strong>
                         <span class="block sm:inline">{{ session('error') }}</span>
                     </div>
                 @endif
 
                 @if ($errors->any())
                     <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl" role="alert">
-                        <strong class="font-bold">Vui lòng kiểm tra lại thông tin:</strong>
+                        <strong class="font-bold">{{ __('client.booking.create.validation_error_title') }}</strong>
                         <ul class="mt-2 list-disc list-inside">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -122,22 +122,23 @@
 
                 <section class="bg-white border border-gray-100 rounded-3xl p-6 space-y-6">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold text-gray-900">Thông tin chuyến đi</h2>
-                        <span class="text-xs text-gray-500 uppercase tracking-wider">Bước 1/2</span>
+                        <h2 class="text-xl font-semibold text-gray-900">{{ __('client.booking.create.trip_info_title') }}</h2>
+                        <span
+                            class="text-xs text-gray-500 uppercase tracking-wider">{{ __('client.booking.create.step_1') }}</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="booking_date" class="block text-sm font-semibold text-gray-700 mb-2">Ngày
-                                đi</label>
+                            <label for="booking_date"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.departure_date_label') }}</label>
                             <input type="text" id="booking_date" name="booking_date"
                                    value="{{ $bookingDate->format('d/m/Y') }}"
                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
                                    required>
                         </div>
                         <div>
-                            <label for="quantity" class="block text-sm font-semibold text-gray-700 mb-2">Số lượng
-                                vé</label>
+                            <label for="quantity"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.quantity_label') }}</label>
                             <div class="flex items-center gap-4">
                                 <button type="button" id="decrease-quantity"
                                         class="quantity-btn p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300">
@@ -152,8 +153,8 @@
                                         class="quantity-btn p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
-                                <span class="text-sm text-gray-500">Còn <strong
-                                        class="text-gray-800">{{ $availableSeats }}</strong> vé</span>
+                                <span
+                                    class="text-sm text-gray-500">{!! trans_choice('client.booking.create.seats_left', $availableSeats, ['count' => $availableSeats]) !!}</span>
                             </div>
                         </div>
                     </div>
@@ -161,54 +162,55 @@
 
                 <section class="bg-white border border-gray-100 rounded-3xl p-6 space-y-6">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold text-gray-900">Thông tin hành khách</h2>
-                        <span class="text-xs text-gray-500 uppercase tracking-wider">Bước 2/2</span>
+                        <h2 class="text-xl font-semibold text-gray-900">{{ __('client.booking.create.passenger_info_title') }}</h2>
+                        <span
+                            class="text-xs text-gray-500 uppercase tracking-wider">{{ __('client.booking.create.step_2') }}</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Họ tên
-                                hành khách</label>
+                            <label for="customer_name"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.name_label') }}</label>
                             <input type="text" id="customer_name" name="customer_name"
                                    value="{{ old('customer_name', request('customer_name', $user->name ?? '')) }}"
                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                                   required placeholder="Ví dụ: Nguyễn Văn An">
+                                   required placeholder="{{ __('client.booking.create.name_placeholder') }}">
                         </div>
                         <div>
-                            <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Số điện
-                                thoại</label>
+                            <label for="customer_phone"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.phone_label') }}</label>
                             <input type="tel" id="customer_phone" name="customer_phone"
                                    value="{{ old('customer_phone', request('customer_phone', $user->phone ?? '')) }}"
                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                                   required placeholder="Số điện thoại nhận thông tin vé">
+                                   required placeholder="{{ __('client.booking.create.phone_placeholder') }}">
                         </div>
                         <div>
-                            <label for="customer_email" class="block text-sm font-semibold text-gray-700 mb-2">Email
-                                nhận vé</label>
+                            <label for="customer_email"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.email_label') }}</label>
                             <input type="email" id="customer_email" name="customer_email"
                                    value="{{ old('customer_email', request('customer_email', $user->email ?? '')) }}"
                                    class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                                   required placeholder="Email để nhận xác nhận đặt vé">
+                                   required placeholder="{{ __('client.booking.create.email_placeholder') }}">
                         </div>
                         <div>
-                            <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">Ghi chú bổ
-                                sung</label>
+                            <label for="notes"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.notes_label') }}</label>
                             <textarea id="notes" name="notes" rows="3"
                                       class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                                      placeholder="Ví dụ: cần hỗ trợ đón tại khách sạn...">{{ old('notes', request('notes')) }}</textarea>
+                                      placeholder="{{ __('client.booking.create.notes_placeholder') }}">{{ old('notes', request('notes')) }}</textarea>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="pickup_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm
-                                đón</label>
+                            <label for="pickup_stop_id"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.pickup_label') }}</label>
                             <select id="pickup_stop_id" name="pickup_stop_id" class="w-full" required>
-                                <option value="">Chọn điểm đón của bạn</option>
+                                <option value="">{{ __('client.booking.create.pickup_placeholder') }}</option>
                                 @if($trip->available_hotel_pickup)
                                     <option
                                         value="hotel_pickup" @selected(old('pickup_stop_id', request('pickup_stop_id')) == 'hotel_pickup')>
-                                        Đón tại khách sạn
+                                        {{ __('client.booking.create.pickup_at_hotel') }}
                                     </option>
                                 @endif
                                 @foreach ($stops->where('stop_type', '!=', 'dropoff') as $point)
@@ -222,10 +224,10 @@
                             </select>
                         </div>
                         <div>
-                            <label for="dropoff_stop_id" class="block text-sm font-semibold text-gray-700 mb-2">Điểm
-                                trả</label>
+                            <label for="dropoff_stop_id"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.dropoff_label') }}</label>
                             <select id="dropoff_stop_id" name="dropoff_stop_id" class="w-full" required>
-                                <option value="">Chọn điểm trả của bạn</option>
+                                <option value="">{{ __('client.booking.create.dropoff_placeholder') }}</option>
                                 @foreach ($stops->where('stop_type', '!=', 'pickup') as $point)
                                     <option
                                         value="{{ $point->id }}"
@@ -239,16 +241,16 @@
                     </div>
 
                     <div id="hotel-pickup-address-wrapper" class="hidden mt-4">
-                        <label for="hotel_pickup_address" class="block text-sm font-semibold text-gray-700 mb-2">Địa chỉ
-                            khách sạn</label>
+                        <label for="hotel_pickup_address"
+                               class="block text-sm font-semibold text-gray-700 mb-2">{{ __('client.booking.create.hotel_address_label') }}</label>
                         <input type="text" id="hotel_pickup_address" name="hotel_pickup_address"
                                value="{{ old('hotel_pickup_address', request('hotel_pickup_address')) }}"
                                class="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-base shadow-sm transition-all duration-300 focus:bg-white focus:border-blue-400 focus:ring-0"
-                               placeholder="Nhập số nhà, tên đường, phường...">
+                               placeholder="{{ __('client.booking.create.hotel_address_placeholder') }}">
                     </div>
 
                     <div>
-                        <h3 class="text-base font-semibold text-gray-800 mb-3">Phương thức thanh toán</h3>
+                        <h3 class="text-base font-semibold text-gray-800 mb-3">{{ __('client.booking.create.payment_method_title') }}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach ($paymentMethods as $method)
                                 <label class="payment-method-label block border border-gray-200 rounded-2xl p-4">
@@ -273,14 +275,12 @@
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="text-sm text-gray-600">
-                        Bằng cách tiếp tục, bạn đồng ý với <a href="#"
-                                                              class="font-semibold text-blue-600 hover:underline">chính
-                            sách</a> của chúng tôi.
+                        {!! __('client.booking.create.terms_agreement', ['link' => '#']) !!}
                     </div>
                     <button type="submit"
                             class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
                             id="submit-booking">
-                        <span id="submit-text">Xác nhận đặt vé</span>
+                        <span id="submit-text">{{ __('client.booking.create.submit_button') }}</span>
                         <i id="submit-spinner" class="fa-solid fa-spinner animate-spin hidden"></i>
                     </button>
                 </div>
@@ -288,31 +288,32 @@
 
             <aside class="space-y-6">
                 <div class="bg-white border border-gray-100 rounded-3xl p-6 space-y-4">
-                    <h2 class="text-xl font-semibold text-gray-900">Tóm tắt chi phí</h2>
+                    <h2 class="text-xl font-semibold text-gray-900">{{ __('client.booking.create.summary_title') }}</h2>
                     <div class="space-y-3 text-base text-gray-600">
                         <div class="flex items-center justify-between">
-                            <span>Giá mỗi vé</span>
+                            <span>{{ __('client.booking.create.summary_price_per_ticket') }}</span>
                             <span
-                                class="font-semibold text-gray-900">{{ $seatPrice > 0 ? number_format($seatPrice) . 'đ' : 'Liên hệ' }}</span>
+                                class="font-semibold text-gray-900">{{ $seatPrice > 0 ? number_format($seatPrice) . 'đ' : __('client.booking.create.summary_contact_price') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span>Số lượng</span>
+                            <span>{{ __('client.booking.create.summary_quantity') }}</span>
                             <span class="font-semibold text-gray-900" id="summary-quantity">1</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span>Phí dịch vụ</span>
-                            <span class="text-green-600 font-semibold">Miễn phí</span>
+                            <span>{{ __('client.booking.create.summary_service_fee') }}</span>
+                            <span
+                                class="text-green-600 font-semibold">{{ __('client.booking.create.summary_free') }}</span>
                         </div>
                     </div>
                     <div
                         class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between text-xl font-bold text-gray-900">
-                        <span>Tổng cộng</span>
+                        <span>{{ __('client.booking.create.summary_total') }}</span>
                         <span id="summary-total-price">0đ</span>
                     </div>
                 </div>
 
                 <div class="bg-blue-50 border border-blue-100 rounded-3xl p-6 space-y-4 text-sm text-blue-800">
-                    <h3 class="text-base font-semibold text-blue-900">Tiện nghi trên xe</h3>
+                    <h3 class="text-base font-semibold text-blue-900">{{ __('client.booking.create.amenities_title') }}</h3>
                     <ul class="grid grid-cols-2 gap-x-4 gap-y-2">
                         @forelse ($services as $service)
                             <li class="flex items-center gap-2">
@@ -321,52 +322,52 @@
                             </li>
                         @empty
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
-                                Điều hòa
+                                {{ __('client.booking.create.amenity_ac') }}
                             </li>
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
-                                Chăn gối
+                                {{ __('client.booking.create.amenity_blanket') }}
                             </li>
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
-                                Nước suối
+                                {{ __('client.booking.create.amenity_water') }}
                             </li>
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-500"></i>
-                                Wi-Fi
+                                {{ __('client.booking.create.amenity_wifi') }}
                             </li>
                         @endforelse
                     </ul>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-3xl p-6 space-y-4">
-                    <h3 class="text-xl font-semibold text-gray-900">Cần hỗ trợ?</h3>
-                    <p class="text-gray-600">Nếu có bất kỳ thắc mắc nào, đừng ngần ngại liên hệ với chúng tôi để được hỗ
-                        trợ nhanh nhất.</p>
+                    <h3 class="text-xl font-semibold text-gray-900">{{ __('client.booking.create.support_title') }}</h3>
+                    <p class="text-gray-600">{{ __('client.booking.create.support_description') }}</p>
                     <div class="space-y-3">
                         @if(!empty($web_profile->hotline))
                             <a href="tel:{{ preg_replace('/[^\d+]/', '', $web_profile->hotline) }}"
                                class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
                                 <i class="fa-solid fa-phone-volume text-blue-600 text-lg"></i>
-                                <span class="font-semibold text-gray-800">Hotline: {{ $web_profile->hotline }}</span>
+                                <span class="font-semibold text-gray-800">{{ __('client.booking.create.support_hotline') }}: {{ $web_profile->hotline }}</span>
                             </a>
                         @endif
                         @if(!empty($web_profile->phone))
                             <a href="tel:{{ preg_replace('/[^\d+]/', '', $web_profile->phone) }}"
                                class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
                                 <i class="fa-solid fa-headset text-blue-600 text-lg"></i>
-                                <span class="font-semibold text-gray-800">Tổng đài: {{ $web_profile->phone }}</span>
+                                <span class="font-semibold text-gray-800">{{ __('client.booking.create.support_call_center') }}: {{ $web_profile->phone }}</span>
                             </a>
                         @endif
                         @if(!empty($web_profile->email))
                             <a href="mailto:{{ $web_profile->email }}"
                                class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
                                 <i class="fa-regular fa-envelope text-blue-600 text-lg"></i>
-                                <span class="font-semibold text-gray-800">Email: {{ $web_profile->email }}</span>
+                                <span class="font-semibold text-gray-800">{{ __('client.booking.create.support_email') }}: {{ $web_profile->email }}</span>
                             </a>
                         @endif
                         @if(!empty($web_profile->zalo_url))
                             <a href="{{ $web_profile->zalo_url }}" target="_blank"
                                class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
                                 <i class="fa-solid fa-comment-dots text-blue-600 text-lg"></i>
-                                <span class="font-semibold text-gray-800">Chat qua Zalo</span>
+                                <span
+                                    class="font-semibold text-gray-800">{{ __('client.booking.create.support_zalo') }}</span>
                             </a>
                         @endif
                         @if(!empty($web_profile->whatsapp))
@@ -374,14 +375,16 @@
                                target="_blank"
                                class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
                                 <i class="fab fa-whatsapp text-blue-600 text-lg"></i>
-                                <span class="font-semibold text-gray-800">Chat qua WhatsApp</span>
+                                <span
+                                    class="font-semibold text-gray-800">{{ __('client.booking.create.support_whatsapp') }}</span>
                             </a>
                         @endif
                         @if(!empty($web_profile->facebook_url))
                             <a href="{{ $web_profile->facebook_url }}" target="_blank"
                                class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
                                 <i class="fa-brands fa-facebook-messenger text-blue-600 text-lg"></i>
-                                <span class="font-semibold text-gray-800">Chat qua Facebook</span>
+                                <span
+                                    class="font-semibold text-gray-800">{{ __('client.booking.create.support_facebook') }}</span>
                             </a>
                         @endif
                     </div>

@@ -13,7 +13,7 @@
                         @endif
                         <span>{{ $brandTitle }}</span>
                     </h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">{{ data_get($webProfile, 'description', 'Nhà xe uy tín, chất lượng hàng đầu cho mọi hành trình của bạn.') }}</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">{{ data_get($webProfile, 'description', __('client.footer.default_description')) }}</p>
                     <div class="flex space-x-4 mt-6">
                         @if(data_get($webProfile, 'facebook_url'))
                             <a href="{{ data_get($webProfile, 'facebook_url') }}" target="_blank" aria-label="Facebook"
@@ -40,27 +40,27 @@
                 @endif
             </div>
             <div>
-                <h4 class="font-bold text-lg mb-4 tracking-wider">Về chúng tôi</h4>
+                <h4 class="font-bold text-lg mb-4 tracking-wider">{{ __('client.footer.about') }}</h4>
                 <ul class="space-y-3">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Giới thiệu</a>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">{{ __('client.footer.links.intro') }}</a>
                     </li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Đội xe</a>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">{{ __('client.footer.links.fleet') }}</a>
                     </li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Tin tức</a>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">{{ __('client.footer.links.news') }}</a>
                     </li>
                 </ul>
             </div>
             <div>
-                <h4 class="font-bold text-lg mb-4 tracking-wider">Hỗ trợ</h4>
+                <h4 class="font-bold text-lg mb-4 tracking-wider">{{ __('client.footer.support') }}</h4>
                 <ul class="space-y-3">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Chính sách hủy vé</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Điều khoản dịch vụ</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Bảo mật thông tin</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">{{ __('client.footer.support_links.cancellation') }}</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">{{ __('client.footer.support_links.terms') }}</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">{{ __('client.footer.support_links.privacy') }}</a></li>
                 </ul>
             </div>
             <div>
                 @if($webProfile)
-                    <h4 class="font-bold text-lg mb-4 tracking-wider">Liên hệ</h4>
+                    <h4 class="font-bold text-lg mb-4 tracking-wider">{{ __('client.footer.contact') }}</h4>
                     <ul class="space-y-3 text-gray-400 text-sm">
                         @if(data_get($webProfile, 'address'))
                             <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 w-4 text-center"></i><span>{{ data_get($webProfile, 'address') }}</span>
@@ -76,7 +76,7 @@
                             <li class="flex items-center"><i class="fas fa-headset mr-3 w-4 text-center"></i><a
                                     href="tel:{{ str_replace([' ', '.'], '', data_get($webProfile, 'hotline')) }}"
                                     class="hover:text-white transition-colors duration-200">{{ data_get($webProfile, 'hotline') }}
-                                    (Hotline)</a></li>
+                                    ({{ __('client.footer.hotline_label') }})</a></li>
                         @endif
                         @if(data_get($webProfile, 'email'))
                             <li class="flex items-center"><i class="fas fa-envelope mr-3 w-4 text-center"></i><a
@@ -89,7 +89,7 @@
             </div>
         </div>
         <div class="mt-10 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
-            &copy; {{ date('Y') }} {{ $brandTitle }}. All rights reserved.
+            &copy; {{ date('Y') }} {{ $brandTitle }}. {{ __('client.footer.rights') }}
         </div>
     </div>
 </footer>

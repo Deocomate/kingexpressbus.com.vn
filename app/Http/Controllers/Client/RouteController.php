@@ -30,7 +30,7 @@ class RouteController extends Controller
             $endProvinceId = $this->resolveProvinceId($validated['destination_type'], (int)$validated['destination_id']);
 
             if (!$startProvinceId || !$endProvinceId) {
-                return $this->searchErrorResponse($request, 'Địa điểm khởi hành hoặc điểm đến không hợp lệ.');
+                return $this->searchErrorResponse($request, __('client.route_show.search.invalid_location'));
             }
 
             $route = DB::table('routes')
@@ -39,7 +39,7 @@ class RouteController extends Controller
                 ->first();
 
             if (!$route) {
-                return $this->searchErrorResponse($request, 'Không tìm thấy tuyến đường phù hợp.');
+                return $this->searchErrorResponse($request, __('client.route_show.search.no_route_found'));
             }
 
             $params = [
@@ -64,7 +64,7 @@ class RouteController extends Controller
             return redirect()->to($redirectUrl);
         } catch (\Throwable $exception) {
             Log::error('Client route search failed', ['error' => $exception->getMessage()]);
-            return $this->searchErrorResponse($request, 'Hệ thống đang quá tải, vui lòng thử lại sau.');
+            return $this->searchErrorResponse($request, __('client.route_show.search.system_error'));
         }
     }
 
@@ -186,8 +186,8 @@ class RouteController extends Controller
             'departureDate' => $departureDate->format('d/m/Y'),
             'searchDefaults' => $searchDefaults,
             'searchData' => SearchDataBuilder::make(['defaults' => $searchDefaults]),
-            'title' => $route->title ?: 'Vé xe ' . $route->name,
-            'description' => $route->description ?: 'Đặt vé tuyến ' . $route->name . ' của King Express Bus.',
+            'title' => $route->title ?: __('client.route_show.meta_title_dynamic', ['name' => $route->name]),
+            'description' => $route->description ?: __('client.route_show.meta_description_dynamic', ['name' => $route->name]),
             'hasActiveFilters' => $activeFilterCount > 0,
         ]);
     }
@@ -490,22 +490,22 @@ class RouteController extends Controller
     {
         return [
             'early_morning' => [
-                'label' => 'Sáng sớm (00:00 - 06:00)',
+                'label' => __('client.route_show.filters.time_range_early_morning'),
                 'start' => 0,
                 'end' => 6,
             ],
             'morning' => [
-                'label' => 'Buổi sáng (06:00 - 12:00)',
+                'label' => __('client.route_show.filters.time_range_morning'),
                 'start' => 6,
                 'end' => 12,
             ],
             'afternoon' => [
-                'label' => 'Buổi chiều (12:00 - 18:00)',
+                'label' => __('client.route_show.filters.time_range_afternoon'),
                 'start' => 12,
                 'end' => 18,
             ],
             'evening' => [
-                'label' => 'Buổi tối (18:00 - 24:00)',
+                'label' => __('client.route_show.filters.time_range_evening'),
                 'start' => 18,
                 'end' => 24,
             ],
@@ -531,30 +531,30 @@ class RouteController extends Controller
         $keywords = Str::lower(trim(($busModel ?? '') . ' ' . ($busName ?? '')));
 
         if (Str::contains($keywords, ['limousine', 'limo'])) {
-            return 'Limousine';
+            return __('client.route_show.bus_categories.limousine');
         }
 
         if (Str::contains($keywords, ['cabin', 'suite'])) {
-            return 'Cabin cao cấp';
+            return __('client.route_show.bus_categories.cabin');
         }
 
         if (Str::contains($keywords, ['giường', 'giuong', 'sleep'])) {
-            return 'Giường nằm';
+            return __('client.route_show.bus_categories.sleeper');
         }
 
         if (Str::contains($keywords, ['ghế', 'ghe', 'seat'])) {
-            return 'Ghế ngồi';
+            return __('client.route_show.bus_categories.seat');
         }
 
         if ($seatCount >= 32) {
-            return 'Giường nằm';
+            return __('client.route_show.bus_categories.sleeper');
         }
 
         if ($seatCount >= 16) {
-            return 'Ghế ngồi';
+            return __('client.route_show.bus_categories.seat');
         }
 
-        return 'Dòng xe khác';
+        return __('client.route_show.bus_categories.other');
     }
 
     private function resolvePrimaryBusImage(?array $images, ?string $fallback): string
@@ -656,18 +656,18 @@ class RouteController extends Controller
         return [
             [
                 'icon' => 'fa-solid fa-clock',
-                'title' => 'Chủ động thời gian',
-                'content' => 'Có mặt tại điểm đón trước giờ khởi hành 15 phút để làm thủ tục.',
+                'title' => __('client.route_show.tips.tip_1_title'),
+                'content' => __('client.route_show.tips.tip_1_content'),
             ],
             [
                 'icon' => 'fa-solid fa-suitcase-rolling',
-                'title' => 'Hành lý gọn nhẹ',
-                'content' => 'Mỗi khách được mang tối đa 10kg hành lý xách tay và 20kg ký gửi.',
+                'title' => __('client.route_show.tips.tip_2_title'),
+                'content' => __('client.route_show.tips.tip_2_content'),
             ],
             [
                 'icon' => 'fa-solid fa-mug-hot',
-                'title' => 'Tiện ích trên xe',
-                'content' => 'Xe trang bị chăn gối, nước uống, wifi và cổng sạc USB.',
+                'title' => __('client.route_show.tips.tip_3_title'),
+                'content' => __('client.route_show.tips.tip_3_content'),
             ],
         ];
     }
@@ -676,16 +676,16 @@ class RouteController extends Controller
     {
         return [
             [
-                'question' => 'Giá vé đã bao gồm những gì?',
-                'answer' => 'Giá vé bao gồm nước uống, chăn gối và các tiện ích cơ bản trên xe. Chi phí phát sinh khác sẽ được thông báo riêng.',
+                'question' => __('client.route_show.faq.faq_1_question'),
+                'answer' => __('client.route_show.faq.faq_1_answer'),
             ],
             [
-                'question' => 'Có thể chọn ghế trước không?',
-                'answer' => 'Bạn có thể chọn ghế trong bước đặt vé trực tuyến. Hệ thống sẽ giữ ghế tối đa 15 phút trong lúc thanh toán.',
+                'question' => __('client.route_show.faq.faq_2_question'),
+                'answer' => __('client.route_show.faq.faq_2_answer'),
             ],
             [
-                'question' => 'Chính sách hủy hoặc đổi vé như thế nào?',
-                'answer' => 'Liên hệ tổng đài trước giờ khởi hành 12 giờ để được hỗ trợ hủy hoặc đổi vé theo quy định cụ thể từng tuyến.',
+                'question' => __('client.route_show.faq.faq_3_question'),
+                'answer' => __('client.route_show.faq.faq_3_answer'),
             ],
         ];
     }
