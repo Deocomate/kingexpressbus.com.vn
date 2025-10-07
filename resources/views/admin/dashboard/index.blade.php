@@ -1,8 +1,8 @@
-@extends('layouts.shared.main')
+<x-admin.layout title="Bảng điều khiển">
+    <x-slot:breadcrumb>
+        {{-- Breadcrumb có thể để trống hoặc chỉ có Dashboard vì đây là trang chính --}}
+    </x-slot:breadcrumb>
 
-@section('title', 'Bảng điều khiển')
-
-@section('content')
     {{-- 1. Info Boxes --}}
     <div class="row">
         <div class="col-lg-3 col-6">
@@ -137,84 +137,84 @@
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- Booking Status Chart (Doughnut) ---
-            const bookingStatusCtx = document.getElementById('bookingStatusChart').getContext('2d');
-            new Chart(bookingStatusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: {!! json_encode($bookingStatusLabels) !!},
-                    datasets: [{
-                        data: {!! json_encode($bookingStatusData) !!},
-                        backgroundColor: ['#ffc107', '#28a745', '#dc3545', '#007bff'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        }
-                    }
-                }
-            });
-
-            // --- Monthly Revenue Chart (Bar) ---
-            const monthlyRevenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
-            new Chart(monthlyRevenueCtx, {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($monthlyRevenueLabels) !!},
-                    datasets: [{
-                        label: 'Doanh thu',
-                        data: {!! json_encode($monthlyRevenueData) !!},
-                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return new Intl.NumberFormat('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND'
-                                    }).format(value);
-                                }
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // --- Booking Status Chart (Doughnut) ---
+                const bookingStatusCtx = document.getElementById('bookingStatusChart').getContext('2d');
+                new Chart(bookingStatusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: {!! json_encode($bookingStatusLabels) !!},
+                        datasets: [{
+                            data: {!! json_encode($bookingStatusData) !!},
+                            backgroundColor: ['#ffc107', '#28a745', '#dc3545', '#007bff'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
                             }
                         }
+                    }
+                });
+
+                // --- Monthly Revenue Chart (Bar) ---
+                const monthlyRevenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+                new Chart(monthlyRevenueCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {!! json_encode($monthlyRevenueLabels) !!},
+                        datasets: [{
+                            label: 'Doanh thu',
+                            data: {!! json_encode($monthlyRevenueData) !!},
+                            backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 1
+                        }]
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += new Intl.NumberFormat('vi-VN', {
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return new Intl.NumberFormat('vi-VN', {
                                             style: 'currency',
                                             currency: 'VND'
-                                        }).format(context.parsed.y);
+                                        }).format(value);
                                     }
-                                    return label;
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND'
+                                            }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                });
             });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
+</x-admin.layout>

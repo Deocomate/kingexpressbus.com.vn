@@ -1,12 +1,14 @@
-@extends('layouts.shared.main')
-
 @php
     $isEdit = isset($profile);
 @endphp
 
-@section('title', $isEdit ? 'Chỉnh sửa Cấu hình' : 'Tạo Cấu hình mới')
+<x-admin.layout :title="$isEdit ? 'Chỉnh sửa Cấu hình' : 'Tạo Cấu hình mới'">
+    <x-slot:breadcrumb>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.web_profiles.index') }}">Quản lý Cấu hình</a></li>
+        <li class="breadcrumb-item active">{{ $isEdit ? 'Chỉnh sửa' : 'Tạo mới' }}</li>
+    </x-slot:breadcrumb>
 
-@section('content')
     <form action="{{ $isEdit ? route('admin.web_profiles.update', $profile->id) : route('admin.web_profiles.store') }}"
           method="POST">
         @csrf
@@ -173,16 +175,16 @@
             </div>
         </div>
     </form>
-@endsection
 
-@push('scripts')
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            initCkEditor('#introduction_content');
-            initCkEditor('#policy_content');
+    @push('scripts')
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                initCkEditor('#introduction_content');
+                initCkEditor('#policy_content');
 
-            initSingleCKFinder('#logo_url');
-            initSingleCKFinder('#favicon_url');
-        });
-    </script>
-@endpush
+                initSingleCKFinder('#logo_url');
+                initSingleCKFinder('#favicon_url');
+            });
+        </script>
+    @endpush
+</x-admin.layout>

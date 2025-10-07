@@ -1,7 +1,9 @@
-@extends('layouts.shared.main')
-@section('title', 'Quản lý Cấu hình Website')
+<x-admin.layout title="Quản lý Cấu hình Website">
+    <x-slot:breadcrumb>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Quản lý Cấu hình Website</li>
+    </x-slot:breadcrumb>
 
-@section('content')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title">Danh sách Cấu hình</h3>
@@ -73,4 +75,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-admin.layout>

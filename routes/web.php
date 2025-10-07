@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\System\CkFinderController;
 use Illuminate\Support\Facades\Route;

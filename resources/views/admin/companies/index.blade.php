@@ -1,39 +1,36 @@
-@extends('layouts.shared.main')
-@section('title', 'Quản lý Nhà xe')
-@section('content')
+<x-admin.layout title="Quản lý Nhà xe">
+    <x-slot:breadcrumb>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Quản lý Nhà xe</li>
+    </x-slot:breadcrumb>
+
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title">Bộ lọc và Tìm kiếm</h3>
+        <div class="card-header">
+            <h3 class="card-title">Danh sách Nhà xe</h3>
+            <div class="card-tools">
+                <button class="btn btn-success btn-sm" id="btn-add-company">
+                    <i class="fas fa-plus"></i> Thêm Nhà xe mới
+                </button>
+            </div>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.companies.index') }}">
+            <form method="GET" action="{{ route('admin.companies.index') }}" class="mb-4">
                 <div class="row">
                     <div class="col-md-10">
-                        <div class="form-group">
-                            <label for="search">Tìm kiếm</label>
+                        <div class="form-group mb-0">
+                            <label for="search" class="sr-only">Tìm kiếm</label>
                             <input type="text" class="form-control" id="search" name="search"
                                    value="{{ request('search') }}"
                                    placeholder="Tên nhà xe, email, SĐT, email tài khoản...">
                         </div>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <div class="form-group w-100">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i> Lọc
-                            </button>
-                        </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Lọc
+                        </button>
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title">Danh sách Nhà xe</h3>
-            <button class="btn btn-success btn-sm" id="btn-add-company">
-                <i class="fas fa-plus"></i> Thêm Nhà xe mới
-            </button>
-        </div>
-        <div class="card-body p-0">
+
             <div class="table-responsive">
                 <table class="table table-striped projects">
                     <thead>
@@ -90,6 +87,7 @@
             {{ $companies->links("pagination::bootstrap-4") }}
         </div>
     </div>
+
     <div class="modal fade" id="companyModal" tabindex="-1" role="dialog" aria-labelledby="companyModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -103,8 +101,6 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" id="company_id" name="id">
-
-                        {{-- Company Info --}}
                         <h5>Thông tin nhà xe</h5>
                         <hr class="mt-2">
                         <div class="row">
@@ -160,8 +156,6 @@
                             <label for="input-content">Nội dung giới thiệu</label>
                             <textarea name="content" id="input-content" class="form-control" rows="5"></textarea>
                         </div>
-
-                        {{-- User Account Info --}}
                         <h5 class="mt-4">Thông tin tài khoản đăng nhập</h5>
                         <hr class="mt-2">
                         <div class="form-group">
@@ -196,196 +190,184 @@
             </div>
         </div>
     </div>
-@endsection
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            const modal = $('#companyModal');
-            const form = $('#companyForm');
-            const modalLabel = $('#companyModalLabel');
-            const btnSave = $('#btn-save');
-            let contentEditor;
-            let triggerButton = null;
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                const modal = $('#companyModal');
+                const form = $('#companyForm');
+                const modalLabel = $('#companyModalLabel');
+                const btnSave = $('#btn-save');
+                let contentEditor;
+                let triggerButton = null;
 
-            // Initialize CKFinder for the logo input
-            initSingleCKFinder('#input-thumbnail_url');
-
-            if (document.querySelector('#input-content')) {
-                initCkEditor('#input-content')
-                    .then(newEditor => {
-                        contentEditor = newEditor;
-                    })
-                    .catch(error => {
-                        console.error('Error initializing CKEditor:', error);
-                    });
-            }
-
-            modal.on('hidden.bs.modal', function () {
-                if (triggerButton) {
-                    $(triggerButton).focus();
-                    triggerButton = null;
-                }
-            });
-
-            function resetForm() {
-                form[0].reset();
-                $('#company_id').val('');
-                if (contentEditor) {
-                    contentEditor.setData('');
-                }
-                $('.ckfinder-preview-image').attr('src', '').hide();
-                form.find('.is-invalid').removeClass('is-invalid');
-                form.find('.invalid-feedback').remove();
-            }
-
-            function showValidationErrors(errors) {
-                form.find('.is-invalid').removeClass('is-invalid');
-                form.find('.invalid-feedback').remove();
-                $.each(errors, function (key, value) {
-                    const fieldName = key.includes('password_confirmation') ? 'password_confirmation' : key;
-                    const field = form.find(`[name="${fieldName}"]`);
-                    field.addClass('is-invalid');
-                    // Place the error message after the input field
-                    field.closest('.form-group').append(`<div class="invalid-feedback d-block">${value[0]}</div>`);
-                });
-            }
-
-            function showLoading(element) {
-                element.attr('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
-            }
-
-            function hideLoading(element, defaultText) {
-                element.attr('disabled', false).html(defaultText);
-            }
-
-            $('#btn-add-company').on('click', function () {
-                triggerButton = this;
-                resetForm();
-                modalLabel.text('Thêm Nhà xe mới');
-                $('#input-password').attr('required', true);
-                $('#input-password_confirmation').attr('required', true);
-                $('#password-required-star, #password-confirm-required-star').show();
-                modal.modal('show');
-            });
-
-            $('body').on('click', '.btn-edit', function () {
-                triggerButton = this;
-                const companyId = $(this).data('id');
-                $.get(`/admin/companies/${companyId}`, function (response) {
-                    if (response.success) {
-                        resetForm();
-                        const data = response.data;
-                        modalLabel.text('Cập nhật Nhà xe: ' + data.name);
-                        $('#company_id').val(data.id);
-                        $('#input-name').val(data.name);
-                        $('#input-priority').val(data.priority);
-                        $('#input-phone').val(data.phone);
-                        $('#input-email').val(data.email);
-                        $('#input-address').val(data.address);
-                        $('#input-thumbnail_url').val(data.thumbnail_url);
-
-                        // User account fields
-                        $('#input-user_email').val(data.user_email);
-                        $('#input-password').val('');
-                        $('#input-password_confirmation').val('');
-                        $('#input-password').attr('required', false);
-                        $('#input-password_confirmation').attr('required', false);
-                        $('#password-required-star, #password-confirm-required-star').hide();
-
-
-                        const previewImage = $('#input-thumbnail_url').closest('.form-group').find('.ckfinder-preview-image');
-                        if (data.thumbnail_url) {
-                            previewImage.attr('src', data.thumbnail_url).show();
-                        } else {
-                            previewImage.attr('src', '').hide();
-                        }
-
-                        if (contentEditor) {
-                            contentEditor.setData(data.content || '');
-                        }
-                        modal.modal('show');
-                    }
-                });
-            });
-
-            form.on('submit', function (e) {
-                e.preventDefault();
-                showLoading(btnSave);
-
-                const companyId = $('#company_id').val();
-                let url = companyId ? `/admin/companies/${companyId}` : `{{ route('admin.companies.store') }}`;
-                let method = 'POST';
-
-                let formData = new FormData(this);
-                if (companyId) {
-                    formData.append('_method', 'PUT');
-                }
-
-                if (contentEditor) {
-                    formData.set('content', contentEditor.getData());
-                }
-
-                $.ajax({
-                    url: url,
-                    method: method,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            modal.modal('hide');
-                            toastr.success(response.message);
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            toastr.error(response.message || 'Đã xảy ra lỗi.');
-                        }
-                    },
-                    error: function (xhr) {
-                        if (xhr.status === 422) {
-                            showValidationErrors(xhr.responseJSON.errors);
-                        } else {
-                            toastr.error('Đã xảy ra lỗi server. Vui lòng thử lại.');
-                        }
-                    },
-                    complete: function () {
-                        hideLoading(btnSave, 'Lưu thay đổi');
-                    }
-                });
-            });
-
-            $('body').on('click', '.btn-delete', function () {
-                const companyId = $(this).data('id');
-                Swal.fire({
-                    title: 'Bạn có chắc chắn?',
-                    text: "Bạn sẽ không thể hoàn tác hành động này! Tài khoản của nhà xe cũng sẽ bị xóa.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Vâng, xóa nó!',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `/admin/companies/${companyId}`,
-                            type: 'DELETE',
-                            success: function (response) {
-                                if (response.success) {
-                                    $(`#company-row-${companyId}`).fadeOut(500, function () {
-                                        $(this).remove();
-                                    });
-                                    Swal.fire('Đã xóa!', response.message, 'success');
-                                } else {
-                                    Swal.fire('Lỗi!', response.message || 'Không thể xóa.', 'error');
-                                }
-                            },
-                            error: function () {
-                                Swal.fire('Lỗi!', 'Đã xảy ra lỗi server.', 'error');
-                            }
+                initSingleCKFinder('#input-thumbnail_url');
+                if (document.querySelector('#input-content')) {
+                    initCkEditor('#input-content')
+                        .then(newEditor => {
+                            contentEditor = newEditor;
+                        })
+                        .catch(error => {
+                            console.error('Error initializing CKEditor:', error);
                         });
+                }
+
+                modal.on('hidden.bs.modal', function () {
+                    if (triggerButton) {
+                        $(triggerButton).focus();
+                        triggerButton = null;
                     }
-                })
+                });
+
+                function resetForm() {
+                    form[0].reset();
+                    $('#company_id').val('');
+                    if (contentEditor) {
+                        contentEditor.setData('');
+                    }
+                    $('.ckfinder-preview-image').attr('src', '').hide();
+                    form.find('.is-invalid').removeClass('is-invalid');
+                    form.find('.invalid-feedback').remove();
+                }
+
+                function showValidationErrors(errors) {
+                    form.find('.is-invalid').removeClass('is-invalid');
+                    form.find('.invalid-feedback').remove();
+                    $.each(errors, function (key, value) {
+                        const fieldName = key.includes('password_confirmation') ? 'password_confirmation' : key;
+                        const field = form.find(`[name="${fieldName}"]`);
+                        field.addClass('is-invalid');
+                        field.closest('.form-group').append(`<div class="invalid-feedback d-block">${value[0]}</div>`);
+                    });
+                }
+
+                function showLoading(element) {
+                    element.attr('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+                }
+
+                function hideLoading(element, defaultText) {
+                    element.attr('disabled', false).html(defaultText);
+                }
+
+                $('#btn-add-company').on('click', function () {
+                    triggerButton = this;
+                    resetForm();
+                    modalLabel.text('Thêm Nhà xe mới');
+                    $('#input-password').attr('required', true);
+                    $('#input-password_confirmation').attr('required', true);
+                    $('#password-required-star, #password-confirm-required-star').show();
+                    modal.modal('show');
+                });
+
+                $('body').on('click', '.btn-edit', function () {
+                    triggerButton = this;
+                    const companyId = $(this).data('id');
+                    $.get(`/admin/companies/${companyId}`, function (response) {
+                        if (response.success) {
+                            resetForm();
+                            const data = response.data;
+                            modalLabel.text('Cập nhật Nhà xe: ' + data.name);
+                            $('#company_id').val(data.id);
+                            $('#input-name').val(data.name);
+                            $('#input-priority').val(data.priority);
+                            $('#input-phone').val(data.phone);
+                            $('#input-email').val(data.email);
+                            $('#input-address').val(data.address);
+                            $('#input-thumbnail_url').val(data.thumbnail_url);
+                            $('#input-user_email').val(data.user_email);
+                            $('#input-password').val('');
+                            $('#input-password_confirmation').val('');
+                            $('#input-password').attr('required', false);
+                            $('#input-password_confirmation').attr('required', false);
+                            $('#password-required-star, #password-confirm-required-star').hide();
+                            const previewImage = $('#input-thumbnail_url').closest('.form-group').find('.ckfinder-preview-image');
+                            if (data.thumbnail_url) {
+                                previewImage.attr('src', data.thumbnail_url).show();
+                            } else {
+                                previewImage.attr('src', '').hide();
+                            }
+                            if (contentEditor) {
+                                contentEditor.setData(data.content || '');
+                            }
+                            modal.modal('show');
+                        }
+                    });
+                });
+
+                form.on('submit', function (e) {
+                    e.preventDefault();
+                    showLoading(btnSave);
+                    const companyId = $('#company_id').val();
+                    let url = companyId ? `/admin/companies/${companyId}` : `{{ route('admin.companies.store') }}`;
+                    let method = 'POST';
+                    let formData = new FormData(this);
+                    if (companyId) {
+                        formData.append('_method', 'PUT');
+                    }
+                    if (contentEditor) {
+                        formData.set('content', contentEditor.getData());
+                    }
+                    $.ajax({
+                        url: url,
+                        method: method,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                modal.modal('hide');
+                                toastr.success(response.message);
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                toastr.error(response.message || 'Đã xảy ra lỗi.');
+                            }
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 422) {
+                                showValidationErrors(xhr.responseJSON.errors);
+                            } else {
+                                toastr.error('Đã xảy ra lỗi server. Vui lòng thử lại.');
+                            }
+                        },
+                        complete: function () {
+                            hideLoading(btnSave, 'Lưu thay đổi');
+                        }
+                    });
+                });
+
+                $('body').on('click', '.btn-delete', function () {
+                    const companyId = $(this).data('id');
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn?',
+                        text: "Bạn sẽ không thể hoàn tác hành động này! Tài khoản của nhà xe cũng sẽ bị xóa.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Vâng, xóa nó!',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/admin/companies/${companyId}`,
+                                type: 'DELETE',
+                                success: function (response) {
+                                    if (response.success) {
+                                        $(`#company-row-${companyId}`).fadeOut(500, function () {
+                                            $(this).remove();
+                                        });
+                                        Swal.fire('Đã xóa!', response.message, 'success');
+                                    } else {
+                                        Swal.fire('Lỗi!', response.message || 'Không thể xóa.', 'error');
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire('Lỗi!', 'Đã xảy ra lỗi server.', 'error');
+                                }
+                            });
+                        }
+                    })
+                });
             });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
+</x-admin.layout>

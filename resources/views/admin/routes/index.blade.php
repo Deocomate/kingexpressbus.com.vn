@@ -1,54 +1,58 @@
-@extends('layouts.shared.main')
-@section('title', 'Quản lý Tuyến đường')
-@push('styles')
-    <style>
-        .route-list {
-            list-style: none;
-            padding: 0;
-        }
+<x-admin.layout title="Quản lý Tuyến đường">
+    <x-slot:breadcrumb>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Quản lý Tuyến đường</li>
+    </x-slot:breadcrumb>
 
-        .route-card {
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-            border-left: 3px solid #17a2b8;
-            border-radius: .3rem;
-            margin-bottom: 10px;
-            padding: 12px 15px;
-            cursor: grab;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    @push('styles')
+        <style>
+            .route-list {
+                list-style: none;
+                padding: 0;
+            }
 
-        .route-card:active {
-            cursor: grabbing;
-        }
+            .route-card {
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                border-left: 3px solid #17a2b8;
+                border-radius: .3rem;
+                margin-bottom: 10px;
+                padding: 12px 15px;
+                cursor: grab;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
 
-        .route-name {
-            font-weight: 600;
-        }
+            .route-card:active {
+                cursor: grabbing;
+            }
 
-        .route-details {
-            font-size: 0.85em;
-            color: #6c757d;
-        }
+            .route-name {
+                font-weight: 600;
+            }
 
-        .sortable-ghost {
-            background: #e9ecef;
-            border: 1px dashed #adb5bd;
-        }
+            .route-details {
+                font-size: 0.85em;
+                color: #6c757d;
+            }
 
-        .card-header-action {
-            margin-left: auto;
-        }
+            .sortable-ghost {
+                background: #e9ecef;
+                border: 1px dashed #adb5bd;
+            }
 
-        .select2-container--bootstrap4 .select2-selection--single {
-            height: calc(2.25rem + 2px) !important;
-        }
-    </style>
-@endpush
-@section('content')
+            .card-header-action {
+                margin-left: auto;
+            }
+
+            .select2-container--bootstrap4 .select2-selection--single {
+                height: calc(2.25rem + 2px) !important;
+            }
+        </style>
+    @endpush
+
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Danh sách Tuyến đường</h3>
@@ -111,7 +115,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -150,7 +153,8 @@
                                                                                         required></select></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group"><label>Tỉnh/Thành đến <span class="text-danger">*</span></label><select
+                                <div class="form-group"><label>Tỉnh/Thành đến <span
+                                            class="text-danger">*</span></label><select
                                         name="province_end_id" id="input-province_end_id" class="form-control select2"
                                         style="width: 100%;" required></select></div>
                             </div>
@@ -203,138 +207,134 @@
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            const provincesData = @json($all_provinces_for_modal);
-            let contentEditor;
-
-            // Initialize Select2
-            $('#input-province_start_id, #input-province_end_id').select2({
-                theme: 'bootstrap4', dropdownParent: $('#formModal'),
-                data: [{id: '', text: '-- Chọn Tỉnh/Thành --'}, ...provincesData.map(p => ({id: p.id, text: p.name}))]
-            });
-
-            // Initialize SortableJS
-            document.querySelectorAll('.route-list').forEach(list => {
-                new Sortable(list, {
-                    animation: 150, ghostClass: 'sortable-ghost',
-                    onEnd: function (evt) {
-                        const order = Array.from(evt.target.children).map(item => item.dataset.routeId);
-                        $.post('{{ route("admin.routes.updateOrder") }}', {order}, res => toastr.success(res.message))
-                            .fail(() => toastr.error('Lỗi server, không thể cập nhật.'));
-                    }
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                const provincesData = @json($all_provinces_for_modal);
+                let contentEditor;
+                // Initialize Select2
+                $('#input-province_start_id, #input-province_end_id').select2({
+                    theme: 'bootstrap4', dropdownParent: $('#formModal'),
+                    data: [{id: '', text: '-- Chọn Tỉnh/Thành --'}, ...provincesData.map(p => ({
+                        id: p.id,
+                        text: p.name
+                    }))]
                 });
-            });
-
-            // --- Modal & Form Logic ---
-            initSingleCKFinder('#input-thumbnail_url');
-            initCkEditor('#input-content').then(editor => contentEditor = editor).catch(e => console.error(e));
-
-            function resetForm() {
-                $('#modalForm')[0].reset();
-                $('#route_id').val('');
-                $('#input-province_start_id, #input-province_end_id').val(null).trigger('change');
-                if (contentEditor) contentEditor.setData('');
-                $('.ckfinder-preview-image').attr('src', '').hide();
-                $('#modalForm').find('.is-invalid, .is-invalid ~ .select2-container .select2-selection').removeClass('is-invalid');
-                $('#modalForm').find('.invalid-feedback').remove();
-            }
-
-            $('#btn-add').on('click', function () {
-                resetForm();
-                $('#formModalLabel').text('Thêm Tuyến đường');
-                $('#formModal').modal('show');
-            });
-
-            $('body').on('click', '.btn-edit', function () {
-                const routeId = $(this).data('id');
-                $.get(`/admin/routes/${routeId}`, function (response) {
-                    if (response.success) {
-                        resetForm();
-                        const data = response.data;
-                        $('#formModalLabel').text('Cập nhật: ' + data.name);
-                        $('#route_id').val(data.id);
-                        $('#input-name').val(data.name);
-                        $('#input-priority').val(data.priority);
-                        $('#input-province_start_id').val(data.province_start_id).trigger('change');
-                        $('#input-province_end_id').val(data.province_end_id).trigger('change');
-                        $('#input-duration').val(data.duration);
-                        $('#input-distance_km').val(data.distance_km);
-                        $('#input-title').val(data.title);
-                        $('#input-description').val(data.description);
-                        $('#input-thumbnail_url').val(data.thumbnail_url);
-                        if (data.thumbnail_url) $('.ckfinder-preview-image').attr('src', data.thumbnail_url).show();
-                        if (contentEditor) contentEditor.setData(data.content || '');
-                        $('#formModal').modal('show');
-                    }
-                });
-            });
-
-            $('#modalForm').on('submit', function (e) {
-                e.preventDefault();
-                const routeId = $('#route_id').val();
-                let url = routeId ? `/admin/routes/${routeId}` : '{{ route("admin.routes.store") }}';
-                let formData = new FormData(this);
-                if (routeId) formData.append('_method', 'PUT');
-                if (contentEditor) formData.set('content', contentEditor.getData());
-
-                $.ajax({
-                    url: url, type: 'POST', data: formData, processData: false, contentType: false,
-                    success: res => {
-                        if (res.success) {
-                            $('#formModal').modal('hide');
-                            toastr.success(res.message);
-                            setTimeout(() => location.reload(), 1500);
+                // Initialize SortableJS
+                document.querySelectorAll('.route-list').forEach(list => {
+                    new Sortable(list, {
+                        animation: 150, ghostClass: 'sortable-ghost',
+                        onEnd: function (evt) {
+                            const order = Array.from(evt.target.children).map(item => item.dataset.routeId);
+                            $.post('{{ route("admin.routes.updateOrder") }}', {order}, res => toastr.success(res.message))
+                                .fail(() => toastr.error('Lỗi server, không thể cập nhật.'));
                         }
-                    },
-                    error: function (xhr) {
-                        if (xhr.status === 422) {
-                            $('#modalForm').find('.is-invalid, .is-invalid ~ .select2-container .select2-selection').removeClass('is-invalid');
-                            $('#modalForm').find('.invalid-feedback').remove();
-                            $.each(xhr.responseJSON.errors, function (key, value) {
-                                const field = $('#modalForm').find(`[name="${key}"]`);
-                                if (field.hasClass('select2')) {
-                                    field.next('.select2-container').find('.select2-selection').addClass('is-invalid');
-                                    field.parent().append(`<div class="invalid-feedback d-block">${value[0]}</div>`);
-                                } else {
-                                    field.addClass('is-invalid').after(`<div class="invalid-feedback">${value[0]}</div>`);
-                                }
+                    });
+                });
+                // --- Modal & Form Logic ---
+                initSingleCKFinder('#input-thumbnail_url');
+                initCkEditor('#input-content').then(editor => contentEditor = editor).catch(e => console.error(e));
+
+                function resetForm() {
+                    $('#modalForm')[0].reset();
+                    $('#route_id').val('');
+                    $('#input-province_start_id, #input-province_end_id').val(null).trigger('change');
+                    if (contentEditor) contentEditor.setData('');
+                    $('.ckfinder-preview-image').attr('src', '').hide();
+                    $('#modalForm').find('.is-invalid, .is-invalid ~ .select2-container .select2-selection').removeClass('is-invalid');
+                    $('#modalForm').find('.invalid-feedback').remove();
+                }
+
+                $('#btn-add').on('click', function () {
+                    resetForm();
+                    $('#formModalLabel').text('Thêm Tuyến đường');
+                    $('#formModal').modal('show');
+                });
+                $('body').on('click', '.btn-edit', function () {
+                    const routeId = $(this).data('id');
+                    $.get(`/admin/routes/${routeId}`, function (response) {
+                        if (response.success) {
+                            resetForm();
+                            const data = response.data;
+                            $('#formModalLabel').text('Cập nhật: ' + data.name);
+                            $('#route_id').val(data.id);
+                            $('#input-name').val(data.name);
+                            $('#input-priority').val(data.priority);
+                            $('#input-province_start_id').val(data.province_start_id).trigger('change');
+                            $('#input-province_end_id').val(data.province_end_id).trigger('change');
+                            $('#input-duration').val(data.duration);
+                            $('#input-distance_km').val(data.distance_km);
+                            $('#input-title').val(data.title);
+                            $('#input-description').val(data.description);
+                            $('#input-thumbnail_url').val(data.thumbnail_url);
+                            if (data.thumbnail_url) $('.ckfinder-preview-image').attr('src', data.thumbnail_url).show();
+                            if (contentEditor) contentEditor.setData(data.content || '');
+                            $('#formModal').modal('show');
+                        }
+                    });
+                });
+                $('#modalForm').on('submit', function (e) {
+                    e.preventDefault();
+                    const routeId = $('#route_id').val();
+                    let url = routeId ? `/admin/routes/${routeId}` : '{{ route("admin.routes.store") }}';
+                    let formData = new FormData(this);
+                    if (routeId) formData.append('_method', 'PUT');
+                    if (contentEditor) formData.set('content', contentEditor.getData());
+                    $.ajax({
+                        url: url, type: 'POST', data: formData, processData: false, contentType: false,
+                        success: res => {
+                            if (res.success) {
+                                $('#formModal').modal('hide');
+                                toastr.success(res.message);
+                                setTimeout(() => location.reload(), 1500);
+                            }
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 422) {
+                                $('#modalForm').find('.is-invalid, .is-invalid ~ .select2-container .select2-selection').removeClass('is-invalid');
+                                $('#modalForm').find('.invalid-feedback').remove();
+                                $.each(xhr.responseJSON.errors, function (key, value) {
+                                    const field = $('#modalForm').find(`[name="${key}"]`);
+                                    if (field.hasClass('select2')) {
+                                        field.next('.select2-container').find('.select2-selection').addClass('is-invalid');
+                                        field.parent().append(`<div class="invalid-feedback d-block">${value[0]}</div>`);
+                                    } else {
+                                        field.addClass('is-invalid').after(`<div class="invalid-feedback">${value[0]}</div>`);
+                                    }
+                                });
+                                toastr.error(Object.values(xhr.responseJSON.errors)[0][0]);
+                            } else {
+                                toastr.error('Đã xảy ra lỗi server.');
+                            }
+                        }
+                    });
+                });
+                $('body').on('click', '.btn-delete', function () {
+                    const routeId = $(this).data('id');
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn?', text: "Hành động này không thể hoàn tác!", icon: 'warning',
+                        showCancelButton: true, confirmButtonText: 'Vâng, xóa nó!', cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/admin/routes/${routeId}`, type: 'DELETE',
+                                success: (res) => {
+                                    if (res.success) {
+                                        $(`.route-card[data-route-id="${routeId}"]`).fadeOut(500, function () {
+                                            $(this).remove();
+                                        });
+                                        Swal.fire('Đã xóa!', res.message, 'success');
+                                    } else {
+                                        Swal.fire('Lỗi!', res.message, 'error');
+                                    }
+                                },
+                                error: () => Swal.fire('Lỗi!', 'Lỗi server.', 'error')
                             });
-                            toastr.error(Object.values(xhr.responseJSON.errors)[0][0]);
-                        } else {
-                            toastr.error('Đã xảy ra lỗi server.');
                         }
-                    }
+                    })
                 });
             });
-
-            $('body').on('click', '.btn-delete', function () {
-                const routeId = $(this).data('id');
-                Swal.fire({
-                    title: 'Bạn có chắc chắn?', text: "Hành động này không thể hoàn tác!", icon: 'warning',
-                    showCancelButton: true, confirmButtonText: 'Vâng, xóa nó!', cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `/admin/routes/${routeId}`, type: 'DELETE',
-                            success: (res) => {
-                                if (res.success) {
-                                    $(`.route-card[data-route-id="${routeId}"]`).fadeOut(500, function () {
-                                        $(this).remove();
-                                    });
-                                    Swal.fire('Đã xóa!', res.message, 'success');
-                                } else {
-                                    Swal.fire('Lỗi!', res.message, 'error');
-                                }
-                            },
-                            error: () => Swal.fire('Lỗi!', 'Lỗi server.', 'error')
-                        });
-                    }
-                })
-            });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
+</x-admin.layout>

@@ -1,38 +1,35 @@
-@extends('layouts.shared.main')
-@section('title', 'Quản lý Tỉnh/Thành phố')
-@section('content')
+<x-admin.layout title="Quản lý Tỉnh/Thành phố">
+    <x-slot:breadcrumb>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Quản lý Tỉnh/Thành phố</li>
+    </x-slot:breadcrumb>
+
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title">Bộ lọc và Tìm kiếm</h3>
+            <h3 class="card-title">Danh sách Tỉnh/Thành phố</h3>
+            <div class="card-tools">
+                <button class="btn btn-success btn-sm" id="btn-add-province">
+                    <i class="fas fa-plus"></i> Thêm mới
+                </button>
+            </div>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.provinces.index') }}">
+            <form method="GET" action="{{ route('admin.provinces.index') }}" class="mb-4">
                 <div class="row">
                     <div class="col-md-10">
-                        <div class="form-group">
-                            <label for="search">Tìm kiếm</label>
+                        <div class="form-group mb-0">
+                            <label for="search" class="sr-only">Tìm kiếm</label>
                             <input type="text" class="form-control" id="search" name="search"
                                    value="{{ request('search') }}" placeholder="Tên tỉnh/thành phố...">
                         </div>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <div class="form-group w-100">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i> Lọc
-                            </button>
-                        </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Lọc
+                        </button>
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title">Danh sách Tỉnh/Thành phố</h3>
-            <button class="btn btn-success btn-sm" id="btn-add-province">
-                <i class="fas fa-plus"></i> Thêm mới
-            </button>
-        </div>
-        <div class="card-body p-0">
+
             <div class="table-responsive">
                 <table class="table table-striped projects">
                     <thead>
@@ -75,9 +72,11 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer clearfix">
-            {{ $provinces->links("pagination::bootstrap-4") }}
-        </div>
+        @if($provinces->hasPages())
+            <div class="card-footer clearfix">
+                {{ $provinces->links("pagination::bootstrap-4") }}
+            </div>
+        @endif
     </div>
 
     <div class="modal fade" id="provinceModal" tabindex="-1" role="dialog" aria-labelledby="provinceModalLabel"
@@ -97,7 +96,7 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label for="input-name">Tên Tỉnh/Thành phố <span
-                                                class="text-danger">*</span></label>
+                                            class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="name" id="input-name" required>
                                 </div>
                             </div>
@@ -146,161 +145,161 @@
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            const modal = $('#provinceModal');
-            const form = $('#provinceForm');
-            const modalLabel = $('#provinceModalLabel');
-            const btnSave = $('#btn-save');
-            let contentEditor;
-            let triggerButton = null;
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                const modal = $('#provinceModal');
+                const form = $('#provinceForm');
+                const modalLabel = $('#provinceModalLabel');
+                const btnSave = $('#btn-save');
+                let contentEditor;
+                let triggerButton = null;
 
-            initSingleCKFinder('#input-thumbnail_url');
-            initCkEditor('#input-content').then(editor => contentEditor = editor).catch(e => console.error(e));
+                initSingleCKFinder('#input-thumbnail_url');
+                initCkEditor('#input-content').then(editor => contentEditor = editor).catch(e => console.error(e));
 
-            modal.on('hidden.bs.modal', function () {
-                if (triggerButton) $(triggerButton).focus();
-                triggerButton = null;
-            });
-
-            function resetForm() {
-                form[0].reset();
-                $('#province_id').val('');
-                if (contentEditor) contentEditor.setData('');
-                $('.ckfinder-preview-image').attr('src', '').hide();
-                form.find('.is-invalid').removeClass('is-invalid');
-                form.find('.invalid-feedback').remove();
-            }
-
-            function showValidationErrors(errors) {
-                form.find('.is-invalid').removeClass('is-invalid');
-                form.find('.invalid-feedback').remove();
-                $.each(errors, function (key, value) {
-                    const field = form.find(`[name="${key}"]`);
-                    field.addClass('is-invalid').after(`<div class="invalid-feedback">${value[0]}</div>`);
+                modal.on('hidden.bs.modal', function () {
+                    if (triggerButton) $(triggerButton).focus();
+                    triggerButton = null;
                 });
-            }
 
-            function showLoading(element) {
-                element.attr('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
-            }
+                function resetForm() {
+                    form[0].reset();
+                    $('#province_id').val('');
+                    if (contentEditor) contentEditor.setData('');
+                    $('.ckfinder-preview-image').attr('src', '').hide();
+                    form.find('.is-invalid').removeClass('is-invalid');
+                    form.find('.invalid-feedback').remove();
+                }
 
-            function hideLoading(element, defaultText) {
-                element.attr('disabled', false).html(defaultText);
-            }
+                function showValidationErrors(errors) {
+                    form.find('.is-invalid').removeClass('is-invalid');
+                    form.find('.invalid-feedback').remove();
+                    $.each(errors, function (key, value) {
+                        const field = form.find(`[name="${key}"]`);
+                        field.addClass('is-invalid').after(`<div class="invalid-feedback">${value[0]}</div>`);
+                    });
+                }
 
-            $('#btn-add-province').on('click', function () {
-                triggerButton = this;
-                resetForm();
-                modalLabel.text('Thêm Tỉnh/Thành phố');
-                modal.modal('show');
-            });
+                function showLoading(element) {
+                    element.attr('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+                }
 
-            $('body').on('click', '.btn-edit', function () {
-                triggerButton = this;
-                const provinceId = $(this).data('id');
-                $.get(`/admin/provinces/${provinceId}`, function (response) {
-                    if (response.success) {
-                        resetForm();
-                        const data = response.data;
-                        modalLabel.text('Cập nhật: ' + data.name);
-                        $('#province_id').val(data.id);
-                        $('#input-name').val(data.name);
-                        $('#input-priority').val(data.priority);
-                        $('#input-title').val(data.title);
-                        $('#input-description').val(data.description);
-                        $('#input-thumbnail_url').val(data.thumbnail_url);
+                function hideLoading(element, defaultText) {
+                    element.attr('disabled', false).html(defaultText);
+                }
 
-                        const previewImage = $('.ckfinder-preview-image');
-                        if (data.thumbnail_url) {
-                            previewImage.attr('src', data.thumbnail_url).show();
-                        } else {
-                            previewImage.hide();
-                        }
-
-                        if (contentEditor) {
-                            contentEditor.setData(data.content || '');
-                        }
-                        modal.modal('show');
-                    }
+                $('#btn-add-province').on('click', function () {
+                    triggerButton = this;
+                    resetForm();
+                    modalLabel.text('Thêm Tỉnh/Thành phố');
+                    modal.modal('show');
                 });
-            });
 
-            form.on('submit', function (e) {
-                e.preventDefault();
-                showLoading(btnSave);
-                const provinceId = $('#province_id').val();
-                const url = provinceId ? `/admin/provinces/${provinceId}` : '/shared/provinces';
-                const method = 'POST';
-
-                let formData = new FormData(this);
-                if (provinceId) formData.append('_method', 'PUT');
-                if (contentEditor) formData.set('content', contentEditor.getData());
-
-                $.ajax({
-                    url: url,
-                    method: method,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
+                $('body').on('click', '.btn-edit', function () {
+                    triggerButton = this;
+                    const provinceId = $(this).data('id');
+                    $.get(`/admin/provinces/${provinceId}`, function (response) {
                         if (response.success) {
-                            modal.modal('hide');
-                            toastr.success(response.message);
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            toastr.error(response.message || 'Đã xảy ra lỗi.');
+                            resetForm();
+                            const data = response.data;
+                            modalLabel.text('Cập nhật: ' + data.name);
+                            $('#province_id').val(data.id);
+                            $('#input-name').val(data.name);
+                            $('#input-priority').val(data.priority);
+                            $('#input-title').val(data.title);
+                            $('#input-description').val(data.description);
+                            $('#input-thumbnail_url').val(data.thumbnail_url);
+
+                            const previewImage = $('.ckfinder-preview-image');
+                            if (data.thumbnail_url) {
+                                previewImage.attr('src', data.thumbnail_url).show();
+                            } else {
+                                previewImage.hide();
+                            }
+
+                            if (contentEditor) {
+                                contentEditor.setData(data.content || '');
+                            }
+                            modal.modal('show');
                         }
-                    },
-                    error: function (xhr) {
-                        if (xhr.status === 422) {
-                            showValidationErrors(xhr.responseJSON.errors);
-                        } else {
-                            toastr.error('Đã xảy ra lỗi server. Vui lòng thử lại.');
+                    });
+                });
+
+                form.on('submit', function (e) {
+                    e.preventDefault();
+                    showLoading(btnSave);
+                    const provinceId = $('#province_id').val();
+                    const url = provinceId ? `/admin/provinces/${provinceId}` : '{{ route("admin.provinces.store") }}';
+                    const method = 'POST';
+
+                    let formData = new FormData(this);
+                    if (provinceId) formData.append('_method', 'PUT');
+                    if (contentEditor) formData.set('content', contentEditor.getData());
+
+                    $.ajax({
+                        url: url,
+                        method: method,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                modal.modal('hide');
+                                toastr.success(response.message);
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                toastr.error(response.message || 'Đã xảy ra lỗi.');
+                            }
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 422) {
+                                showValidationErrors(xhr.responseJSON.errors);
+                            } else {
+                                toastr.error('Đã xảy ra lỗi server. Vui lòng thử lại.');
+                            }
+                        },
+                        complete: function () {
+                            hideLoading(btnSave, 'Lưu lại');
                         }
-                    },
-                    complete: function () {
-                        hideLoading(btnSave, 'Lưu lại');
-                    }
+                    });
+                });
+
+                $('body').on('click', '.btn-delete', function () {
+                    const provinceId = $(this).data('id');
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn?',
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Vâng, xóa nó!',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/admin/provinces/${provinceId}`,
+                                type: 'DELETE',
+                                success: function (response) {
+                                    if (response.success) {
+                                        $(`#province-row-${provinceId}`).fadeOut(500, function () {
+                                            $(this).remove();
+                                        });
+                                        Swal.fire('Đã xóa!', response.message, 'success');
+                                    } else {
+                                        Swal.fire('Lỗi!', response.message || 'Không thể xóa.', 'error');
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire('Lỗi!', 'Đã xảy ra lỗi server.', 'error');
+                                }
+                            });
+                        }
+                    })
                 });
             });
-
-            $('body').on('click', '.btn-delete', function () {
-                const provinceId = $(this).data('id');
-                Swal.fire({
-                    title: 'Bạn có chắc chắn?',
-                    text: "Hành động này không thể hoàn tác!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Vâng, xóa nó!',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `/admin/provinces/${provinceId}`,
-                            type: 'DELETE',
-                            success: function (response) {
-                                if (response.success) {
-                                    $(`#province-row-${provinceId}`).fadeOut(500, function () {
-                                        $(this).remove();
-                                    });
-                                    Swal.fire('Đã xóa!', response.message, 'success');
-                                } else {
-                                    Swal.fire('Lỗi!', response.message || 'Không thể xóa.', 'error');
-                                }
-                            },
-                            error: function () {
-                                Swal.fire('Lỗi!', 'Đã xảy ra lỗi server.', 'error');
-                            }
-                        });
-                    }
-                })
-            });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
+</x-admin.layout>
