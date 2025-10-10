@@ -152,70 +152,74 @@
             .trip-card {
                 display: flex;
                 flex-direction: column;
-                gap: 20px;
+                gap: 16px;
                 background-color: #ffffff;
                 border: 1px solid #e2e8f0;
-                border-radius: 22px;
-                padding: 22px;
-                transition: box-shadow 0.25s ease;
+                border-radius: 20px;
+                padding: 18px;
+                transition: all 0.25s ease;
             }
 
             .trip-card:hover {
-                box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+                box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+                border-color: #3b82f6;
             }
 
             .trip-card-media {
                 position: relative;
                 overflow: hidden;
-                border-radius: 18px;
+                border-radius: 14px;
                 border: 1px solid #e2e8f0;
-                flex: 1 1 auto;
+                flex-shrink: 0;
+                height: 180px;
+                width: 100%;
             }
 
             .trip-card-media img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                display: block;
             }
 
-            .trip-gallery-list {
-                display: flex;
-                gap: 8px;
-                overflow-x: auto;
-                padding-bottom: 4px;
+            .scrollbar-thin {
+                scrollbar-width: thin;
             }
 
-            .trip-gallery-list button {
-                display: inline-flex;
-                border-radius: 10px;
+            .scrollbar-thin::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .scrollbar-thin::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 4px;
+            }
+
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+
+            .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+
+            .line-clamp-1 {
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
                 overflow: hidden;
-                border: 1px solid transparent;
-                width: 50px;
-                height: 50px;
-                flex-shrink: 0;
-                transition: border-color 0.2s ease, transform 0.2s ease;
-            }
-
-            .trip-gallery-list button img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .trip-gallery-list button:focus,
-            .trip-gallery-list button:hover {
-                border-color: #60a5fa;
-                transform: translateY(-2px);
             }
 
             .availability-badge {
                 display: inline-flex;
                 align-items: center;
-                gap: 6px;
-                padding: 6px 12px;
+                gap: 4px;
+                padding: 4px 10px;
                 border-radius: 9999px;
-                font-size: 12px;
+                font-size: 11px;
                 font-weight: 600;
+                white-space: nowrap;
             }
 
             .availability-badge--available {
@@ -287,25 +291,32 @@
             @media (min-width: 1024px) {
                 .trip-card {
                     flex-direction: row;
+                    gap: 18px;
+                    padding: 20px;
                 }
 
                 .trip-card-media {
-                    width: 25%;
+                    width: 220px;
+                    min-width: 220px;
+                    max-width: 220px;
+                    height: 165px;
                 }
 
                 .trip-card-body {
-                    width: 75%;
+                    flex: 1;
+                    min-width: 0;
                 }
             }
 
             @media (max-width: 640px) {
                 .trip-card {
-                    padding: 18px;
-                    gap: 16px;
+                    padding: 16px;
+                    gap: 14px;
                 }
 
                 .trip-card-media {
-                    height: 190px;
+                    height: 160px;
+                    width: 100%;
                 }
             }
         </style>
@@ -572,38 +583,35 @@
                                 $hasSeats = ($trip->seats_available ?? 0) > 0;
                             @endphp
                             <article class="trip-card">
+                                {{-- Left: Bus Image --}}
                                 <div class="trip-card-media">
                                     <img id="trip-image-{{ $trip->bus_route_id }}" src="{{ $primaryImage }}"
                                          alt="{{ $trip->company_name }}" loading="lazy">
-                                    <span
-                                        class="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 bg-white/90 text-gray-800 text-xs font-semibold rounded-full shadow-sm">
-                                        <i class="fa-solid fa-bus"></i>
+                                    <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 text-gray-800 text-xs font-semibold rounded-full shadow-sm backdrop-blur">
+                                        <i class="fa-solid fa-bus text-xs"></i>
                                         {{ $trip->bus_category }}
                                     </span>
                                 </div>
-                                <div class="trip-card-body flex-1 space-y-5">
-                                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                                        <div class="flex items-start gap-4">
-                                            <img
-                                                src="{{ $trip->company_thumbnail ?: '/userfiles/files/web information/logo.jpg' }}"
-                                                alt="{{ $trip->company_name }}"
-                                                class="h-12 w-12 rounded-full object-cover border border-gray-200">
-                                            <div>
-                                                <h3 class="text-lg font-bold text-gray-900">{{ $trip->company_name }}
-                                                </h3>
-                                                <p class="text-sm text-gray-500">{{ $trip->bus_name }}</p>
-                                                <p class="text-xs text-gray-400 mt-1">{{ __('client.route_show.trip_card.trip_code') }}
-                                                    :
-                                                    {{ $trip->bus_route_id }}</p>
+
+                                {{-- Right: Trip Information --}}
+                                <div class="trip-card-body flex-1 flex flex-col">
+                                    {{-- Header: Company Info + Price --}}
+                                    <div class="flex items-start justify-between gap-4 mb-3">
+                                        <div class="flex items-start gap-3 flex-1 min-w-0">
+                                            <img src="{{ $trip->company_thumbnail ?: '/userfiles/files/web information/logo.jpg' }}"
+                                                 alt="{{ $trip->company_name }}"
+                                                 class="h-11 w-11 rounded-full object-cover border border-gray-200 flex-shrink-0">
+                                            <div class="min-w-0 flex-1">
+                                                <h3 class="text-base font-bold text-gray-900 truncate">{{ $trip->company_name }}</h3>
+                                                <p class="text-sm text-gray-600">{{ $trip->bus_name }}</p>
+                                                <p class="text-xs text-gray-400">Mã: {{ $trip->bus_route_id }}</p>
                                             </div>
                                         </div>
                                         <div class="text-right flex-shrink-0">
                                             @if ($trip->has_price)
-                                                <p class="text-xl font-bold price-text">
-                                                    {{ number_format($trip->price_value) }}đ</p>
-                                                <span
-                                                    class="availability-badge {{ $trip->seats_available > 0 ? 'availability-badge--available' : 'availability-badge--unavailable' }}">
-                                                    <i class="fa-solid fa-circle text-xs"></i>
+                                                <p class="text-xl font-bold price-text leading-tight">{{ number_format($trip->price_value) }}đ</p>
+                                                <span class="availability-badge {{ $trip->seats_available > 0 ? 'availability-badge--available' : 'availability-badge--unavailable' }} mt-1.5">
+                                                    <i class="fa-solid fa-circle text-[6px]"></i>
                                                     <span>{{ $trip->seats_available > 0 ? __('client.route_show.trip_card.seats_available') : __('client.route_show.trip_card.seats_full') }}</span>
                                                 </span>
                                             @else
@@ -612,100 +620,105 @@
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                                    {{-- Time & Duration --}}
+                                    <div class="grid grid-cols-3 gap-3 py-3 border-y border-gray-100">
                                         <div>
-                                            <p class="text-2xl font-bold text-gray-900">
-                                                {{ $tripStart->format('H:i') }}</p>
-                                            <p class="text-sm text-gray-500"
-                                               title="{{ $firstPickup->name ?? __('client.route_show.trip_card.pickup_point') }}">
-                                                {{ $firstPickup->name ?? __('client.route_show.trip_card.pickup_point') }}</p>
+                                            <p class="text-2xl font-bold text-gray-900 leading-tight">{{ $tripStart->format('H:i') }}</p>
+                                            <p class="text-xs text-gray-500 mt-0.5 line-clamp-1" title="{{ $firstPickup->name ?? __('client.route_show.trip_card.pickup_point') }}">
+                                                {{ $firstPickup->name ?? __('client.route_show.trip_card.pickup_point') }}
+                                            </p>
                                         </div>
-                                        <div class="text-center space-y-1">
-                                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('client.route_show.trip_card.duration_label') }}</p>
-                                            <p class="text-sm text-gray-700 font-semibold">{{ $durationLabel }}</p>
-                                            <div class="relative h-px bg-gray-300">
-                                                <i
-                                                    class="fa-solid fa-bus-simple absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-gray-400"></i>
+                                        <div class="text-center">
+                                            <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">{{ __('client.route_show.trip_card.duration_label') }}</p>
+                                            <p class="text-xs text-gray-700 font-semibold mt-0.5">{{ $durationLabel }}</p>
+                                            <div class="relative h-px bg-gray-300 mt-1.5">
+                                                <i class="fa-solid fa-bus-simple absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-1.5 text-gray-400 text-xs"></i>
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <p class="text-2xl font-bold text-gray-900">{{ $tripEnd->format('H:i') }}
+                                            <p class="text-2xl font-bold text-gray-900 leading-tight">{{ $tripEnd->format('H:i') }}</p>
+                                            <p class="text-xs text-gray-500 mt-0.5 line-clamp-1" title="{{ $firstDropoff->name ?? __('client.route_show.trip_card.dropoff_point') }}">
+                                                {{ $firstDropoff->name ?? __('client.route_show.trip_card.dropoff_point') }}
                                             </p>
-                                            <p class="text-sm text-gray-500"
-                                               title="{{ $firstDropoff->name ?? __('client.route_show.trip_card.dropoff_point') }}">
-                                                {{ $firstDropoff->name ?? __('client.route_show.trip_card.dropoff_point') }}</p>
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                                        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2">
-                                            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">{{ __('client.route_show.trip_card.featured_pickup') }}</h4>
+                                    {{-- Pickup & Dropoff Points (Compact) --}}
+                                    <div class="grid grid-cols-2 gap-3 my-3">
+                                        <div class="bg-blue-50/50 rounded-lg p-2.5 border border-blue-100/50">
+                                            <h4 class="text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-location-dot text-blue-600 text-xs"></i>
+                                                Điểm đón
+                                            </h4>
                                             @forelse ($pickupPoints->take(2) as $pickup)
-                                                <p class="flex items-start gap-2">
-                                                    <i class="fa-solid fa-location-dot mt-1 text-blue-500"></i>
-                                                    <span>{{ $pickup->name }}</span>
-                                                </p>
+                                                <p class="text-xs text-gray-600 truncate">• {{ $pickup->name }}</p>
                                             @empty
-                                                <p class="text-xs text-gray-400">{{ __('client.route_show.trip_card.not_updated') }}</p>
+                                                <p class="text-xs text-gray-400">Chưa cập nhật</p>
                                             @endforelse
                                             @if ($pickupPoints->count() > 2)
-                                                <p class="text-xs text-blue-600">+{{ $pickupPoints->count() - 2 }}
-                                                    {{ __('client.route_show.trip_card.more_pickup_points') }}</p>
+                                                <p class="text-xs text-blue-600 font-medium mt-0.5">+{{ $pickupPoints->count() - 2 }} điểm khác</p>
                                             @endif
                                         </div>
-                                        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2">
-                                            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">{{ __('client.route_show.trip_card.featured_dropoff') }}</h4>
+                                        <div class="bg-emerald-50/50 rounded-lg p-2.5 border border-emerald-100/50">
+                                            <h4 class="text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-flag-checkered text-emerald-600 text-xs"></i>
+                                                Điểm trả
+                                            </h4>
                                             @forelse ($dropoffPoints->take(2) as $dropoff)
-                                                <p class="flex items-start gap-2">
-                                                    <i class="fa-solid fa-flag-checkered mt-1 text-emerald-500"></i>
-                                                    <span>{{ $dropoff->name }}</span>
-                                                </p>
+                                                <p class="text-xs text-gray-600 truncate">• {{ $dropoff->name }}</p>
                                             @empty
-                                                <p class="text-xs text-gray-400">{{ __('client.route_show.trip_card.not_updated') }}</p>
+                                                <p class="text-xs text-gray-400">Chưa cập nhật</p>
                                             @endforelse
                                             @if ($dropoffPoints->count() > 2)
-                                                <p class="text-xs text-blue-600">+{{ $dropoffPoints->count() - 2 }}
-                                                    {{ __('client.route_show.trip_card.more_dropoff_points') }}</p>
+                                                <p class="text-xs text-emerald-600 font-medium mt-0.5">+{{ $dropoffPoints->count() - 2 }} điểm khác</p>
                                             @endif
                                         </div>
                                     </div>
 
-                                    @if ($imageGallery->count() > 1)
-                                        <div class="trip-gallery-list">
-                                            @foreach ($imageGallery->take(6) as $image)
-                                                <button type="button" data-image-trigger
-                                                        data-target="#trip-image-{{ $trip->bus_route_id }}"
-                                                        data-image="{{ $image }}">
-                                                    <img src="{{ $image }}"
-                                                         alt="{{__('client.route_show.trip_card.bus_image_alt')}}"
-                                                         loading="lazy">
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    @endif
-
-                                    <div class="flex flex-wrap gap-2">
-                                        @forelse ($serviceList->take(6) as $service)
-                                            <span
-                                                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold">
-                                                <i class="fa-solid fa-circle-check"></i>
+                                    {{-- Services (Compact) --}}
+                                    <div class="flex flex-wrap gap-1.5 mb-3">
+                                        @forelse ($serviceList->take(4) as $service)
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-medium">
+                                                <i class="fa-solid fa-circle-check text-[9px]"></i>
                                                 {{ $service }}
                                             </span>
                                         @empty
-                                            <span
-                                                class="text-sm text-gray-500">{{ __('client.route_show.trip_card.no_services_updated') }}</span>
+                                            <span class="text-xs text-gray-400">Chưa có tiện ích</span>
                                         @endforelse
+                                        @if ($serviceList->count() > 4)
+                                            <span class="text-[11px] text-blue-600 font-medium">+{{ $serviceList->count() - 4 }}</span>
+                                        @endif
                                     </div>
 
-                                    <div class="flex flex-col sm:flex-row gap-3">
+                                    {{-- Gallery Thumbnails (if multiple images) --}}
+                                    @if ($imageGallery->count() > 1)
+                                        <div class="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-thin">
+                                            @foreach ($imageGallery->take(5) as $image)
+                                                <button type="button" data-image-trigger
+                                                        data-target="#trip-image-{{ $trip->bus_route_id }}"
+                                                        data-image="{{ $image }}"
+                                                        class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-200 hover:border-blue-400 transition">
+                                                    <img src="{{ $image }}" alt="Bus image" loading="lazy" class="w-full h-full object-cover">
+                                                </button>
+                                            @endforeach
+                                            @if ($imageGallery->count() > 5)
+                                                <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-xs font-semibold text-gray-600">
+                                                    +{{ $imageGallery->count() - 5 }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    {{-- Action Buttons --}}
+                                    <div class="flex gap-2.5 mt-auto pt-2">
                                         <a href="{{ route('client.booking.create', ['bus_route_id' => $trip->bus_route_id, 'date' => $departureDate]) }}"
-                                           class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-yellow-400 text-gray-900 rounded-xl font-semibold hover:bg-yellow-500 transition shadow-sm">
-                                            <i class="fa-solid fa-ticket"></i>{{ __('client.route_show.trip_card.select_trip_button') }}
+                                           class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-yellow-400 text-gray-900 rounded-xl font-semibold hover:bg-yellow-500 transition text-sm shadow-sm">
+                                            <i class="fa-solid fa-ticket text-sm"></i>Chọn chuyến
                                         </a>
                                         <button type="button"
-                                                class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition view-trip-details-btn"
+                                                class="inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition text-sm view-trip-details-btn"
                                                 data-trip='{{ json_encode($trip) }}'>
-                                            <i class="fa-solid fa-circle-info"></i>{{ __('client.route_show.trip_card.details_button') }}
+                                            <i class="fa-solid fa-circle-info text-sm"></i>Xem chi tiết
                                         </button>
                                     </div>
                                 </div>

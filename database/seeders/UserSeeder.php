@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
         DB::table('users')->insert([
             [
                 'id' => 1,
@@ -23,12 +24,12 @@ class UserSeeder extends Seeder
                 'email' => 'admin@kingexpressbus.com',
                 'phone' => '0865095066',
                 'address' => '19 Hàng Thiếc - Hoàn Kiếm - Hà Nội',
-                'email_verified_at' => now(),
-                'password' => Hash::make('admin'),
+                'email_verified_at' => '2025-10-03 06:27:39',
+                'password' => Hash::make('admin'), // Mật khẩu mặc định là 'admin'
                 'role' => 'admin',
                 'remember_token' => Str::random(60),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2025-10-03 06:27:39',
+                'updated_at' => '2025-10-03 06:27:39',
             ],
             [
                 'id' => 2,
@@ -36,12 +37,12 @@ class UserSeeder extends Seeder
                 'email' => 'nguyenvanan@gmail.com',
                 'phone' => '0123456789',
                 'address' => '123 Đường Cầu Giấy, Hà Nội',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
+                'email_verified_at' => '2025-10-03 06:27:39',
+                'password' => Hash::make('password'), // Mật khẩu mặc định là 'password'
                 'role' => 'customer',
                 'remember_token' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2025-10-03 06:27:40',
+                'updated_at' => '2025-10-03 06:27:40',
             ],
             [
                 'id' => 3,
@@ -49,12 +50,12 @@ class UserSeeder extends Seeder
                 'email' => 'tranthibinh@gmail.com',
                 'phone' => '0987123456',
                 'address' => '456 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
+                'email_verified_at' => '2025-10-03 06:27:40',
+                'password' => Hash::make('password'), // Mật khẩu mặc định là 'password'
                 'role' => 'customer',
                 'remember_token' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2025-10-03 06:27:40',
+                'updated_at' => '2025-10-03 06:27:40',
             ],
             [
                 'id' => 4,
@@ -62,12 +63,12 @@ class UserSeeder extends Seeder
                 'email' => 'lehoangcuong@gmail.com',
                 'phone' => '0369852147',
                 'address' => '789 Đường Nguyễn Văn Linh, Đà Nẵng',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
+                'email_verified_at' => '2025-10-03 06:27:40',
+                'password' => Hash::make('password'), // Mật khẩu mặc định là 'password'
                 'role' => 'customer',
                 'remember_token' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2025-10-03 06:27:40',
+                'updated_at' => '2025-10-03 06:27:40',
             ],
             [
                 'id' => 5,
@@ -79,21 +80,21 @@ class UserSeeder extends Seeder
                 'password' => null,
                 'role' => 'guest',
                 'remember_token' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2025-10-03 06:27:40',
+                'updated_at' => '2025-10-03 06:27:40',
             ],
             [
                 'id' => 6,
-                'name' => 'Nhà xe KingExpress',
+                'name' => 'King Express Bus',
                 'email' => 'company@kingexpressbus.com',
-                'phone' => '0865095066',
+                'phone' => '0924300366',
                 'address' => '19 Hàng Thiếc - Hoàn Kiếm - Hà Nội',
-                'email_verified_at' => now(),
-                'password' => Hash::make('admin'),
+                'email_verified_at' => '2025-10-03 06:27:40',
+                'password' => Hash::make('admin'), // Mật khẩu mặc định là 'admin'
                 'role' => 'company',
                 'remember_token' => Str::random(60),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2025-10-03 06:27:41',
+                'updated_at' => '2025-10-10 03:19:01',
             ],
         ]);
     }
