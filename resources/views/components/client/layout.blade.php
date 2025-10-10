@@ -34,11 +34,11 @@
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:url" content="{{ $currentUrl }}">
-    <meta property="og:image" content="{{ $shareImage }}">
+    <meta property="og:image" content="{{ url($shareImage) }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $pageDescription }}">
-    <meta name="twitter:image" content="{{ $shareImage }}">
+    <meta name="twitter:image" content="{{ url($shareImage) }}">
 
     {{-- Apple Touch Icon for iOS devices --}}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ data_get($webProfile, 'logo_url', '/favicon.ico') }}">
@@ -52,41 +52,49 @@
 
     {{-- Structured Data (JSON-LD) for SEO --}}
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "{{ data_get($webProfile, 'name', config('app.name')) }}",
-        "url": "{{ config('app.url') }}",
-        "logo": "{{ data_get($webProfile, 'logo_url') }}",
-        "description": "{{ $pageDescription }}",
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "{{ data_get($webProfile, 'hotline') }}",
-            "contactType": "customer service",
-            "areaServed": "VN",
-            "availableLanguage": ["vi", "en"]
-        },
-        "sameAs": [
-            @if(data_get($webProfile, 'facebook_url'))
-            "{{ data_get($webProfile, 'facebook_url') }}",
-            @endif
-            @if(data_get($webProfile, 'youtube_url'))
-            "{{ data_get($webProfile, 'youtube_url') }}",
-            @endif
-            @if(data_get($webProfile, 'instagram_url'))
-            "{{ data_get($webProfile, 'instagram_url') }}"
-            @endif
-        ]
-    }
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "{{ data_get($webProfile, 'name', config('app.name')) }}",
+    "url": "{{ config('app.url') }}",
+    "logo": "{{ url(data_get($webProfile, 'logo_url', '/favicon.ico')) }}",
+    "description": "{{ str_replace('"', "'", $pageDescription) }}",
+    "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "{{ data_get($webProfile, 'hotline') }}",
+        "contactType": "customer service",
+        "areaServed": "VN",
+        "availableLanguage": ["vi", "en"]
+    }@if(data_get($webProfile, 'facebook_url') || data_get($webProfile, 'youtube_url') || data_get($webProfile, 'instagram_url'))
+            ,
+                "sameAs": [@php $socialLinks = array_filter([data_get($webProfile, 'facebook_url'), data_get($webProfile, 'youtube_url'), data_get($webProfile, 'instagram_url')]); @endphp
+            @foreach($socialLinks as $index => $link)
+                "{{ $link }}"@if($index < count($socialLinks) - 1)
+                    ,
+                @endif
+            @endforeach
+            ]
+        @endif
+
+        }
     </script>
 
+    {{-- Preload critical resources --}}
+    <link rel="preload" as="style"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" media="print"
+          onload="this.media='all'"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"
+          media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" media="print"
+          onload="this.media='all'">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -161,14 +169,15 @@
     <div class="social-float">
         @if (data_get($webProfile, 'facebook_url'))
             <a href="https://m.me/{{ basename(parse_url(data_get($webProfile, 'facebook_url'), PHP_URL_PATH) ?? '') }}"
-               target="_blank" class="social-icon messenger" aria-label="Messenger">
+               target="_blank" rel="noopener noreferrer" class="social-icon messenger" aria-label="Messenger">
                 <i class="fab fa-facebook-messenger"></i>
             </a>
         @endif
         @if (data_get($webProfile, 'zalo_url'))
-            <a href="{{ data_get($webProfile, 'zalo_url') }}" target="_blank" class="social-icon zalo"
+            <a href="{{ data_get($webProfile, 'zalo_url') }}" target="_blank" rel="noopener noreferrer"
+               class="social-icon zalo"
                aria-label="Zalo">
-                <span class="font-bold">Za</span>
+                <img src="{{asset('/client/icons/zalo.png')}}" alt="">
             </a>
         @endif
         @if (data_get($webProfile, 'hotline'))
@@ -179,16 +188,16 @@
         @endif
         @if (data_get($webProfile, 'whatsapp'))
             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', data_get($webProfile, 'whatsapp')) }}"
-               target="_blank" class="social-icon bg-green-500" aria-label="WhatsApp">
+               target="_blank" rel="noopener noreferrer" class="social-icon bg-green-500" aria-label="WhatsApp">
                 <i class="fab fa-whatsapp"></i>
             </a>
         @endif
     </div>
 @endif
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
-<script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" defer></script>
+<script defer>
     document.addEventListener('DOMContentLoaded', function () {
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
