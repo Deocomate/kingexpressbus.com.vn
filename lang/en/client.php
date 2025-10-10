@@ -484,4 +484,9 @@ return [
             'button' => 'Find Your Trip Now',
         ],
     ],
+    'share' => [
+        'label' => 'Share',
+        'copied' => 'Link copied!',
+        'copy_failed' => 'Failed to copy link',
+    ],
 ];

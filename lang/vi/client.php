@@ -484,4 +484,9 @@ return [
             'button' => 'Tìm Chuyến Xe Ngay',
         ],
     ],
+    'share' => [
+        'label' => 'Chia sẻ',
+        'copied' => 'Đã sao chép liên kết!',
+        'copy_failed' => 'Không thể sao chép liên kết',
+    ],
 ];

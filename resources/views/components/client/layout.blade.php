@@ -39,7 +39,47 @@
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $pageDescription }}">
     <meta name="twitter:image" content="{{ $shareImage }}">
+
+    {{-- Apple Touch Icon for iOS devices --}}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ data_get($webProfile, 'logo_url', '/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconUrl }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconUrl }}">
     <link rel="icon" href="{{ $faviconUrl }}">
+
+    {{-- Theme color for mobile browsers --}}
+    <meta name="theme-color" content="#1e40af">
+    <meta name="msapplication-TileColor" content="#1e40af">
+
+    {{-- Structured Data (JSON-LD) for SEO --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "{{ data_get($webProfile, 'name', config('app.name')) }}",
+        "url": "{{ config('app.url') }}",
+        "logo": "{{ data_get($webProfile, 'logo_url') }}",
+        "description": "{{ $pageDescription }}",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "{{ data_get($webProfile, 'hotline') }}",
+            "contactType": "customer service",
+            "areaServed": "VN",
+            "availableLanguage": ["vi", "en"]
+        },
+        "sameAs": [
+            @if(data_get($webProfile, 'facebook_url'))
+            "{{ data_get($webProfile, 'facebook_url') }}",
+            @endif
+            @if(data_get($webProfile, 'youtube_url'))
+            "{{ data_get($webProfile, 'youtube_url') }}",
+            @endif
+            @if(data_get($webProfile, 'instagram_url'))
+            "{{ data_get($webProfile, 'instagram_url') }}"
+            @endif
+        ]
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">

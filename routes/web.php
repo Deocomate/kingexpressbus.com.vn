@@ -77,7 +77,11 @@ Route::name('client.')->group(function () {
     Route::get('/dat-ve/thanh-cong', [ClientBookingController::class, 'success'])->name('booking.success');
 
     Route::get('/lien-he', [ContactController::class, 'index'])->name('contact');
-    Route::get('/trang/{slug}', [PageController::class, 'show'])->name('page.show');
+    Route::get('/lien-he', [ContactController::class, 'index'])->name('contact.index');
+    Route::get('/trang/{slug}', [PageController::class, 'show'])->name('pages.show');
+
+    // SEO: Sitemap
+    Route::get('/sitemap.xml', [\App\Http\Controllers\Client\SitemapController::class, 'index'])->name('sitemap');
 
     Route::get('/dang-nhap', [ClientAuthController::class, 'showLoginForm'])->name('login');
     Route::post('/dang-nhap', [ClientAuthController::class, 'login'])->name('login.submit');

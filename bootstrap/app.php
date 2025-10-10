@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             except: ['ckfinder/*']
         );
         $middleware->appendToGroup('web', \App\Http\Middleware\SetLocale::class);
+        $middleware->appendToGroup('web', \App\Http\Middleware\ForceHttpsAndWww::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
