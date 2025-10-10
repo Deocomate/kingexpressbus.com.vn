@@ -25,6 +25,7 @@ class DatabaseTableSeeder extends Seeder
         $this->seedUsers();
         $this->seedWebProfiles();
         $this->seedDistrictTypes();
+        $this->seedBusServices();
         $this->seedProvinces();
         $this->seedDistricts();
         $this->seedStops();
@@ -47,24 +48,21 @@ class DatabaseTableSeeder extends Seeder
     private function truncateTables(): void
     {
         $tables = [
-            // Bảng con trước
             'bookings',
-            'company_route_stops',
             'bus_routes',
-            'buses',
+            'company_route_stops',
             'company_routes',
+            'buses',
             'companies',
+            'routes',
             'stops',
             'districts',
-            'routes',
-            'menus',
-            // Bảng cha sau
-            'users',
-            'provinces',
-            'district_types',
-            // Các bảng khác
-            'web_profiles',
             'bus_services',
+            'district_types',
+            'provinces',
+            'menus',
+            'web_profiles',
+            'users',
             'cache',
             'cache_locks',
             'failed_jobs',
@@ -75,6 +73,7 @@ class DatabaseTableSeeder extends Seeder
             'personal_access_tokens',
             'sessions',
         ];
+
         foreach ($tables as $table) {
             DB::table($table)->truncate();
         }
@@ -89,12 +88,12 @@ class DatabaseTableSeeder extends Seeder
                 'email' => 'admin@kingexpressbus.com',
                 'phone' => '0865095066',
                 'address' => '19 Hàng Thiếc - Hoàn Kiếm - Hà Nội',
-                'email_verified_at' => '2025-10-03 06:27:39',
-                'password' => '$2y$12$MwPM20HI4V1o5viry.II7ewdXUhwkFBwIcHKOVLpuAHKBwlsQeRty', // admin
+                'email_verified_at' => now(),
+                'password' => Hash::make('admin'),
                 'role' => 'admin',
-                'remember_token' => 'BUy9mtpx1cCed9SX5JHQFNlBKr6jNsVK19cOgUWWGuMbBYtRRXLaR3uTo8tS',
-                'created_at' => '2025-10-03 06:27:39',
-                'updated_at' => '2025-10-03 06:27:39',
+                'remember_token' => Str::random(60),
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'id' => 2,
@@ -102,12 +101,12 @@ class DatabaseTableSeeder extends Seeder
                 'email' => 'nguyenvanan@gmail.com',
                 'phone' => '0123456789',
                 'address' => '123 Đường Cầu Giấy, Hà Nội',
-                'email_verified_at' => '2025-10-03 06:27:39',
-                'password' => '$2y$12$nJfIwnzcs4EFTRyBaC/8WONBMLaYtYm2FbJKR2rYIB7YDYocksQk2', // password
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
                 'role' => 'customer',
                 'remember_token' => null,
-                'created_at' => '2025-10-03 06:27:40',
-                'updated_at' => '2025-10-03 06:27:40',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'id' => 3,
@@ -115,38 +114,12 @@ class DatabaseTableSeeder extends Seeder
                 'email' => 'tranthibinh@gmail.com',
                 'phone' => '0987123456',
                 'address' => '456 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh',
-                'email_verified_at' => '2025-10-03 06:27:40',
-                'password' => '$2y$12$vaaAKGAqBp1hmIIFn1jbo.Oixfx3hqaPRvr11k6459cORu5YEpgD6', // password
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
                 'role' => 'customer',
                 'remember_token' => null,
-                'created_at' => '2025-10-03 06:27:40',
-                'updated_at' => '2025-10-03 06:27:40',
-            ],
-            [
-                'id' => 4,
-                'name' => 'Lê Hoàng Cường',
-                'email' => 'lehoangcuong@gmail.com',
-                'phone' => '0369852147',
-                'address' => '789 Đường Nguyễn Văn Linh, Đà Nẵng',
-                'email_verified_at' => '2025-10-03 06:27:40',
-                'password' => '$2y$12$VqlMLK/CO0QtFHk/s/.DK.cQ5JwA/oNzfWbw7tTudNk5tUM1uZ6eG', // password
-                'role' => 'customer',
-                'remember_token' => null,
-                'created_at' => '2025-10-03 06:27:40',
-                'updated_at' => '2025-10-03 06:27:40',
-            ],
-            [
-                'id' => 5,
-                'name' => 'Minh Long',
-                'email' => 'deocomate@gmail.com',
-                'phone' => '0565651189',
-                'address' => 'Vé test',
-                'email_verified_at' => null,
-                'password' => null,
-                'role' => 'guest',
-                'remember_token' => null,
-                'created_at' => '2025-10-03 06:27:40',
-                'updated_at' => '2025-10-03 06:27:40',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'id' => 6,
@@ -154,12 +127,12 @@ class DatabaseTableSeeder extends Seeder
                 'email' => 'company@kingexpressbus.com',
                 'phone' => '0924300366',
                 'address' => '19 Hàng Thiếc - Hoàn Kiếm - Hà Nội',
-                'email_verified_at' => '2025-10-03 06:27:40',
-                'password' => '$2y$12$7TB0yStqTMIcXC4xV7GyzuyPYB8nFX6ysmK5.Cmf5agcTBg0MBtoK', // admin
+                'email_verified_at' => now(),
+                'password' => Hash::make('admin'),
                 'role' => 'company',
-                'remember_token' => 'Gdhngtvgxtuo38MP8M4bdBmrU3Tx4F6LZ0nvhKm0SRNAfXKLZJYT0picyUVM',
-                'created_at' => '2025-10-03 06:27:41',
-                'updated_at' => '2025-10-10 03:19:01',
+                'remember_token' => Str::random(60),
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
     }
@@ -185,9 +158,21 @@ class DatabaseTableSeeder extends Seeder
                 'map_embedded' => '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2056.7461655506627!2d105.84669827498637!3d21.03349741327072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abbe60e203cb%3A0xad322a16a1be4362!2zMTkgUC4gSMOgbmcgVGhp4bq_YywgSMOgbmcgR2FpLCBIb8OgbiBLaeG6v20sIEjDoCBO4buZaSAxMTA3MDEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1759471064920!5m2!1sen!2s" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
                 'policy_content' => '<h1>Chính sách chung</h1><p>Chính sách và điều khoản của nhà xe King Express Bus</p>',
                 'introduction_content' => '<h2>Về chúng tôi</h2><p>King Express Bus tự hào là một trong những đơn vị vận tải hàng đầu</p>',
-                'created_at' => '2025-10-03 06:27:41',
-                'updated_at' => '2025-10-10 03:18:33',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
+        ]);
+    }
+
+    private function seedBusServices(): void
+    {
+        DB::table('bus_services')->insert([
+            ['name' => 'Chăn gối', 'icon' => 'fas fa-bed', 'priority' => 1],
+            ['name' => 'Nước uống', 'icon' => 'fas fa-tint', 'priority' => 2],
+            ['name' => 'Điều hòa', 'icon' => 'fas fa-wind', 'priority' => 3],
+            ['name' => 'Rèm che', 'icon' => 'fas fa-blinds-raised', 'priority' => 4],
+            ['name' => 'TV', 'icon' => 'fas fa-tv', 'priority' => 5],
+            ['name' => 'Cổng sạc USB', 'icon' => 'fas fa-usb', 'priority' => 6],
         ]);
     }
 
@@ -206,53 +191,52 @@ class DatabaseTableSeeder extends Seeder
     private function seedProvinces(): void
     {
         DB::table('provinces')->insert([
-            ['id' => 1, 'name' => 'Hà Nội', 'slug' => 'ha-noi', 'title' => 'Vé xe khách đi Hà Nội', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Hà Nội và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 100, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'name' => 'Sapa', 'slug' => 'sapa', 'title' => 'Vé xe khách đi Sapa', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Sapa và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/sapa.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/sapa.jpg"]', 'content' => null, 'priority' => 99, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'name' => 'Tuần Châu', 'slug' => 'tuan-chau', 'title' => 'Vé xe khách đi Tuần Châu', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Tuần Châu và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/tuan-chau.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/tuan-chau.jpg"]', 'content' => null, 'priority' => 5, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'name' => 'Mai Châu', 'slug' => 'mai-chau', 'title' => 'Vé xe khách đi Mai Châu', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Mai Châu và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/mai-chau.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/mai-chau.jpg"]', 'content' => null, 'priority' => 6, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 5, 'name' => 'Cát Bà', 'slug' => 'cat-ba', 'title' => 'Vé xe khách đi Cát Bà', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Cát Bà và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/cat-ba.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/cat-ba.jpg"]', 'content' => null, 'priority' => 7, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 6, 'name' => 'Hà Giang', 'slug' => 'ha-giang', 'title' => 'Vé xe khách đi Hà Giang', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Hà Giang và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/ha-giang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-giang.jpg"]', 'content' => null, 'priority' => 8, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 7, 'name' => 'Ninh Bình', 'slug' => 'ninh-binh', 'title' => 'Vé xe khách đi Ninh Bình', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Ninh Bình và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 9, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 8, 'name' => 'Phong Nha', 'slug' => 'phong-nha', 'title' => 'Vé xe khách đi Phong Nha', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Phong Nha và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/phong-nha.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/phong-nha.jpg"]', 'content' => null, 'priority' => 10, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 9, 'name' => 'Huế', 'slug' => 'hue', 'title' => 'Vé xe khách đi Huế', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Huế và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/hue.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hue.jpg"]', 'content' => null, 'priority' => 98, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 10, 'name' => 'Đà Nẵng', 'slug' => 'da-nang', 'title' => 'Vé xe khách đi Đà Nẵng', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Đà Nẵng và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/da-nang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/da-nang.jpg"]', 'content' => null, 'priority' => 97, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 11, 'name' => 'Hội An', 'slug' => 'hoi-an', 'title' => 'Vé xe khách đi Hội An', 'description' => 'Đặt vé xe giường nằm, limousine chất lượng cao đi Hội An và các tỉnh.', 'thumbnail_url' => '/userfiles/files/city_imgs/hoi-an.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hoi-an.jpg"]', 'content' => null, 'priority' => 11, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
+            ['id' => 1, 'name' => 'Hà Nội', 'slug' => 'ha-noi', 'priority' => 100, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'name' => 'Sapa', 'slug' => 'sapa', 'priority' => 99, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'name' => 'Tuần Châu', 'slug' => 'tuan-chau', 'priority' => 5, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'name' => 'Mai Châu', 'slug' => 'mai-chau', 'priority' => 6, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'name' => 'Cát Bà', 'slug' => 'cat-ba', 'priority' => 7, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'name' => 'Hà Giang', 'slug' => 'ha-giang', 'priority' => 8, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 7, 'name' => 'Ninh Bình', 'slug' => 'ninh-binh', 'priority' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 8, 'name' => 'Phong Nha', 'slug' => 'phong-nha', 'priority' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 9, 'name' => 'Huế', 'slug' => 'hue', 'priority' => 98, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 10, 'name' => 'Đà Nẵng', 'slug' => 'da-nang', 'priority' => 97, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 11, 'name' => 'Hội An', 'slug' => 'hoi-an', 'priority' => 11, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 
     private function seedDistricts(): void
     {
         DB::table('districts')->insert([
-            ['id' => 1, 'province_id' => 1, 'district_type_id' => 6, 'name' => 'Thành Phố Hà Nội', 'slug' => 'thanh-pho-ha-noi', 'title' => 'Thành Phố Hà Nội', 'description' => 'Các điểm đón trả tại Thành Phố Hà Nội', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'province_id' => 2, 'district_type_id' => 6, 'name' => 'Thành Phố Sapa', 'slug' => 'thanh-pho-sapa', 'title' => 'Thành Phố Sapa', 'description' => 'Các điểm đón trả tại Thành Phố Sapa', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'province_id' => 3, 'district_type_id' => 6, 'name' => 'Thành Phố Tuần Châu', 'slug' => 'thanh-pho-tuan-chau', 'title' => 'Thành Phố Tuần Châu', 'description' => 'Các điểm đón trả tại Thành Phố Tuần Châu', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'province_id' => 4, 'district_type_id' => 6, 'name' => 'Thành Phố Mai Châu', 'slug' => 'thanh-pho-mai-chau', 'title' => 'Thành Phố Mai Châu', 'description' => 'Các điểm đón trả tại Thành Phố Mai Châu', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 5, 'province_id' => 5, 'district_type_id' => 6, 'name' => 'Thành Phố Cát Bà', 'slug' => 'thanh-pho-cat-ba', 'title' => 'Thành Phố Cát Bà', 'description' => 'Các điểm đón trả tại Thành Phố Cát Bà', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 6, 'province_id' => 6, 'district_type_id' => 6, 'name' => 'Thành Phố Hà Giang', 'slug' => 'thanh-pho-ha-giang', 'title' => 'Thành Phố Hà Giang', 'description' => 'Các điểm đón trả tại Thành Phố Hà Giang', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 7, 'province_id' => 7, 'district_type_id' => 6, 'name' => 'Thành Phố Ninh Bình', 'slug' => 'thanh-pho-ninh-binh', 'title' => 'Thành Phố Ninh Bình', 'description' => 'Các điểm đón trả tại Thành Phố Ninh Bình', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 8, 'province_id' => 8, 'district_type_id' => 6, 'name' => 'Thành Phố Phong Nha', 'slug' => 'thanh-pho-phong-nha', 'title' => 'Thành Phố Phong Nha', 'description' => 'Các điểm đón trả tại Thành Phố Phong Nha', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 9, 'province_id' => 9, 'district_type_id' => 6, 'name' => 'Thành Phố Huế', 'slug' => 'thanh-pho-hue', 'title' => 'Thành Phố Huế', 'description' => 'Các điểm đón trả tại Thành Phố Huế', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 10, 'province_id' => 10, 'district_type_id' => 6, 'name' => 'Thành Phố Đà Nẵng', 'slug' => 'thanh-pho-da-nang', 'title' => 'Thành Phố Đà Nẵng', 'description' => 'Các điểm đón trả tại Thành Phố Đà Nẵng', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 11, 'province_id' => 11, 'district_type_id' => 6, 'name' => 'Thành Phố Hội An', 'slug' => 'thanh-pho-hoi-an', 'title' => 'Thành Phố Hội An', 'description' => 'Các điểm đón trả tại Thành Phố Hội An', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
+            ['id' => 1, 'province_id' => 1, 'district_type_id' => 6, 'name' => 'Thành Phố Hà Nội', 'slug' => 'thanh-pho-ha-noi', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'province_id' => 2, 'district_type_id' => 6, 'name' => 'Thị xã Sapa', 'slug' => 'thi-xa-sapa', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'province_id' => 3, 'district_type_id' => 6, 'name' => 'Thành Phố Tuần Châu', 'slug' => 'thanh-pho-tuan-chau', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'province_id' => 4, 'district_type_id' => 6, 'name' => 'Huyện Mai Châu', 'slug' => 'huyen-mai-chau', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'province_id' => 5, 'district_type_id' => 6, 'name' => 'Huyện Cát Bà', 'slug' => 'huyen-cat-ba', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'province_id' => 6, 'district_type_id' => 6, 'name' => 'Thành Phố Hà Giang', 'slug' => 'thanh-pho-ha-giang', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 7, 'province_id' => 7, 'district_type_id' => 6, 'name' => 'Thành Phố Ninh Bình', 'slug' => 'thanh-pho-ninh-binh', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 8, 'province_id' => 8, 'district_type_id' => 6, 'name' => 'Huyện Phong Nha', 'slug' => 'huyen-phong-nha', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 9, 'province_id' => 9, 'district_type_id' => 6, 'name' => 'Thành Phố Huế', 'slug' => 'thanh-pho-hue', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 10, 'province_id' => 10, 'district_type_id' => 6, 'name' => 'Thành Phố Đà Nẵng', 'slug' => 'thanh-pho-da-nang', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 11, 'province_id' => 11, 'district_type_id' => 6, 'name' => 'Thành Phố Hội An', 'slug' => 'thanh-pho-hoi-an', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 
     private function seedStops(): void
     {
         DB::table('stops')->insert([
-            ['id' => 1, 'district_id' => 1, 'name' => 'VP Hà Nội', 'address' => '19 Hàng Thiếc', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'district_id' => 2, 'name' => 'VP Sapa', 'address' => '458 Dien Bien Phu', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'district_id' => 3, 'name' => 'VP Tuần Châu', 'address' => 'Tuần Châu Harbor', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'district_id' => 4, 'name' => 'VP Mai Châu', 'address' => 'Hotel', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 5, 'district_id' => 5, 'name' => 'VP Cát Bà', 'address' => '217 Mot Thang Tu', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 6, 'district_id' => 6, 'name' => 'VP Hà Giang', 'address' => '100 Tran Phu', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 7, 'district_id' => 7, 'name' => 'VP Ninh Bình', 'address' => 'No 2a, đường 27/7 - TP Ninh Bình', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 8, 'district_id' => 8, 'name' => 'VP Phong Nha', 'address' => 'Central Backpacker Phong Nha', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 9, 'district_id' => 9, 'name' => 'VP Huế', 'address' => '07 Đội Cung- TP Huế', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 10, 'district_id' => 10, 'name' => 'VP Đà Nẵng', 'address' => 'Số 28 đường 3/2- TP Đà Nẵng', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 11, 'district_id' => 11, 'name' => 'VP Hội An', 'address' => '105 Tôn Đức Thắng - TP Hội An', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 12, 'district_id' => 7, 'name' => 'VP Tam Cốc', 'address' => 'Travel Agency- Tam Cốc (NEW PICK UP POINT)', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 13, 'district_id' => 7, 'name' => 'BX Đồng Gừng', 'address' => 'Đồng Gừng Bus Station', 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
+            ['id' => 1, 'district_id' => 1, 'name' => 'VP Hà Nội', 'address' => '19 Hàng Thiếc, Hoàn Kiếm, Hà Nội', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'district_id' => 2, 'name' => 'VP Sapa', 'address' => '458 Điện Biên Phủ, Sapa', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'district_id' => 3, 'name' => 'VP Tuần Châu', 'address' => 'Tuần Châu Harbor, Tuần Châu', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'district_id' => 4, 'name' => 'VP Mai Châu', 'address' => 'Hotel, Mai Châu', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'district_id' => 5, 'name' => 'VP Cát Bà', 'address' => '217 Một Tháng Tư, Cát Bà', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'district_id' => 6, 'name' => 'VP Hà Giang', 'address' => '100 Trần Phú, TP Hà Giang', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 7, 'district_id' => 7, 'name' => 'VP Ninh Bình', 'address' => 'Số 2A, đường 27/7, TP Ninh Bình', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 8, 'district_id' => 8, 'name' => 'VP Phong Nha', 'address' => 'Central Backpacker, Phong Nha', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 9, 'district_id' => 9, 'name' => 'VP Huế', 'address' => '07 Đội Cung, TP Huế', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 10, 'district_id' => 10, 'name' => 'VP Đà Nẵng', 'address' => 'Số 28 đường 3/2, TP Đà Nẵng', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 11, 'district_id' => 11, 'name' => 'VP Hội An', 'address' => '105 Tôn Đức Thắng, TP Hội An', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 12, 'district_id' => 7, 'name' => 'VP Tam Cốc', 'address' => 'Travel Agency, Tam Cốc, Ninh Bình', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 
@@ -267,15 +251,14 @@ class DatabaseTableSeeder extends Seeder
                 'title' => 'Nhà xe King Express Bus',
                 'description' => 'Dịch vụ xe khách chất lượng cao',
                 'thumbnail_url' => '/userfiles/files/web%20information/logo.jpg',
-                'image_list_url' => null,
                 'content' => '<p>Giới thiệu về nhà xe King Express Bus.</p>',
                 'phone' => '0924300366',
-                'hotline' => null,
+                'hotline' => '0924300366',
                 'email' => 'kingexpressbus@gmail.com',
                 'address' => '19 Hàng Thiếc - Hoàn Kiếm - Hà Nội',
                 'priority' => 1,
-                'created_at' => '2025-10-03 06:27:41',
-                'updated_at' => '2025-10-10 03:19:01',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }
@@ -283,123 +266,529 @@ class DatabaseTableSeeder extends Seeder
     private function seedBuses(): void
     {
         DB::table('buses')->insert([
-            ['id' => 1, 'company_id' => 1, 'name' => 'Sleeper', 'model_name' => 'Sleeper Bus', 'seat_count' => 38, 'seat_map' => null, 'services' => '["Chăn gối","Nước uống"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/sleeper/1.jpg', 'image_list_url' => '["/userfiles/files/kingexpressbus/sleeper/1.jpg","/userfiles/files/kingexpressbus/sleeper/2.jpg"]', 'content' => '<p>Xe giường nằm tiêu chuẩn là lựa chọn kinh tế cho các chuyến đi dài.</p>', 'priority' => 1, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'company_id' => 1, 'name' => 'Cabin Single', 'model_name' => 'Cabin Single', 'seat_count' => 22, 'seat_map' => null, 'services' => '["Nước uống","Rèm che","TV","Cổng sạc USB"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/cabin/1.jpg', 'image_list_url' => '["/userfiles/files/kingexpressbus/cabin/1.jpg","/userfiles/files/kingexpressbus/cabin/2.jpg","/userfiles/files/kingexpressbus/cabin/3.jpg"]', 'content' => '<p>Cabin đơn đem lại sự riêng tư tuyệt đối với đầy đủ tiện nghi.</p>', 'priority' => 3, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'company_id' => 1, 'name' => 'Cabin Double', 'model_name' => 'Cabin Double', 'seat_count' => 22, 'seat_map' => null, 'services' => '["Chăn gối","TV","Cổng sạc USB"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/cabin_double/1.jpg', 'image_list_url' => '["/userfiles/files/kingexpressbus/cabin_double/1.jpg","/userfiles/files/kingexpressbus/cabin_double/2.jpg","/userfiles/files/kingexpressbus/cabin_double/3.jpg"]', 'content' => '<p>Cabin đôi lý tưởng cho cặp đôi hoặc gia đình nhỏ.</p>', 'priority' => 4, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'company_id' => 1, 'name' => 'Seater', 'model_name' => 'Seater Bus', 'seat_count' => 16, 'seat_map' => null, 'services' => '["Điều hoà","Nước uống"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/seater/1.png', 'image_list_url' => '["/userfiles/files/kingexpressbus/seater/1.png","/userfiles/files/kingexpressbus/seater/2.png"]', 'content' => '<p>Xe ghế ngồi 16 chỗ phù hợp cho những chuyến đi ngắn, linh hoạt.</p>', 'priority' => 6, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 5, 'company_id' => 1, 'name' => 'Limousine', 'model_name' => 'Limousine Bus', 'seat_count' => 9, 'seat_map' => null, 'services' => '["Nước uống","Wi-Fi","Điều hoà","Ổ sạc"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/limousine/1.png', 'image_list_url' => '["/userfiles/files/kingexpressbus/limousine/1.png","/userfiles/files/kingexpressbus/limousine/2.png"]', 'content' => '<p>Xe Limousine hiện đại với ghế hạng thương gia và dịch vụ cao cấp.</p>', 'priority' => 5, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 6, 'company_id' => 1, 'name' => 'VIP 32 sleeper', 'model_name' => 'VIP Sleeper 32', 'seat_count' => 32, 'seat_map' => null, 'services' => '["Nước uống","Chăn gối","Rèm che"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/sleeper_vip_32/sleeper32-1.jpg', 'image_list_url' => '["/userfiles/files/kingexpressbus/sleeper_vip_32/sleeper32-1.jpg","/userfiles/files/kingexpressbus/sleeper_vip_32/sleeper32-2.jpg"]', 'content' => '<p>Xe giường nằm VIP 32 chỗ với rèm che riêng tư, không gian sang trọng.</p>', 'priority' => 2, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 7, 'company_id' => 1, 'name' => 'VIP 22 cabin single', 'model_name' => 'VIP Cabin Single 22', 'seat_count' => 22, 'seat_map' => null, 'services' => '["Nước uống","Rèm che","TV","Cổng sạc USB"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/cabin/1.jpg', 'image_list_url' => '["/userfiles/files/kingexpressbus/cabin/1.jpg","/userfiles/files/kingexpressbus/cabin/2.jpg","/userfiles/files/kingexpressbus/cabin/3.jpg"]', 'content' => '<p>Cabin VIP đơn 22 giường đem lại sự riêng tư tuyệt đối với đầy đủ tiện nghi.</p>', 'priority' => 3, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 8, 'company_id' => 1, 'name' => 'VIP 22 cabin double', 'model_name' => 'VIP Cabin Double 22', 'seat_count' => 22, 'seat_map' => null, 'services' => '["Chăn gối","TV","Cổng sạc USB"]', 'thumbnail_url' => '/userfiles/files/kingexpressbus/cabin_double/1.jpg', 'image_list_url' => '["/userfiles/files/kingexpressbus/cabin_double/1.jpg","/userfiles/files/kingexpressbus/cabin_double/2.jpg","/userfiles/files/kingexpressbus/cabin_double/3.jpg"]', 'content' => '<p>Cabin VIP đôi 22 giường lý tưởng cho cặp đôi hoặc gia đình nhỏ.</p>', 'priority' => 4, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
+            ['id' => 1, 'company_id' => 1, 'name' => 'Sleeper', 'model_name' => 'Sleeper Bus', 'seat_count' => 38, 'services' => '["Chăn gối", "Nước uống", "Điều hòa"]', 'priority' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'company_id' => 1, 'name' => 'VIP 32 sleeper', 'model_name' => 'VIP Sleeper 32', 'seat_count' => 32, 'services' => '["Nước uống", "Chăn gối", "Rèm che", "Điều hòa"]', 'priority' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'company_id' => 1, 'name' => 'VIP 22 Cabin Single', 'model_name' => 'VIP Cabin Single 22', 'seat_count' => 22, 'services' => '["Chăn gối", "Nước uống", "Rèm che", "TV", "Cổng sạc USB", "Điều hòa"]', 'priority' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'company_id' => 1, 'name' => 'VIP 22 Cabin Double', 'model_name' => 'VIP Cabin Double 22', 'seat_count' => 22, 'services' => '["Chăn gối", "Nước uống", "Cổng sạc USB", "Rèm che", "Điều hòa"]', 'priority' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'company_id' => 1, 'name' => 'Seater', 'model_name' => 'Seater Bus', 'seat_count' => 16, 'services' => '["Điều hoà", "Nước uống"]', 'priority' => 6, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'company_id' => 1, 'name' => 'Limousine', 'model_name' => 'Limousine Bus', 'seat_count' => 9, 'services' => '["Nước uống", "Điều hoà"]', 'priority' => 5, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 
     private function seedRoutes(): void
     {
-        DB::table('routes')->insert([
-            ['id' => 1, 'province_start_id' => 1, 'province_end_id' => 2, 'name' => 'Hà Nội - Sapa', 'slug' => 'ha-noi-sapa', 'title' => 'Vé xe Hà Nội - Sapa', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Sapa', 'duration' => '6h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/sapa.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/sapa.jpg"]', 'content' => null, 'priority' => 1, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'province_start_id' => 2, 'province_end_id' => 1, 'name' => 'Sapa - Hà Nội', 'slug' => 'sapa-ha-noi', 'title' => 'Vé xe Sapa - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Sapa - Hà Nội', 'duration' => '6h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 2, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'province_start_id' => 1, 'province_end_id' => 9, 'name' => 'Hà Nội - Huế', 'slug' => 'ha-noi-hue', 'title' => 'Vé xe Hà Nội - Huế', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Huế', 'duration' => '12h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hue.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hue.jpg"]', 'content' => null, 'priority' => 3, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'province_start_id' => 1, 'province_end_id' => 10, 'name' => 'Hà Nội - Đà Nẵng', 'slug' => 'ha-noi-da-nang', 'title' => 'Vé xe Hà Nội - Đà Nẵng', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Đà Nẵng', 'duration' => '15h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/da-nang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/da-nang.jpg"]', 'content' => null, 'priority' => 4, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 5, 'province_start_id' => 1, 'province_end_id' => 6, 'name' => 'Hà Nội - Hà Giang', 'slug' => 'ha-noi-ha-giang', 'title' => 'Vé xe Hà Nội - Hà Giang', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Hà Giang', 'duration' => '6h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-giang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-giang.jpg"]', 'content' => null, 'priority' => 5, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 6, 'province_start_id' => 6, 'province_end_id' => 1, 'name' => 'Hà Giang - Hà Nội', 'slug' => 'ha-giang-ha-noi', 'title' => 'Vé xe Hà Giang - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Giang - Hà Nội', 'duration' => '6h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 6, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 7, 'province_start_id' => 1, 'province_end_id' => 7, 'name' => 'Hà Nội - Ninh Bình', 'slug' => 'ha-noi-ninh-binh', 'title' => 'Vé xe Hà Nội - Ninh Bình', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Ninh Bình', 'duration' => '2h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 7, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 8, 'province_start_id' => 7, 'province_end_id' => 1, 'name' => 'Ninh Bình - Hà Nội', 'slug' => 'ninh-binh-ha-noi', 'title' => 'Vé xe Ninh Bình - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Ninh Bình - Hà Nội', 'duration' => '2h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 8, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 9, 'province_start_id' => 6, 'province_end_id' => 2, 'name' => 'Hà Giang - Sapa', 'slug' => 'ha-giang-sapa', 'title' => 'Vé xe Hà Giang - Sapa', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Giang - Sapa', 'duration' => '7h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/sapa.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/sapa.jpg"]', 'content' => null, 'priority' => 9, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 10, 'province_start_id' => 2, 'province_end_id' => 6, 'name' => 'Sapa - Hà Giang', 'slug' => 'sapa-ha-giang', 'title' => 'Vé xe Sapa - Hà Giang', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Sapa - Hà Giang', 'duration' => '7h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-giang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-giang.jpg"]', 'content' => null, 'priority' => 10, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 11, 'province_start_id' => 1, 'province_end_id' => 5, 'name' => 'Hà Nội - Cát Bà', 'slug' => 'ha-noi-cat-ba', 'title' => 'Vé xe Hà Nội - Cát Bà', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Cát Bà', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/cat-ba.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/cat-ba.jpg"]', 'content' => null, 'priority' => 11, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 12, 'province_start_id' => 5, 'province_end_id' => 1, 'name' => 'Cát Bà - Hà Nội', 'slug' => 'cat-ba-ha-noi', 'title' => 'Vé xe Cát Bà - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Cát Bà - Hà Nội', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 12, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 13, 'province_start_id' => 1, 'province_end_id' => 3, 'name' => 'Hà Nội - Tuần Châu', 'slug' => 'ha-noi-tuan-chau', 'title' => 'Vé xe Hà Nội - Tuần Châu', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Tuần Châu', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/tuan-chau.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/tuan-chau.jpg"]', 'content' => null, 'priority' => 13, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 14, 'province_start_id' => 3, 'province_end_id' => 1, 'name' => 'Tuần Châu - Hà Nội', 'slug' => 'tuan-chau-ha-noi', 'title' => 'Vé xe Tuần Châu - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Tuần Châu - Hà Nội', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 14, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 15, 'province_start_id' => 1, 'province_end_id' => 4, 'name' => 'Hà Nội - Mai Châu', 'slug' => 'ha-noi-mai-chau', 'title' => 'Vé xe Hà Nội - Mai Châu', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Mai Châu', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/mai-chau.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/mai-chau.jpg"]', 'content' => null, 'priority' => 15, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 16, 'province_start_id' => 4, 'province_end_id' => 1, 'name' => 'Mai Châu - Hà Nội', 'slug' => 'mai-chau-ha-noi', 'title' => 'Vé xe Mai Châu - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Mai Châu - Hà Nội', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 16, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 17, 'province_start_id' => 9, 'province_end_id' => 1, 'name' => 'Huế - Hà Nội', 'slug' => 'hue-ha-noi', 'title' => 'Vé xe Huế - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Huế - Hà Nội', 'duration' => '12h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 17, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 18, 'province_start_id' => 10, 'province_end_id' => 1, 'name' => 'Đà Nẵng - Hà Nội', 'slug' => 'da-nang-ha-noi', 'title' => 'Vé xe Đà Nẵng - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Đà Nẵng - Hà Nội', 'duration' => '15h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 18, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 19, 'province_start_id' => 1, 'province_end_id' => 8, 'name' => 'Hà Nội - Phong Nha', 'slug' => 'ha-noi-phong-nha', 'title' => 'Vé xe Hà Nội - Phong Nha', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Phong Nha', 'duration' => '9h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/phong-nha.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/phong-nha.jpg"]', 'content' => null, 'priority' => 19, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 20, 'province_start_id' => 8, 'province_end_id' => 1, 'name' => 'Phong Nha - Hà Nội', 'slug' => 'phong-nha-ha-noi', 'title' => 'Vé xe Phong Nha - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Phong Nha - Hà Nội', 'duration' => '9h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 20, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 21, 'province_start_id' => 1, 'province_end_id' => 11, 'name' => 'Hà Nội - Hội An', 'slug' => 'ha-noi-hoi-an', 'title' => 'Vé xe Hà Nội - Hội An', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Hội An', 'duration' => '16h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hoi-an.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hoi-an.jpg"]', 'content' => null, 'priority' => 21, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 22, 'province_start_id' => 11, 'province_end_id' => 1, 'name' => 'Hội An - Hà Nội', 'slug' => 'hoi-an-ha-noi', 'title' => 'Vé xe Hội An - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hội An - Hà Nội', 'duration' => '16h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-noi.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-noi.jpg"]', 'content' => null, 'priority' => 22, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 23, 'province_start_id' => 7, 'province_end_id' => 8, 'name' => 'Ninh Bình - Phong Nha', 'slug' => 'ninh-binh-phong-nha', 'title' => 'Vé xe Ninh Bình - Phong Nha', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Ninh Bình - Phong Nha', 'duration' => '7h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/phong-nha.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/phong-nha.jpg"]', 'content' => null, 'priority' => 23, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 24, 'province_start_id' => 8, 'province_end_id' => 7, 'name' => 'Phong Nha - Ninh Bình', 'slug' => 'phong-nha-ninh-binh', 'title' => 'Vé xe Phong Nha - Ninh Bình', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Phong Nha - Ninh Bình', 'duration' => '7h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 24, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 25, 'province_start_id' => 7, 'province_end_id' => 9, 'name' => 'Ninh Bình - Huế', 'slug' => 'ninh-binh-hue', 'title' => 'Vé xe Ninh Bình - Huế', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Ninh Bình - Huế', 'duration' => '10h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hue.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hue.jpg"]', 'content' => null, 'priority' => 25, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 26, 'province_start_id' => 9, 'province_end_id' => 7, 'name' => 'Huế - Ninh Bình', 'slug' => 'hue-ninh-binh', 'title' => 'Vé xe Huế - Ninh Bình', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Huế - Ninh Bình', 'duration' => '10h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 26, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 27, 'province_start_id' => 7, 'province_end_id' => 10, 'name' => 'Ninh Bình - Đà Nẵng', 'slug' => 'ninh-binh-da-nang', 'title' => 'Vé xe Ninh Bình - Đà Nẵng', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Ninh Bình - Đà Nẵng', 'duration' => '13h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/da-nang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/da-nang.jpg"]', 'content' => null, 'priority' => 27, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 28, 'province_start_id' => 10, 'province_end_id' => 7, 'name' => 'Đà Nẵng - Ninh Bình', 'slug' => 'da-nang-ninh-binh', 'title' => 'Vé xe Đà Nẵng - Ninh Bình', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Đà Nẵng - Ninh Bình', 'duration' => '13h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 28, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 29, 'province_start_id' => 7, 'province_end_id' => 11, 'name' => 'Ninh Bình - Hội An', 'slug' => 'ninh-binh-hoi-an', 'title' => 'Vé xe Ninh Bình - Hội An', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Ninh Bình - Hội An', 'duration' => '14h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hoi-an.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hoi-an.jpg"]', 'content' => null, 'priority' => 29, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 30, 'province_start_id' => 11, 'province_end_id' => 7, 'name' => 'Hội An - Ninh Bình', 'slug' => 'hoi-an-ninh-binh', 'title' => 'Vé xe Hội An - Ninh Bình', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hội An - Ninh Bình', 'duration' => '14h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 30, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 31, 'province_start_id' => 10, 'province_end_id' => 11, 'name' => 'Đà Nẵng - Hội An', 'slug' => 'da-nang-hoi-an', 'title' => 'Vé xe Đà Nẵng - Hội An', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Đà Nẵng - Hội An', 'duration' => '1h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hoi-an.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hoi-an.jpg"]', 'content' => null, 'priority' => 31, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 32, 'province_start_id' => 11, 'province_end_id' => 10, 'name' => 'Hội An - Đà Nẵng', 'slug' => 'hoi-an-da-nang', 'title' => 'Vé xe Hội An - Đà Nẵng', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hội An - Đà Nẵng', 'duration' => '1h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/da-nang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/da-nang.jpg"]', 'content' => null, 'priority' => 32, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 33, 'province_start_id' => 9, 'province_end_id' => 11, 'name' => 'Huế - Hội An', 'slug' => 'hue-hoi-an', 'title' => 'Vé xe Huế - Hội An', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Huế - Hội An', 'duration' => '4h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hoi-an.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hoi-an.jpg"]', 'content' => null, 'priority' => 33, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 34, 'province_start_id' => 11, 'province_end_id' => 9, 'name' => 'Hội An - Huế', 'slug' => 'hoi-an-hue', 'title' => 'Vé xe Hội An - Huế', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hội An - Huế', 'duration' => '4h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hue.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hue.jpg"]', 'content' => null, 'priority' => 34, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 35, 'province_start_id' => 9, 'province_end_id' => 10, 'name' => 'Huế - Đà Nẵng', 'slug' => 'hue-da-nang', 'title' => 'Vé xe Huế - Đà Nẵng', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Huế - Đà Nẵng', 'duration' => '3h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/da-nang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/da-nang.jpg"]', 'content' => null, 'priority' => 35, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 36, 'province_start_id' => 10, 'province_end_id' => 9, 'name' => 'Đà Nẵng - Huế', 'slug' => 'da-nang-hue', 'title' => 'Vé xe Đà Nẵng - Huế', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Đà Nẵng - Huế', 'duration' => '3h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hue.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hue.jpg"]', 'content' => null, 'priority' => 36, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 37, 'province_start_id' => 8, 'province_end_id' => 11, 'name' => 'Phong Nha - Hội An', 'slug' => 'phong-nha-hoi-an', 'title' => 'Vé xe Phong Nha - Hội An', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Phong Nha - Hội An', 'duration' => '7h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hoi-an.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hoi-an.jpg"]', 'content' => null, 'priority' => 37, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 38, 'province_start_id' => 11, 'province_end_id' => 8, 'name' => 'Hội An - Phong Nha', 'slug' => 'hoi-an-phong-nha', 'title' => 'Vé xe Hội An - Phong Nha', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hội An - Phong Nha', 'duration' => '7h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/phong-nha.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/phong-nha.jpg"]', 'content' => null, 'priority' => 38, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 39, 'province_start_id' => 8, 'province_end_id' => 10, 'name' => 'Phong Nha - Đà Nẵng', 'slug' => 'phong-nha-da-nang', 'title' => 'Vé xe Phong Nha - Đà Nẵng', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Phong Nha - Đà Nẵng', 'duration' => '6h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/da-nang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/da-nang.jpg"]', 'content' => null, 'priority' => 39, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 40, 'province_start_id' => 10, 'province_end_id' => 8, 'name' => 'Đà Nẵng - Phong Nha', 'slug' => 'da-nang-phong-nha', 'title' => 'Vé xe Đà Nẵng - Phong Nha', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Đà Nẵng - Phong Nha', 'duration' => '6h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/phong-nha.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/phong-nha.jpg"]', 'content' => null, 'priority' => 40, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 41, 'province_start_id' => 8, 'province_end_id' => 9, 'name' => 'Phong Nha - Huế', 'slug' => 'phong-nha-hue', 'title' => 'Vé xe Phong Nha - Huế', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Phong Nha - Huế', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/hue.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/hue.jpg"]', 'content' => null, 'priority' => 41, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 42, 'province_start_id' => 9, 'province_end_id' => 8, 'name' => 'Huế - Phong Nha', 'slug' => 'hue-phong-nha', 'title' => 'Vé xe Huế - Phong Nha', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Huế - Phong Nha', 'duration' => '3,5h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/phong-nha.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/phong-nha.jpg"]', 'content' => null, 'priority' => 42, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 43, 'province_start_id' => 6, 'province_end_id' => 7, 'name' => 'Hà Giang - Ninh Bình', 'slug' => 'ha-giang-ninh-binh', 'title' => 'Vé xe Hà Giang - Ninh Bình', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Giang - Ninh Bình', 'duration' => '8h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ninh-binh.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ninh-binh.jpg"]', 'content' => null, 'priority' => 43, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 44, 'province_start_id' => 7, 'province_end_id' => 6, 'name' => 'Ninh Bình - Hà Giang', 'slug' => 'ninh-binh-ha-giang', 'title' => 'Vé xe Ninh Bình - Hà Giang', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Ninh Bình - Hà Giang', 'duration' => '8h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-giang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-giang.jpg"]', 'content' => null, 'priority' => 44, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 45, 'province_start_id' => 6, 'province_end_id' => 5, 'name' => 'Hà Giang - Cát Bà', 'slug' => 'ha-giang-cat-ba', 'title' => 'Vé xe Hà Giang - Cát Bà', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Giang - Cát Bà', 'duration' => '12h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/cat-ba.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/cat-ba.jpg"]', 'content' => null, 'priority' => 45, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 46, 'province_start_id' => 5, 'province_end_id' => 6, 'name' => 'Cát Bà - Hà Giang', 'slug' => 'cat-ba-ha-giang', 'title' => 'Vé xe Cát Bà - Hà Giang', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Cát Bà - Hà Giang', 'duration' => '12h', 'distance_km' => null, 'thumbnail_url' => '/userfiles/files/city_imgs/ha-giang.jpg', 'image_list_url' => '["/userfiles/files/city_imgs/ha-giang.jpg"]', 'content' => null, 'priority' => 46, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-        ]);
+        $routes = [
+            // id => [start_id, end_id, name, slug, duration]
+            1 => [1, 2, 'Hà Nội - Sapa', 'ha-noi-sapa', '6h'],
+            2 => [2, 1, 'Sapa - Hà Nội', 'sapa-ha-noi', '6h'],
+            3 => [1, 9, 'Hà Nội - Huế', 'ha-noi-hue', '12h'],
+            4 => [1, 10, 'Hà Nội - Đà Nẵng', 'ha-noi-da-nang', '15h'],
+            5 => [1, 6, 'Hà Nội - Hà Giang', 'ha-noi-ha-giang', '6h'],
+            6 => [6, 1, 'Hà Giang - Hà Nội', 'ha-giang-ha-noi', '6h'],
+            7 => [1, 7, 'Hà Nội - Ninh Bình', 'ha-noi-ninh-binh', '2h'],
+            8 => [7, 1, 'Ninh Bình - Hà Nội', 'ninh-binh-ha-noi', '2h'],
+            9 => [6, 2, 'Hà Giang - Sapa', 'ha-giang-sapa', '7h'],
+            10 => [2, 6, 'Sapa - Hà Giang', 'sapa-ha-giang', '7h'],
+            11 => [1, 5, 'Hà Nội - Cát Bà', 'ha-noi-cat-ba', '3.5h'],
+            12 => [5, 1, 'Cát Bà - Hà Nội', 'cat-ba-ha-noi', '3.5h'],
+            13 => [1, 3, 'Hà Nội - Tuần Châu', 'ha-noi-tuan-chau', '3.5h'],
+            14 => [3, 1, 'Tuần Châu - Hà Nội', 'tuan-chau-ha-noi', '3.5h'],
+            15 => [1, 4, 'Hà Nội - Mai Châu', 'ha-noi-mai-chau', '3.5h'],
+            16 => [4, 1, 'Mai Châu - Hà Nội', 'mai-chau-ha-noi', '3.5h'],
+            17 => [9, 1, 'Huế - Hà Nội', 'hue-ha-noi', '12h'],
+            18 => [10, 1, 'Đà Nẵng - Hà Nội', 'da-nang-ha-noi', '15h'],
+            19 => [1, 8, 'Hà Nội - Phong Nha', 'ha-noi-phong-nha', '9h'],
+            20 => [8, 1, 'Phong Nha - Hà Nội', 'phong-nha-ha-noi', '9h'],
+            21 => [1, 11, 'Hà Nội - Hội An', 'ha-noi-hoi-an', '16h'],
+            22 => [11, 1, 'Hội An - Hà Nội', 'hoi-an-ha-noi', '16h'],
+            23 => [7, 8, 'Ninh Bình - Phong Nha', 'ninh-binh-phong-nha', '7h'],
+            24 => [8, 7, 'Phong Nha - Ninh Bình', 'phong-nha-ninh-binh', '7h'],
+            25 => [7, 9, 'Ninh Bình - Huế', 'ninh-binh-hue', '10h'],
+            26 => [9, 7, 'Huế - Ninh Bình', 'hue-ninh-binh', '10h'],
+            27 => [7, 10, 'Ninh Bình - Đà Nẵng', 'ninh-binh-da-nang', '13h'],
+            28 => [10, 7, 'Đà Nẵng - Ninh Bình', 'da-nang-ninh-binh', '13h'],
+            29 => [7, 11, 'Ninh Bình - Hội An', 'ninh-binh-hoi-an', '14h'],
+            30 => [11, 7, 'Hội An - Ninh Bình', 'hoi-an-ninh-binh', '14h'],
+            31 => [10, 11, 'Đà Nẵng - Hội An', 'da-nang-hoi-an', '1h'],
+            32 => [11, 10, 'Hội An - Đà Nẵng', 'hoi-an-da-nang', '1h'],
+            33 => [9, 11, 'Huế - Hội An', 'hue-hoi-an', '4h'],
+            34 => [11, 9, 'Hội An - Huế', 'hoi-an-hue', '4h'],
+            35 => [9, 10, 'Huế - Đà Nẵng', 'hue-da-nang', '3h'],
+            36 => [10, 9, 'Đà Nẵng - Huế', 'da-nang-hue', '3h'],
+            37 => [8, 11, 'Phong Nha - Hội An', 'phong-nha-hoi-an', '7h'],
+            38 => [11, 8, 'Hội An - Phong Nha', 'hoi-an-phong-nha', '7h'],
+            39 => [8, 10, 'Phong Nha - Đà Nẵng', 'phong-nha-da-nang', '6h'],
+            40 => [10, 8, 'Đà Nẵng - Phong Nha', 'da-nang-phong-nha', '6h'],
+            41 => [8, 9, 'Phong Nha - Huế', 'phong-nha-hue', '3.5h'],
+            42 => [9, 8, 'Huế - Phong Nha', 'hue-phong-nha', '3.5h'],
+            43 => [6, 7, 'Hà Giang - Ninh Bình', 'ha-giang-ninh-binh', '8h'],
+            44 => [7, 6, 'Ninh Bình - Hà Giang', 'ninh-binh-ha-giang', '8h'],
+            45 => [6, 5, 'Hà Giang - Cát Bà', 'ha-giang-cat-ba', '12h'],
+            46 => [5, 6, 'Cát Bà - Hà Giang', 'cat-ba-ha-giang', '12h'],
+        ];
+
+        $data = [];
+        foreach ($routes as $id => $route) {
+            $data[] = [
+                'id' => $id,
+                'province_start_id' => $route[0],
+                'province_end_id' => $route[1],
+                'name' => $route[2],
+                'slug' => $route[3],
+                'duration' => $route[4],
+                'title' => 'Vé xe ' . $route[2],
+                'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến ' . $route[2],
+                'priority' => $id,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+        DB::table('routes')->insert($data);
     }
 
     private function seedCompanyRoutes(): void
     {
-        DB::table('company_routes')->insert([
-            ['id' => 1, 'company_id' => 1, 'route_id' => 1, 'name' => 'Hà Nội - Sapa - King Express Bus', 'slug' => 'ha-noi-sapa-king-express-bus', 'title' => 'Vé xe Hà Nội - Sapa', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Hà Nội - Sapa', 'duration' => '6h', 'available_hotel_pickup' => 1, 'priority' => 1, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'company_id' => 1, 'route_id' => 2, 'name' => 'Sapa - Hà Nội - King Express Bus', 'slug' => 'sapa-ha-noi-king-express-bus', 'title' => 'Vé xe Sapa - Hà Nội', 'description' => 'Đặt vé xe giường nằm, cabin, limousine chất lượng cao tuyến Sapa - Hà Nội', 'duration' => '6h', 'available_hotel_pickup' => 0, 'priority' => 2, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            // ... and so on for all 46 routes
-        ]);
+        $data = [];
+        for ($i = 1; $i <= 46; $i++) {
+            $route = DB::table('routes')->find($i);
+            $data[] = [
+                'id' => $i,
+                'company_id' => 1,
+                'route_id' => $i,
+                'name' => $route->name . ' - King Express Bus',
+                'slug' => $route->slug . '-king-express-bus',
+                'title' => $route->title,
+                'description' => $route->description,
+                'duration' => $route->duration,
+                'available_hotel_pickup' => ($i == 1), // Only enable for Ha Noi - Sapa as an example
+                'priority' => $i,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+        DB::table('company_routes')->insert($data);
     }
 
     private function seedCompanyRouteStops(): void
     {
-        DB::table('company_route_stops')->insert([
-            ['id' => 1, 'company_route_id' => 1, 'stop_id' => 1, 'stop_type' => 'pickup', 'priority' => 1],
-            ['id' => 2, 'company_route_id' => 1, 'stop_id' => 2, 'stop_type' => 'dropoff', 'priority' => 2],
-            ['id' => 3, 'company_route_id' => 2, 'stop_id' => 2, 'stop_type' => 'pickup', 'priority' => 1],
-            ['id' => 4, 'company_route_id' => 2, 'stop_id' => 1, 'stop_type' => 'dropoff', 'priority' => 2],
-            // ... and so on for all 92 stops
-        ]);
+        $stops = [
+            // company_route_id => [pickup_stop_id, dropoff_stop_id]
+            1 => [1, 2], 2 => [2, 1], 3 => [1, 9], 4 => [1, 10], 5 => [1, 6], 6 => [6, 1],
+            7 => [1, 7], 8 => [7, 1], 9 => [6, 2], 10 => [2, 6], 11 => [1, 5], 12 => [5, 1],
+            13 => [1, 3], 14 => [3, 1], 15 => [1, 4], 16 => [4, 1], 17 => [9, 1], 18 => [10, 1],
+            19 => [1, 8], 20 => [8, 1], 21 => [1, 11], 22 => [11, 1], 23 => [12, 8], 24 => [8, 7],
+            25 => [12, 9], 26 => [9, 7], 27 => [12, 10], 28 => [10, 7], 29 => [12, 11], 30 => [11, 7],
+            31 => [10, 11], 32 => [11, 10], 33 => [9, 11], 34 => [11, 9], 35 => [9, 10], 36 => [10, 9],
+            37 => [8, 11], 38 => [11, 8], 39 => [8, 10], 40 => [10, 8], 41 => [8, 9], 42 => [9, 8],
+            43 => [6, 7], 44 => [7, 6], 45 => [6, 5], 46 => [5, 6],
+        ];
+
+        $data = [];
+        $idCounter = 1;
+        foreach ($stops as $routeId => $stopIds) {
+            $data[] = ['id' => $idCounter++, 'company_route_id' => $routeId, 'stop_id' => $stopIds[0], 'stop_type' => 'pickup', 'priority' => 1];
+            $data[] = ['id' => $idCounter++, 'company_route_id' => $routeId, 'stop_id' => $stopIds[1], 'stop_type' => 'dropoff', 'priority' => 2];
+        }
+        DB::table('company_route_stops')->insert($data);
     }
 
     private function seedBusRoutes(): void
     {
-        DB::table('bus_routes')->insert([
-            ['id' => 1, 'bus_id' => 1, 'company_route_id' => 1, 'start_time' => '07:00:00', 'end_time' => '13:00:00', 'price' => 270000, 'is_active' => 1, 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'bus_id' => 1, 'company_route_id' => 1, 'start_time' => '22:00:00', 'end_time' => '04:00:00', 'price' => 270000, 'is_active' => 1, 'priority' => 0, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            // ... and so on for all 227 bus routes
-        ]);
+        $data = [
+            // Tuyến 1: Hà Nội - Sapa
+            ['bus_id' => 1, 'company_route_id' => 1, 'start_time' => '07:00', 'end_time' => '13:00', 'price' => 270000],
+            ['bus_id' => 1, 'company_route_id' => 1, 'start_time' => '22:00', 'end_time' => '04:00', 'price' => 270000],
+            ['bus_id' => 3, 'company_route_id' => 1, 'start_time' => '07:00', 'end_time' => '13:00', 'price' => 400000],
+            ['bus_id' => 3, 'company_route_id' => 1, 'start_time' => '22:00', 'end_time' => '04:00', 'price' => 400000],
+            ['bus_id' => 4, 'company_route_id' => 1, 'start_time' => '07:00', 'end_time' => '13:00', 'price' => 650000],
+            ['bus_id' => 4, 'company_route_id' => 1, 'start_time' => '22:00', 'end_time' => '04:00', 'price' => 650000],
+
+            // Tuyến 2: Sapa - Hà Nội
+            ['bus_id' => 1, 'company_route_id' => 2, 'start_time' => '14:00', 'end_time' => '20:00', 'price' => 270000],
+            ['bus_id' => 1, 'company_route_id' => 2, 'start_time' => '16:00', 'end_time' => '22:00', 'price' => 270000],
+            ['bus_id' => 1, 'company_route_id' => 2, 'start_time' => '22:00', 'end_time' => '04:00', 'price' => 270000],
+            ['bus_id' => 3, 'company_route_id' => 2, 'start_time' => '14:00', 'end_time' => '20:00', 'price' => 400000],
+            ['bus_id' => 3, 'company_route_id' => 2, 'start_time' => '16:00', 'end_time' => '22:00', 'price' => 400000],
+            ['bus_id' => 3, 'company_route_id' => 2, 'start_time' => '22:00', 'end_time' => '04:00', 'price' => 400000],
+            ['bus_id' => 4, 'company_route_id' => 2, 'start_time' => '14:00', 'end_time' => '20:00', 'price' => 650000],
+            ['bus_id' => 4, 'company_route_id' => 2, 'start_time' => '16:00', 'end_time' => '22:00', 'price' => 650000],
+            ['bus_id' => 4, 'company_route_id' => 2, 'start_time' => '22:00', 'end_time' => '04:00', 'price' => 650000],
+
+            // Tuyến 3: Hà Nội - Huế
+            ['bus_id' => 1, 'company_route_id' => 3, 'start_time' => '18:00', 'end_time' => '06:00', 'price' => 380000],
+            ['bus_id' => 2, 'company_route_id' => 3, 'start_time' => '18:00', 'end_time' => '06:00', 'price' => 450000],
+            ['bus_id' => 3, 'company_route_id' => 3, 'start_time' => '18:00', 'end_time' => '06:00', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 3, 'start_time' => '18:00', 'end_time' => '06:00', 'price' => 750000],
+
+            // Tuyến 4: Hà Nội - Đà Nẵng
+            ['bus_id' => 1, 'company_route_id' => 4, 'start_time' => '18:00', 'end_time' => '09:00', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 4, 'start_time' => '18:00', 'end_time' => '09:00', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 4, 'start_time' => '18:00', 'end_time' => '09:00', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 4, 'start_time' => '18:00', 'end_time' => '09:00', 'price' => 1050000],
+
+            // Tuyến 5: Hà Nội - Hà Giang
+            ['bus_id' => 6, 'company_route_id' => 5, 'start_time' => '06:30', 'end_time' => '12:30', 'price' => 370000],
+            ['bus_id' => 6, 'company_route_id' => 5, 'start_time' => '15:30', 'end_time' => '21:30', 'price' => 370000],
+            ['bus_id' => 1, 'company_route_id' => 5, 'start_time' => '20:00', 'end_time' => '02:00', 'price' => 320000],
+            ['bus_id' => 2, 'company_route_id' => 5, 'start_time' => '09:00', 'end_time' => '15:00', 'price' => 370000],
+            ['bus_id' => 2, 'company_route_id' => 5, 'start_time' => '19:30', 'end_time' => '01:30', 'price' => 370000],
+            ['bus_id' => 3, 'company_route_id' => 5, 'start_time' => '09:00', 'end_time' => '15:00', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 5, 'start_time' => '11:30', 'end_time' => '17:30', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 5, 'start_time' => '19:30', 'end_time' => '01:30', 'price' => 420000],
+            ['bus_id' => 4, 'company_route_id' => 5, 'start_time' => '09:00', 'end_time' => '15:00', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 5, 'start_time' => '11:30', 'end_time' => '17:30', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 5, 'start_time' => '19:30', 'end_time' => '01:30', 'price' => 600000],
+
+            // Tuyến 6: Hà Giang - Hà Nội
+            ['bus_id' => 6, 'company_route_id' => 6, 'start_time' => '06:30', 'end_time' => '12:30', 'price' => 370000],
+            ['bus_id' => 6, 'company_route_id' => 6, 'start_time' => '15:30', 'end_time' => '21:30', 'price' => 370000],
+            ['bus_id' => 1, 'company_route_id' => 6, 'start_time' => '20:30', 'end_time' => '02:30', 'price' => 320000],
+            ['bus_id' => 2, 'company_route_id' => 6, 'start_time' => '09:00', 'end_time' => '15:00', 'price' => 370000],
+            ['bus_id' => 2, 'company_route_id' => 6, 'start_time' => '18:00', 'end_time' => '00:00', 'price' => 370000],
+            ['bus_id' => 3, 'company_route_id' => 6, 'start_time' => '07:00', 'end_time' => '13:00', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 6, 'start_time' => '09:00', 'end_time' => '15:00', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 6, 'start_time' => '11:30', 'end_time' => '17:30', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 6, 'start_time' => '15:30', 'end_time' => '21:30', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 6, 'start_time' => '17:30', 'end_time' => '23:30', 'price' => 420000],
+            ['bus_id' => 3, 'company_route_id' => 6, 'start_time' => '19:30', 'end_time' => '01:30', 'price' => 420000],
+            ['bus_id' => 4, 'company_route_id' => 6, 'start_time' => '07:00', 'end_time' => '13:00', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 6, 'start_time' => '09:00', 'end_time' => '15:00', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 6, 'start_time' => '11:30', 'end_time' => '17:30', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 6, 'start_time' => '15:30', 'end_time' => '21:30', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 6, 'start_time' => '17:30', 'end_time' => '23:30', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 6, 'start_time' => '19:30', 'end_time' => '01:30', 'price' => 600000],
+
+            // Tuyến 7: Hà Nội - Ninh Bình
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '06:10', 'end_time' => '08:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '07:10', 'end_time' => '09:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '08:10', 'end_time' => '10:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '09:10', 'end_time' => '11:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '10:10', 'end_time' => '12:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '11:10', 'end_time' => '13:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '12:10', 'end_time' => '14:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '13:10', 'end_time' => '15:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '14:10', 'end_time' => '16:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '15:10', 'end_time' => '17:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '16:10', 'end_time' => '18:10', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 7, 'start_time' => '17:10', 'end_time' => '19:10', 'price' => 250000],
+
+            // Tuyến 8: Ninh Bình - Hà Nội
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '06:30', 'end_time' => '08:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '07:30', 'end_time' => '09:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '08:30', 'end_time' => '10:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '09:30', 'end_time' => '11:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '10:30', 'end_time' => '12:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '11:30', 'end_time' => '13:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '12:30', 'end_time' => '14:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '13:30', 'end_time' => '15:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '14:30', 'end_time' => '16:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '15:30', 'end_time' => '17:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '16:30', 'end_time' => '18:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 8, 'start_time' => '17:30', 'end_time' => '19:30', 'price' => 250000],
+
+            // Tuyến 9: Hà Giang - Sapa
+            ['bus_id' => 6, 'company_route_id' => 9, 'start_time' => '09:00', 'end_time' => '16:00', 'price' => 370000],
+            ['bus_id' => 2, 'company_route_id' => 9, 'start_time' => '18:00', 'end_time' => '01:00', 'price' => 370000],
+            ['bus_id' => 3, 'company_route_id' => 9, 'start_time' => '18:00', 'end_time' => '01:00', 'price' => 420000],
+            ['bus_id' => 4, 'company_route_id' => 9, 'start_time' => '18:00', 'end_time' => '01:00', 'price' => 600000],
+
+            // Tuyến 10: Sapa - Hà Giang
+            ['bus_id' => 2, 'company_route_id' => 10, 'start_time' => '11:00', 'end_time' => '18:00', 'price' => 370000],
+            ['bus_id' => 3, 'company_route_id' => 10, 'start_time' => '11:00', 'end_time' => '18:00', 'price' => 420000],
+            ['bus_id' => 4, 'company_route_id' => 10, 'start_time' => '11:00', 'end_time' => '18:00', 'price' => 600000],
+            ['bus_id' => 6, 'company_route_id' => 10, 'start_time' => '17:00', 'end_time' => '00:00', 'price' => 370000],
+
+            // Tuyến 11: Hà Nội - Cát Bà
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '06:00', 'end_time' => '09:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '07:30', 'end_time' => '11:00', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '09:00', 'end_time' => '12:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '11:00', 'end_time' => '14:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '12:30', 'end_time' => '16:00', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '14:00', 'end_time' => '17:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 11, 'start_time' => '15:30', 'end_time' => '19:00', 'price' => 270000],
+            ['bus_id' => 6, 'company_route_id' => 11, 'start_time' => '06:30', 'end_time' => '10:00', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 11, 'start_time' => '08:00', 'end_time' => '11:30', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 11, 'start_time' => '10:30', 'end_time' => '14:00', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 11, 'start_time' => '14:30', 'end_time' => '18:00', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 11, 'start_time' => '16:00', 'end_time' => '19:30', 'price' => 320000],
+
+            // Tuyến 12: Cát Bà - Hà Nội
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '07:00', 'end_time' => '10:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '09:00', 'end_time' => '12:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '11:00', 'end_time' => '14:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '12:30', 'end_time' => '16:00', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '14:00', 'end_time' => '17:30', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '15:30', 'end_time' => '19:00', 'price' => 270000],
+            ['bus_id' => 5, 'company_route_id' => 12, 'start_time' => '17:00', 'end_time' => '20:30', 'price' => 270000],
+            ['bus_id' => 6, 'company_route_id' => 12, 'start_time' => '05:00', 'end_time' => '08:30', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 12, 'start_time' => '08:00', 'end_time' => '11:30', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 12, 'start_time' => '10:30', 'end_time' => '14:00', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 12, 'start_time' => '14:30', 'end_time' => '18:00', 'price' => 320000],
+            ['bus_id' => 6, 'company_route_id' => 12, 'start_time' => '17:00', 'end_time' => '20:30', 'price' => 320000],
+
+            // Tuyến 13: Hà Nội - Tuần Châu
+            ['bus_id' => 5, 'company_route_id' => 13, 'start_time' => '07:00', 'end_time' => '10:30', 'price' => 200000],
+            ['bus_id' => 5, 'company_route_id' => 13, 'start_time' => '08:00', 'end_time' => '11:30', 'price' => 200000],
+            ['bus_id' => 6, 'company_route_id' => 13, 'start_time' => '07:00', 'end_time' => '10:30', 'price' => 250000],
+            ['bus_id' => 6, 'company_route_id' => 13, 'start_time' => '08:00', 'end_time' => '11:30', 'price' => 250000],
+
+            // Tuyến 14: Tuần Châu - Hà Nội
+            ['bus_id' => 5, 'company_route_id' => 14, 'start_time' => '11:30', 'end_time' => '15:00', 'price' => 200000],
+            ['bus_id' => 6, 'company_route_id' => 14, 'start_time' => '11:30', 'end_time' => '15:00', 'price' => 250000],
+
+            // Tuyến 15: Hà Nội - Mai Châu
+            ['bus_id' => 6, 'company_route_id' => 15, 'start_time' => '07:00', 'end_time' => '10:30', 'price' => 300000],
+            ['bus_id' => 6, 'company_route_id' => 15, 'start_time' => '12:00', 'end_time' => '15:30', 'price' => 300000],
+            ['bus_id' => 6, 'company_route_id' => 15, 'start_time' => '16:00', 'end_time' => '19:30', 'price' => 300000],
+
+            // Tuyến 16: Mai Châu - Hà Nội
+            ['bus_id' => 6, 'company_route_id' => 16, 'start_time' => '04:00', 'end_time' => '07:30', 'price' => 300000],
+            ['bus_id' => 6, 'company_route_id' => 16, 'start_time' => '08:30', 'end_time' => '12:00', 'price' => 300000],
+            ['bus_id' => 6, 'company_route_id' => 16, 'start_time' => '13:00', 'end_time' => '16:30', 'price' => 300000],
+
+            // Tuyến 17: Huế - Hà Nội
+            ['bus_id' => 2, 'company_route_id' => 17, 'start_time' => '15:00', 'end_time' => '03:00', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 17, 'start_time' => '17:00', 'end_time' => '05:00', 'price' => 450000],
+            ['bus_id' => 1, 'company_route_id' => 17, 'start_time' => '17:00', 'end_time' => '05:00', 'price' => 380000],
+            ['bus_id' => 3, 'company_route_id' => 17, 'start_time' => '17:00', 'end_time' => '05:00', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 17, 'start_time' => '17:00', 'end_time' => '05:00', 'price' => 750000],
+
+            // Tuyến 18: Đà Nẵng - Hà Nội
+            ['bus_id' => 1, 'company_route_id' => 18, 'start_time' => '14:15', 'end_time' => '05:15', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 18, 'start_time' => '14:15', 'end_time' => '05:15', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 18, 'start_time' => '14:15', 'end_time' => '05:15', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 18, 'start_time' => '14:15', 'end_time' => '05:15', 'price' => 1050000],
+
+            // Tuyến 19: Hà Nội - Phong Nha
+            ['bus_id' => 1, 'company_route_id' => 19, 'start_time' => '18:00', 'end_time' => '03:00', 'price' => 380000],
+            ['bus_id' => 2, 'company_route_id' => 19, 'start_time' => '18:00', 'end_time' => '03:00', 'price' => 450000],
+            ['bus_id' => 3, 'company_route_id' => 19, 'start_time' => '18:00', 'end_time' => '03:00', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 19, 'start_time' => '18:00', 'end_time' => '03:00', 'price' => 750000],
+
+            // Tuyến 20: Phong Nha - Hà Nội
+            ['bus_id' => 2, 'company_route_id' => 20, 'start_time' => '20:00', 'end_time' => '05:00', 'price' => 250000],
+            ['bus_id' => 2, 'company_route_id' => 20, 'start_time' => '21:30', 'end_time' => '06:30', 'price' => 450000],
+            ['bus_id' => 1, 'company_route_id' => 20, 'start_time' => '21:30', 'end_time' => '06:30', 'price' => 380000],
+            ['bus_id' => 3, 'company_route_id' => 20, 'start_time' => '21:30', 'end_time' => '06:30', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 20, 'start_time' => '21:30', 'end_time' => '06:30', 'price' => 750000],
+
+            // Tuyến 21: Hà Nội - Hội An
+            ['bus_id' => 1, 'company_route_id' => 21, 'start_time' => '18:00', 'end_time' => '10:00', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 21, 'start_time' => '18:00', 'end_time' => '10:00', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 21, 'start_time' => '18:00', 'end_time' => '10:00', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 21, 'start_time' => '18:00', 'end_time' => '10:00', 'price' => 1050000],
+
+            // Tuyến 22: Hội An - Hà Nội
+            ['bus_id' => 1, 'company_route_id' => 22, 'start_time' => '13:30', 'end_time' => '05:30', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 22, 'start_time' => '13:30', 'end_time' => '05:30', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 22, 'start_time' => '13:30', 'end_time' => '05:30', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 22, 'start_time' => '13:30', 'end_time' => '05:30', 'price' => 1050000],
+
+            // Tuyến 23: Ninh Bình - Phong Nha
+            ['bus_id' => 1, 'company_route_id' => 23, 'start_time' => '20:30', 'end_time' => '03:30', 'price' => 380000],
+            ['bus_id' => 2, 'company_route_id' => 23, 'start_time' => '20:30', 'end_time' => '03:30', 'price' => 450000],
+            ['bus_id' => 3, 'company_route_id' => 23, 'start_time' => '20:30', 'end_time' => '03:30', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 23, 'start_time' => '20:30', 'end_time' => '03:30', 'price' => 750000],
+
+            // Tuyến 24: Phong Nha - Ninh Bình
+            ['bus_id' => 2, 'company_route_id' => 24, 'start_time' => '20:00', 'end_time' => '03:00', 'price' => 250000],
+            ['bus_id' => 2, 'company_route_id' => 24, 'start_time' => '21:30', 'end_time' => '04:30', 'price' => 450000],
+            ['bus_id' => 1, 'company_route_id' => 24, 'start_time' => '21:30', 'end_time' => '04:30', 'price' => 380000],
+            ['bus_id' => 3, 'company_route_id' => 24, 'start_time' => '21:30', 'end_time' => '04:30', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 24, 'start_time' => '21:30', 'end_time' => '04:30', 'price' => 750000],
+
+            // Tuyến 25: Ninh Bình - Huế
+            ['bus_id' => 1, 'company_route_id' => 25, 'start_time' => '20:30', 'end_time' => '06:30', 'price' => 380000],
+            ['bus_id' => 2, 'company_route_id' => 25, 'start_time' => '20:30', 'end_time' => '06:30', 'price' => 450000],
+            ['bus_id' => 3, 'company_route_id' => 25, 'start_time' => '20:30', 'end_time' => '06:30', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 25, 'start_time' => '20:30', 'end_time' => '06:30', 'price' => 750000],
+
+            // Tuyến 26: Huế - Ninh Bình
+            ['bus_id' => 2, 'company_route_id' => 26, 'start_time' => '15:00', 'end_time' => '01:00', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 26, 'start_time' => '17:00', 'end_time' => '03:00', 'price' => 450000],
+            ['bus_id' => 1, 'company_route_id' => 26, 'start_time' => '17:00', 'end_time' => '03:00', 'price' => 380000],
+            ['bus_id' => 3, 'company_route_id' => 26, 'start_time' => '17:00', 'end_time' => '03:00', 'price' => 550000],
+            ['bus_id' => 4, 'company_route_id' => 26, 'start_time' => '17:00', 'end_time' => '03:00', 'price' => 750000],
+
+            // Tuyến 27: Ninh Bình - Đà Nẵng
+            ['bus_id' => 1, 'company_route_id' => 27, 'start_time' => '20:30', 'end_time' => '09:30', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 27, 'start_time' => '20:30', 'end_time' => '09:30', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 27, 'start_time' => '20:30', 'end_time' => '09:30', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 27, 'start_time' => '20:30', 'end_time' => '09:30', 'price' => 1050000],
+
+            // Tuyến 28: Đà Nẵng - Ninh Bình
+            ['bus_id' => 1, 'company_route_id' => 28, 'start_time' => '14:15', 'end_time' => '03:15', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 28, 'start_time' => '14:15', 'end_time' => '03:15', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 28, 'start_time' => '14:15', 'end_time' => '03:15', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 28, 'start_time' => '14:15', 'end_time' => '03:15', 'price' => 1050000],
+
+            // Tuyến 29: Ninh Bình - Hội An
+            ['bus_id' => 1, 'company_route_id' => 29, 'start_time' => '20:30', 'end_time' => '10:30', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 29, 'start_time' => '20:30', 'end_time' => '10:30', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 29, 'start_time' => '20:30', 'end_time' => '10:30', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 29, 'start_time' => '20:30', 'end_time' => '10:30', 'price' => 1050000],
+
+            // Tuyến 30: Hội An - Ninh Bình
+            ['bus_id' => 1, 'company_route_id' => 30, 'start_time' => '13:30', 'end_time' => '03:30', 'price' => 450000],
+            ['bus_id' => 2, 'company_route_id' => 30, 'start_time' => '13:30', 'end_time' => '03:30', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 30, 'start_time' => '13:30', 'end_time' => '03:30', 'price' => 750000],
+            ['bus_id' => 4, 'company_route_id' => 30, 'start_time' => '13:30', 'end_time' => '03:30', 'price' => 1050000],
+
+            // Tuyến 31: Đà Nẵng - Hội An
+            ['bus_id' => 1, 'company_route_id' => 31, 'start_time' => '11:00', 'end_time' => '12:00', 'price' => 150000],
+            ['bus_id' => 2, 'company_route_id' => 31, 'start_time' => '11:00', 'end_time' => '12:00', 'price' => 200000],
+
+            // Tuyến 32: Hội An - Đà Nẵng
+            ['bus_id' => 1, 'company_route_id' => 32, 'start_time' => '13:30', 'end_time' => '14:30', 'price' => 150000],
+            ['bus_id' => 2, 'company_route_id' => 32, 'start_time' => '13:30', 'end_time' => '14:30', 'price' => 200000],
+
+            // Tuyến 33: Huế - Hội An
+            ['bus_id' => 1, 'company_route_id' => 33, 'start_time' => '07:30', 'end_time' => '11:30', 'price' => 200000],
+            ['bus_id' => 2, 'company_route_id' => 33, 'start_time' => '07:30', 'end_time' => '11:30', 'price' => 250000],
+
+            // Tuyến 34: Hội An - Huế
+            ['bus_id' => 1, 'company_route_id' => 34, 'start_time' => '13:30', 'end_time' => '17:30', 'price' => 200000],
+            ['bus_id' => 2, 'company_route_id' => 34, 'start_time' => '13:30', 'end_time' => '17:30', 'price' => 250000],
+
+            // Tuyến 35: Huế - Đà Nẵng
+            ['bus_id' => 1, 'company_route_id' => 35, 'start_time' => '07:30', 'end_time' => '10:30', 'price' => 200000],
+            ['bus_id' => 2, 'company_route_id' => 35, 'start_time' => '07:30', 'end_time' => '10:30', 'price' => 250000],
+
+            // Tuyến 36: Đà Nẵng - Huế
+            ['bus_id' => 1, 'company_route_id' => 36, 'start_time' => '14:15', 'end_time' => '17:15', 'price' => 200000],
+            ['bus_id' => 2, 'company_route_id' => 36, 'start_time' => '14:15', 'end_time' => '17:15', 'price' => 250000],
+
+            // Tuyến 37: Phong Nha - Hội An
+            ['bus_id' => 1, 'company_route_id' => 37, 'start_time' => '04:00', 'end_time' => '11:00', 'price' => 300000],
+            ['bus_id' => 2, 'company_route_id' => 37, 'start_time' => '04:00', 'end_time' => '11:00', 'price' => 400000],
+
+            // Tuyến 38: Hội An - Phong Nha
+            ['bus_id' => 1, 'company_route_id' => 38, 'start_time' => '13:30', 'end_time' => '20:30', 'price' => 300000],
+            ['bus_id' => 2, 'company_route_id' => 38, 'start_time' => '13:30', 'end_time' => '20:30', 'price' => 400000],
+
+            // Tuyến 39: Phong Nha - Đà Nẵng
+            ['bus_id' => 1, 'company_route_id' => 39, 'start_time' => '04:00', 'end_time' => '10:00', 'price' => 300000],
+            ['bus_id' => 2, 'company_route_id' => 39, 'start_time' => '04:00', 'end_time' => '10:00', 'price' => 400000],
+
+            // Tuyến 40: Đà Nẵng - Phong Nha
+            ['bus_id' => 1, 'company_route_id' => 40, 'start_time' => '14:15', 'end_time' => '20:15', 'price' => 300000],
+            ['bus_id' => 2, 'company_route_id' => 40, 'start_time' => '14:15', 'end_time' => '20:15', 'price' => 400000],
+
+            // Tuyến 41: Phong Nha - Huế
+            ['bus_id' => 1, 'company_route_id' => 41, 'start_time' => '04:00', 'end_time' => '07:30', 'price' => 250000],
+            ['bus_id' => 2, 'company_route_id' => 41, 'start_time' => '04:00', 'end_time' => '07:30', 'price' => 300000],
+
+            // Tuyến 42: Huế - Phong Nha
+            ['bus_id' => 1, 'company_route_id' => 42, 'start_time' => '17:00', 'end_time' => '20:30', 'price' => 250000],
+            ['bus_id' => 2, 'company_route_id' => 42, 'start_time' => '17:00', 'end_time' => '20:30', 'price' => 300000],
+
+            // Tuyến 43: Hà Giang - Ninh Bình
+            ['bus_id' => 1, 'company_route_id' => 43, 'start_time' => '20:00', 'end_time' => '04:00', 'price' => 370000],
+            ['bus_id' => 3, 'company_route_id' => 43, 'start_time' => '20:00', 'end_time' => '04:00', 'price' => 460000],
+            ['bus_id' => 4, 'company_route_id' => 43, 'start_time' => '20:00', 'end_time' => '04:00', 'price' => 640000],
+
+            // Tuyến 44: Ninh Bình - Hà Giang
+            ['bus_id' => 1, 'company_route_id' => 44, 'start_time' => '18:00', 'end_time' => '02:00', 'price' => 370000],
+            ['bus_id' => 3, 'company_route_id' => 44, 'start_time' => '19:00', 'end_time' => '03:00', 'price' => 460000],
+            ['bus_id' => 4, 'company_route_id' => 44, 'start_time' => '19:00', 'end_time' => '03:00', 'price' => 640000],
+
+            // Tuyến 45: Hà Giang - Cát Bà
+            ['bus_id' => 2, 'company_route_id' => 45, 'start_time' => '19:00', 'end_time' => '07:00', 'price' => 550000],
+            ['bus_id' => 3, 'company_route_id' => 45, 'start_time' => '19:00', 'end_time' => '07:00', 'price' => 600000],
+            ['bus_id' => 4, 'company_route_id' => 45, 'start_time' => '19:00', 'end_time' => '07:00', 'price' => 800000],
+
+            // Tuyến 46: Cát Bà - Hà Giang
+            ['bus_id' => 2, 'company_route_id' => 46, 'start_time' => '17:00', 'end_time' => '05:00', 'price' => 550000],
+        ];
+
+        $insertData = [];
+        foreach ($data as $item) {
+            $insertData[] = array_merge($item, [
+                'is_active' => 1,
+                'priority' => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        DB::table('bus_routes')->insert($insertData);
     }
+
 
     private function seedMenus(): void
     {
         DB::table('menus')->insert([
-            ['id' => 1, 'name' => 'Trang chủ', 'url' => '/', 'parent_id' => null, 'priority' => 0, 'type' => 'custom_link', 'related_id' => null, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'name' => 'Tuyến đường', 'url' => '#', 'parent_id' => null, 'priority' => 1, 'type' => 'custom_link', 'related_id' => null, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'name' => 'Liên Hệ', 'url' => '/lien-he', 'parent_id' => null, 'priority' => 2, 'type' => 'custom_link', 'related_id' => null, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'name' => 'Hà Nội - Sapa', 'url' => '/tuyen-duong/ha-noi-sapa', 'parent_id' => 2, 'priority' => 0, 'type' => 'route', 'related_id' => 1, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 5, 'name' => 'Sapa - Hà Nội', 'url' => '/tuyen-duong/sapa-ha-noi', 'parent_id' => 2, 'priority' => 1, 'type' => 'route', 'related_id' => 2, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 6, 'name' => 'Hà Nội - Huế', 'url' => '/tuyen-duong/ha-noi-hue', 'parent_id' => 2, 'priority' => 2, 'type' => 'route', 'related_id' => 3, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 7, 'name' => 'Hà Nội - Đà Nẵng', 'url' => '/tuyen-duong/ha-noi-da-nang', 'parent_id' => 2, 'priority' => 3, 'type' => 'route', 'related_id' => 4, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 8, 'name' => 'Hà Nội - Hà Giang', 'url' => '/tuyen-duong/ha-noi-ha-giang', 'parent_id' => 2, 'priority' => 4, 'type' => 'route', 'related_id' => 5, 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
+            ['id' => 1, 'name' => 'Trang chủ', 'url' => '/', 'parent_id' => null, 'priority' => 0, 'type' => 'custom_link', 'related_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'name' => 'Tuyến đường', 'url' => '#', 'parent_id' => null, 'priority' => 1, 'type' => 'custom_link', 'related_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'name' => 'Liên Hệ', 'url' => '/lien-he', 'parent_id' => null, 'priority' => 2, 'type' => 'custom_link', 'related_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'name' => 'Hà Nội - Sapa', 'url' => '/tuyen-duong/ha-noi-sapa', 'parent_id' => 2, 'priority' => 0, 'type' => 'route', 'related_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'name' => 'Sapa - Hà Nội', 'url' => '/tuyen-duong/sapa-ha-noi', 'parent_id' => 2, 'priority' => 1, 'type' => 'route', 'related_id' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'name' => 'Hà Nội - Huế', 'url' => '/tuyen-duong/ha-noi-hue', 'parent_id' => 2, 'priority' => 2, 'type' => 'route', 'related_id' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 7, 'name' => 'Hà Nội - Đà Nẵng', 'url' => '/tuyen-duong/ha-noi-da-nang', 'parent_id' => 2, 'priority' => 3, 'type' => 'route', 'related_id' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 8, 'name' => 'Hà Nội - Hà Giang', 'url' => '/tuyen-duong/ha-noi-ha-giang', 'parent_id' => 2, 'priority' => 4, 'type' => 'route', 'related_id' => 5, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 
     private function seedBookings(): void
     {
         DB::table('bookings')->insert([
-            ['id' => 1, 'booking_code' => 'KEBXWZNF8FP', 'user_id' => 2, 'bus_route_id' => 1, 'booking_date' => '2025-10-20', 'customer_name' => 'Nguyễn Văn An', 'customer_email' => 'nguyenvanan@gmail.com', 'customer_phone' => '0123456789', 'pickup_stop_id' => 1, 'dropoff_stop_id' => 2, 'quantity' => 2, 'total_price' => 540000, 'status' => 'confirmed', 'payment_method' => 'online_banking', 'payment_status' => 'paid', 'notes' => 'Ghi chú cho đơn hàng 1', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 2, 'booking_code' => 'KEBAVNBMMJT', 'user_id' => 3, 'bus_route_id' => 10, 'booking_date' => '2025-11-15', 'customer_name' => 'Trần Thị Bình', 'customer_email' => 'tranthibinh@gmail.com', 'customer_phone' => '0987123456', 'pickup_stop_id' => 2, 'dropoff_stop_id' => 1, 'quantity' => 1, 'total_price' => 400000, 'status' => 'pending', 'payment_method' => 'cash_on_pickup', 'payment_status' => 'unpaid', 'notes' => 'Ghi chú cho đơn hàng 2', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 3, 'booking_code' => 'KEBJDQELCXB', 'user_id' => 5, 'bus_route_id' => 3, 'booking_date' => '2025-09-25', 'customer_name' => 'Minh Long', 'customer_email' => 'deocomate@gmail.com', 'customer_phone' => '0565651189', 'pickup_stop_id' => 1, 'dropoff_stop_id' => 2, 'quantity' => 1, 'total_price' => 400000, 'status' => 'confirmed', 'payment_method' => 'cash_on_pickup', 'payment_status' => 'unpaid', 'notes' => 'Ghi chú cho đơn hàng 3', 'created_at' => '2025-10-03 06:27:41', 'updated_at' => '2025-10-03 06:27:41'],
-            ['id' => 4, 'booking_code' => 'FHCDAPKA', 'user_id' => null, 'bus_route_id' => 1, 'booking_date' => '2025-10-03', 'customer_name' => 'Minh Long', 'customer_email' => 'deocomate@gmail.com', 'customer_phone' => '0999888777', 'pickup_stop_id' => null, 'dropoff_stop_id' => 2, 'quantity' => 1, 'total_price' => 270000, 'status' => 'confirmed', 'payment_method' => 'cash_on_pickup', 'payment_status' => 'unpaid', 'notes' => '[Đón tại khách sạn]: Khach san???\n[Ghi chú của khách]: 19 Hang Thiec Hoan Kiem Ha Noi', 'created_at' => '2025-10-03 06:29:29', 'updated_at' => '2025-10-03 06:29:29'],
-            ['id' => 5, 'booking_code' => '9N7OBWDL', 'user_id' => null, 'bus_route_id' => 86, 'booking_date' => '2026-01-26', 'customer_name' => 'Hayden Smith', 'customer_email' => 'mail@chambalam.com', 'customer_phone' => '+61415173146', 'pickup_stop_id' => 6, 'dropoff_stop_id' => 1, 'quantity' => 2, 'total_price' => 840000, 'status' => 'confirmed', 'payment_method' => 'cash_on_pickup', 'payment_status' => 'unpaid', 'notes' => null, 'created_at' => '2025-10-04 10:42:56', 'updated_at' => '2025-10-04 10:42:56'],
-            ['id' => 6, 'booking_code' => 'BOGCJ2VS', 'user_id' => null, 'bus_route_id' => 66, 'booking_date' => '2025-10-04', 'customer_name' => 'Hayden Smith', 'customer_email' => 'mail@chambalam.com', 'customer_phone' => '+61415173146', 'pickup_stop_id' => 1, 'dropoff_stop_id' => 6, 'quantity' => 2, 'total_price' => 740000, 'status' => 'confirmed', 'payment_method' => 'cash_on_pickup', 'payment_status' => 'unpaid', 'notes' => null, 'created_at' => '2025-10-04 11:05:18', 'updated_at' => '2025-10-04 11:05:18'],
-            ['id' => 7, 'booking_code' => 'MTF2VJ7X', 'user_id' => null, 'bus_route_id' => 77, 'booking_date' => '2026-01-27', 'customer_name' => 'Hayden', 'customer_email' => 'mail@chambalam.com', 'customer_phone' => '+61415173146', 'pickup_stop_id' => 6, 'dropoff_stop_id' => 1, 'quantity' => 2, 'total_price' => 740000, 'status' => 'confirmed', 'payment_method' => 'cash_on_pickup', 'payment_status' => 'unpaid', 'notes' => null, 'created_at' => '2025-10-06 04:28:50', 'updated_at' => '2025-10-06 04:28:50'],
-            ['id' => 8, 'booking_code' => 'HKG0FZTQ', 'user_id' => null, 'bus_route_id' => 1, 'booking_date' => '2025-10-06', 'customer_name' => 'Minh Loing', 'customer_email' => 'deocomate@gmail.com', 'customer_phone' => '0865095066', 'pickup_stop_id' => null, 'dropoff_stop_id' => 2, 'quantity' => 1, 'total_price' => 270000, 'status' => 'pending', 'payment_method' => 'online_banking', 'payment_status' => 'unpaid', 'notes' => '[Đón tại khách sạn]: 19 Hang Thiec\n[Ghi chú của khách]: ABC', 'created_at' => '2025-10-06 08:38:38', 'updated_at' => '2025-10-06 08:38:38'],
+            [
+                'booking_code' => 'KEB' . Str::upper(Str::random(8)),
+                'user_id' => 2,
+                'bus_route_id' => 1,
+                'booking_date' => now()->addDays(10)->toDateString(),
+                'customer_name' => 'Nguyễn Văn An',
+                'customer_email' => 'nguyenvanan@gmail.com',
+                'customer_phone' => '0123456789',
+                'pickup_stop_id' => 1,
+                'dropoff_stop_id' => 2,
+                'quantity' => 2,
+                'total_price' => 540000,
+                'status' => 'confirmed',
+                'payment_method' => 'online_banking',
+                'payment_status' => 'paid',
+                'notes' => 'Ghi chú cho đơn hàng mẫu 1',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'booking_code' => 'KEB' . Str::upper(Str::random(8)),
+                'user_id' => 3,
+                'bus_route_id' => 10,
+                'booking_date' => now()->addDays(20)->toDateString(),
+                'customer_name' => 'Trần Thị Bình',
+                'customer_email' => 'tranthibinh@gmail.com',
+                'customer_phone' => '0987123456',
+                'pickup_stop_id' => 2,
+                'dropoff_stop_id' => 1,
+                'quantity' => 1,
+                'total_price' => 400000,
+                'status' => 'pending',
+                'payment_method' => 'cash_on_pickup',
+                'payment_status' => 'unpaid',
+                'notes' => 'Ghi chú cho đơn hàng mẫu 2',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'booking_code' => 'KEB' . Str::upper(Str::random(8)),
+                'user_id' => null,
+                'bus_route_id' => 1,
+                'booking_date' => now()->addDays(5)->toDateString(),
+                'customer_name' => 'Minh Long',
+                'customer_email' => 'deocomate@gmail.com',
+                'customer_phone' => '0999888777',
+                'pickup_stop_id' => null,
+                'dropoff_stop_id' => 2,
+                'quantity' => 1,
+                'total_price' => 270000,
+                'status' => 'confirmed',
+                'payment_method' => 'cash_on_pickup',
+                'payment_status' => 'unpaid',
+                'notes' => '[Đón tại khách sạn]: Khách sạn ABC, 123 Phố Cổ, Hà Nội' . PHP_EOL . '[Ghi chú của khách]: Vui lòng gọi trước 30 phút.',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
         ]);
     }
 }

@@ -64,6 +64,8 @@ class BookingController extends Controller
 
         abort_if(!$trip || !$trip->is_active, 404, __('client.booking.create.trip_not_found'));
 
+        $seatPrice = (int)($trip->price ?? 0);
+
         $bookedTicketsCount = DB::table('bookings')
             ->where('bus_route_id', $busRouteId)
             ->whereDate('booking_date', $bookingDate)
@@ -116,14 +118,14 @@ class BookingController extends Controller
             'availableSeats' => $availableSeats,
             'user' => $user,
             'title' => __('client.booking.create.meta_title'),
-            'description' => __('client.booking.create.meta_description')
+            'description' => __('client.booking.create.meta_description'),
+            'seatPrice' => $seatPrice,
         ]);
     }
 
     public function store(Request $request)
     {
         $isHotelPickup = $request->input('pickup_stop_id') === 'hotel_pickup';
-
         $rules = [
             'bus_route_id' => 'required|integer|exists:bus_routes,id',
             'booking_date' => 'required|date_format:d/m/Y',
@@ -150,7 +152,6 @@ class BookingController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
         $validated = $validator->validated();
         $bookingDateForDb = Carbon::createFromFormat('d/m/Y', $validated['booking_date'])->format('Y-m-d');
 
@@ -212,7 +213,6 @@ class BookingController extends Controller
 
             try {
                 $mailDetails = $this->prepareMailDetails($bookingId);
-
                 if ($mailDetails) {
                     Mail::to($validated['customer_email'])->queue(new BookingConfirmMail($mailDetails));
                     Mail::to("kingexpressbus@gmail.com")->queue(new BookingConfirmMail($mailDetails));
@@ -249,11 +249,19 @@ class BookingController extends Controller
             ->join('provinces as start_prov', 'r.province_start_id', '=', 'start_prov.id')
             ->join('provinces as end_prov', 'r.province_end_id', '=', 'end_prov.id')
             ->select([
-                'b.*', 'r.name as route_name', 'c.name as company_name', 'c.hotline as company_hotline',
-                'br.start_time', 'bus.name as bus_name', 'bus.model_name as bus_model_name',
-                'p_stop.name as pickup_name', 'p_stop.address as pickup_address',
-                'd_stop.name as dropoff_name', 'd_stop.address as dropoff_address',
-                'start_prov.name as start_province', 'end_prov.name as end_province',
+                'b.*',
+                'r.name as route_name',
+                'c.name as company_name',
+                'c.hotline as company_hotline',
+                'br.start_time',
+                'bus.name as bus_name',
+                'bus.model_name as bus_model_name',
+                'p_stop.name as pickup_name',
+                'p_stop.address as pickup_address',
+                'd_stop.name as dropoff_name',
+                'd_stop.address as dropoff_address',
+                'start_prov.name as start_province',
+                'end_prov.name as end_province',
             ])
             ->where('b.id', $bookingId)->first();
 
@@ -261,13 +269,11 @@ class BookingController extends Controller
 
         $result = (array)$details;
         $webProfile = DB::table('web_profiles')->where('is_default', true)->first();
-
         $result['web_title'] = $webProfile->title ?? config('app.name');
         $result['web_phone'] = $webProfile->hotline ?? $webProfile->phone ?? 'N/A';
         $result['web_email'] = $webProfile->email ?? 'N/A';
         $result['web_link'] = url('/');
         $result['web_logo'] = !empty($webProfile->logo_url) ? url($webProfile->logo_url) : null;
-
         $result['departure_date'] = Carbon::parse($result['booking_date'])->format('d/m/Y');
         $result['start_time'] = Carbon::parse($result['start_time'])->format('H:i');
         $result['bus_type_name'] = $result['bus_model_name'] ?? __('client.booking.common.updating');
@@ -341,7 +347,6 @@ class BookingController extends Controller
             } catch (\Throwable $exception) {
             }
         }
-
         try {
             return Carbon::parse($value)->startOfDay();
         } catch (\Throwable $exception) {

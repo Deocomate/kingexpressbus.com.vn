@@ -22,8 +22,9 @@
         ];
     }
 @endphp
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,17 +40,14 @@
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $pageDescription }}">
     <meta name="twitter:image" content="{{ url($shareImage) }}">
-
     {{-- Apple Touch Icon for iOS devices --}}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ data_get($webProfile, 'logo_url', '/favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconUrl }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconUrl }}">
     <link rel="icon" href="{{ $faviconUrl }}">
-
     {{-- Theme color for mobile browsers --}}
     <meta name="theme-color" content="#1e40af">
     <meta name="msapplication-TileColor" content="#1e40af">
-
     {{-- Structured Data (JSON-LD) for SEO --}}
     <script type="application/ld+json">
         {
@@ -75,26 +73,24 @@
             @endforeach
             ]
         @endif
-
         }
     </script>
-
     {{-- Preload critical resources --}}
     <link rel="preload" as="style"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="preload" as="style"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" media="print"
-          onload="this.media='all'"/>
+        onload="this.media='all'" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"
-          media="print" onload="this.media='all'">
+        media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          media="print" onload="this.media='all'">
+        media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" media="print"
-          onload="this.media='all'">
+        onload="this.media='all'">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -144,98 +140,99 @@
             background-color: #d9534f;
         }
 
-        details[open] > summary i.fa-chevron-down {
+        details[open]>summary i.fa-chevron-down {
             transform: rotate(180deg);
         }
 
-        details > summary {
+        details>summary {
             list-style: none;
         }
 
-        details > summary::-webkit-details-marker {
+        details>summary::-webkit-details-marker {
             display: none;
         }
     </style>
     @stack('styles')
 </head>
+
 <body class="{{ $bodyClassName }}">
-<x-client.nav-bar :web-profile="$webProfile" :main-menu="$mainMenu" :auth-user="$authUser"
-                  :customer-links="$customerLinks"/>
-<main>
-    {{ $slot }}
-</main>
-<x-client.footer :web-profile="$webProfile"/>
-@if ($webProfile)
-    <div class="social-float">
-        @if (data_get($webProfile, 'facebook_url'))
-            <a href="https://m.me/{{ basename(parse_url(data_get($webProfile, 'facebook_url'), PHP_URL_PATH) ?? '') }}"
-               target="_blank" rel="noopener noreferrer" class="social-icon messenger" aria-label="Messenger">
-                <i class="fab fa-facebook-messenger"></i>
-            </a>
-        @endif
-        @if (data_get($webProfile, 'zalo_url'))
-            <a href="{{ data_get($webProfile, 'zalo_url') }}" target="_blank" rel="noopener noreferrer"
-               class="social-icon zalo"
-               aria-label="Zalo">
-                <img src="{{asset('/client/icons/zalo.png')}}" alt="">
-            </a>
-        @endif
-        @if (data_get($webProfile, 'hotline'))
-            <a href="tel:{{ str_replace([' ', '.'], '', data_get($webProfile, 'hotline')) }}"
-               class="social-icon hotline" aria-label="Hotline">
-                <i class="fas fa-phone-alt"></i>
-            </a>
-        @endif
-        @if (data_get($webProfile, 'whatsapp'))
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', data_get($webProfile, 'whatsapp')) }}"
-               target="_blank" rel="noopener noreferrer" class="social-icon bg-green-500" aria-label="WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-        @endif
-    </div>
-@endif
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" defer></script>
-<script defer>
-    document.addEventListener('DOMContentLoaded', function () {
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+    <x-client.nav-bar :web-profile="$webProfile" :main-menu="$mainMenu" :auth-user="$authUser" :customer-links="$customerLinks" />
+    <main>
+        {{ $slot }}
+    </main>
+    <x-client.footer :web-profile="$webProfile" />
+    @if ($webProfile)
+        <div class="social-float">
+            @if (data_get($webProfile, 'facebook_url'))
+                <a href="https://m.me/{{ basename(parse_url(data_get($webProfile, 'facebook_url'), PHP_URL_PATH) ?? '') }}"
+                    target="_blank" rel="noopener noreferrer" class="social-icon messenger" aria-label="Messenger">
+                    <i class="fab fa-facebook-messenger"></i>
+                </a>
+            @endif
+            @if (data_get($webProfile, 'zalo_url'))
+                <a href="{{ data_get($webProfile, 'zalo_url') }}" target="_blank" rel="noopener noreferrer"
+                    class="social-icon zalo" aria-label="Zalo">
+                    <img src="{{ asset('/client/icons/zalo.png') }}" alt="">
+                </a>
+            @endif
+            @if (data_get($webProfile, 'hotline'))
+                <a href="tel:{{ str_replace([' ', '.'], '', data_get($webProfile, 'hotline')) }}"
+                    class="social-icon hotline" aria-label="Hotline">
+                    <i class="fas fa-phone-alt"></i>
+                </a>
+            @endif
+            @if (data_get($webProfile, 'whatsapp'))
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', data_get($webProfile, 'whatsapp')) }}"
+                    target="_blank" rel="noopener noreferrer" class="social-icon bg-green-500" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            @endif
+        </div>
+    @endif
 
-        function toggleMenu() {
-            mobileMenu.classList.toggle('-translate-x-full');
-            mobileMenuOverlay.classList.toggle('hidden');
-        }
+    {{-- SCRIPT FIX: Load jQuery first without 'defer' to ensure it's available for other scripts --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const closeMobileMenuButton = document.getElementById('close-mobile-menu');
 
-        if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMenu);
-        if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', toggleMenu);
-        if (closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMenu);
-        toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            positionClass: 'toast-top-right'
-        };
-        @if (session('success'))
-        toastr.success('{{ addslashes(session('success')) }}');
-        @endif
-        @if (session('error'))
-        toastr.error('{{ addslashes(session('error')) }}');
-        @endif
-        @if (session('warning'))
-        toastr.warning('{{ addslashes(session('warning')) }}');
-        @endif
-        @if (session('info'))
-        toastr.info('{{ addslashes(session('info')) }}');
-        @endif
-        @if ($errors->any())
-        @foreach ($errors->all() as $error)
-        toastr.error('{{ addslashes($error) }}');
-        @endforeach
-        @endif
-    });
-</script>
-@stack('scripts')
+            function toggleMenu() {
+                mobileMenu.classList.toggle('-translate-x-full');
+                mobileMenuOverlay.classList.toggle('hidden');
+            }
+            if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMenu);
+            if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', toggleMenu);
+            if (closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMenu);
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: 'toast-top-right'
+            };
+            @if (session('success'))
+                toastr.success('{{ addslashes(session('success')) }}');
+            @endif
+            @if (session('error'))
+                toastr.error('{{ addslashes(session('error')) }}');
+            @endif
+            @if (session('warning'))
+                toastr.warning('{{ addslashes(session('warning')) }}');
+            @endif
+            @if (session('info'))
+                toastr.info('{{ addslashes(session('info')) }}');
+            @endif
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    toastr.error('{{ addslashes($error) }}');
+                @endforeach
+            @endif
+        });
+    </script>
+    @stack('scripts')
 </body>
+
 </html>
