@@ -1,4 +1,4 @@
-<x-client.layout :title="$title ?? 'Danh sách nhà xe đối tác'" :description="$description ?? ''">
+<x-client.layout :title="$title ?? __('companies.meta_title')" :description="$description ?? ''">
     @php
         $searchTerm = $filters['search'] ?? '';
         $companyFallback = '/userfiles/files/web information/logo.jpg';
@@ -14,21 +14,21 @@
             <div class="max-w-3xl space-y-4">
                 <span class="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-yellow-300">
                     <i class="fa-solid fa-building"></i>
-                    Hệ sinh thái đối tác
+                    {{ __('companies.partner_ecosystem') }}
                 </span>
-                <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">Nhà xe đồng hành cùng King Express Bus</h1>
+                <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">{{ __('companies.partner_companies_title') }}</h1>
                 <p class="text-white/80 text-lg">
-                    Khám phá danh sách các nhà xe đã được kiểm duyệt, đáp ứng tiêu chuẩn dịch vụ và an toàn để phục vụ hành khách trên khắp cả nước.
+                    {{ __('companies.partner_companies_desc') }}
                 </p>
             </div>
             <form method="GET" action="{{ route('client.companies.index') }}" class="bg-white/10 backdrop-blur rounded-2xl p-4 flex flex-col md:flex-row gap-3 md:items-center">
                 <div class="flex-1 flex items-center gap-3 bg-white rounded-xl px-4 py-3">
                     <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
-                    <input type="text" name="q" value="{{ $searchTerm }}" class="flex-1 text-slate-900 border-none focus:ring-0" placeholder="Tìm theo tên nhà xe hoặc địa điểm">
+                    <input type="text" name="q" value="{{ $searchTerm }}" class="flex-1 text-slate-900 border-none focus:ring-0" placeholder="{{ __('companies.search_placeholder') }}">
                 </div>
                 <button type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-yellow-400 text-slate-900 font-semibold rounded-xl shadow hover:bg-yellow-300 transition">
                     <i class="fa-solid fa-search"></i>
-                    Tìm kiếm
+                    {{ __('companies.search_button') }}
                 </button>
             </form>
         </div>
@@ -38,7 +38,7 @@
     <section id="search-section" class="py-10 bg-slate-50">
         <div class="container mx-auto px-4">
             <div class="bg-white border border-slate-100 rounded-3xl p-4 shadow-sm">
-                <x-client.search-bar :search-data="$searchData" submit-label="Tìm tuyến" />
+                <x-client.search-bar :search-data="$searchData" submit-label="{{ __('companies.find_route') }}" />
             </div>
         </div>
     </section>
@@ -47,9 +47,9 @@
         <div class="container mx-auto px-4 grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
             <div class="xl:col-span-2 space-y-6">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-slate-900">{{ $companies->total() }} nhà xe phù hợp</h2>
+                    <h2 class="text-2xl font-bold text-slate-900">{{ $companies->total() }} {{ __('companies.matching_companies') }}</h2>
                     @if ($searchTerm)
-                        <a href="{{ route('client.companies.index') }}" class="text-sm text-blue-600 hover:text-blue-700">Xóa bộ lọc</a>
+                        <a href="{{ route('client.companies.index') }}" class="text-sm text-blue-600 hover:text-blue-700">{{ __('companies.clear_filter') }}</a>
                     @endif
                 </div>
 
@@ -67,22 +67,22 @@
                                             <p class="text-sm text-slate-500">{{ \Illuminate\Support\Str::limit($company->description, 150) }}</p>
                                         </div>
                                         <a href="{{ route('client.companies.show', $company->slug) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700">
-                                            Xem chi tiết
+                                            {{ __('companies.view_details') }}
                                             <i class="fa-solid fa-arrow-right"></i>
                                         </a>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-slate-600">
                                         <div class="flex items-center gap-2">
                                             <i class="fa-solid fa-route text-blue-500"></i>
-                                            <span>{{ $company->route_count }} tuyến đang khai thác</span>
+                                            <span>{{ $company->route_count }} {{ __('companies.routes_operating') }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <i class="fa-solid fa-ticket text-emerald-500"></i>
-                                            <span>{{ $company->active_trip_count }} chuyến đang mở bán</span>
+                                            <span>{{ $company->active_trip_count }} {{ __('companies.trips_open') }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <i class="fa-solid fa-coins text-yellow-500"></i>
-                                            <span>{{ $company->min_price ? 'Giá từ ' . number_format($company->min_price) . ' đ' : 'Liên hệ giá' }}</span>
+                                            <span>{{ $company->min_price ? __('companies.price_from') . ' ' . number_format($company->min_price) . ' đ' : __('companies.contact_price') }}</span>
                                         </div>
                                     </div>
                                     @if ($company->address || $company->hotline)
@@ -101,7 +101,7 @@
                     @empty
                         <div class="bg-white border border-slate-100 rounded-3xl p-10 text-center text-slate-500">
                             <i class="fa-regular fa-face-frown-open text-3xl mb-3"></i>
-                            <p>Không tìm thấy nhà xe phù hợp. Hãy thay đổi từ khóa và thử lại.</p>
+                            <p>{{ __('companies.no_results') }}</p>
                         </div>
                     @endforelse
                 </div>
@@ -115,7 +115,7 @@
 
                 @if ($featuredRoutes->isNotEmpty())
                     <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-4">
-                        <h3 class="text-lg font-semibold text-slate-900">Tuyến nổi bật</h3>
+                        <h3 class="text-lg font-semibold text-slate-900">{{ __('companies.featured_routes') }}</h3>
                         <div class="space-y-4">
                             @foreach ($featuredRoutes as $route)
                                 <a href="{{ route('client.routes.show', ['slug' => $route->slug]) }}" class="flex items-center gap-4 group">
@@ -124,7 +124,7 @@
                                     </div>
                                     <div class="flex-1">
                                         <p class="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition">{{ $route->name }}</p>
-                                        <p class="text-xs text-slate-500">{{ $route->min_price ? 'Giá từ ' . number_format($route->min_price) . ' đ' : 'Liên hệ giá' }}</p>
+                                        <p class="text-xs text-slate-500">{{ $route->min_price ? __('companies.price_from') . ' ' . number_format($route->min_price) . ' đ' : __('companies.contact_price') }}</p>
                                     </div>
                                 </a>
                             @endforeach
@@ -133,11 +133,11 @@
                 @endif
 
                 <div class="bg-blue-50 border border-blue-100 rounded-3xl p-6 space-y-4 text-sm text-blue-700">
-                    <h3 class="text-base font-semibold text-blue-900">Lợi ích khi đặt qua King Express Bus</h3>
+                    <h3 class="text-base font-semibold text-blue-900">{{ __('companies.benefits_title') }}</h3>
                     <ul class="space-y-2">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Xác thực nhà xe, đảm bảo chất lượng</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Hỗ trợ đổi vé linh hoạt, minh bạch</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Nhiều ưu đãi dành riêng cho thành viên</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> {{ __('companies.benefit_1') }}</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> {{ __('companies.benefit_2') }}</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> {{ __('companies.benefit_3') }}</li>
                     </ul>
                 </div>
             </aside>

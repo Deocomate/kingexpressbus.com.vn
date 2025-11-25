@@ -1,4 +1,4 @@
-<x-client.layout :title="$title ?? 'Thông tin nhà xe'" :description="$description ?? ''">
+<x-client.layout :title="$title ?? __('companies.company_info')" :description="$description ?? ''">
     @php
         $companyImage = $company->thumbnail_url ?? '/userfiles/files/web information/logo.jpg';
         $routes = $routes ?? collect();
@@ -20,10 +20,10 @@
                 <div class="space-y-4 flex-1">
                     <span class="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-yellow-300">
                         <i class="fa-solid fa-building"></i>
-                        Nhà xe đối tác
+                        {{ __('companies.partner_company') }}
                     </span>
                     <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">{{ $company->name }}</h1>
-                    <p class="text-white/80 max-w-2xl">{{ $company->description ?? 'Nhà xe đồng hành cùng King Express Bus mang đến trải nghiệm tiện nghi, an toàn và đáng giá.' }}</p>
+                    <p class="text-white/80 max-w-2xl">{{ $company->description ?? __('companies.default_description') }}</p>
                     <div class="flex flex-wrap gap-4 text-sm text-white/70">
                         @if ($company->address)
                             <span class="inline-flex items-center gap-2"><i class="fa-solid fa-map-marker-alt"></i>{{ $company->address }}</span>
@@ -45,19 +45,19 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="rounded-2xl bg-white/10 backdrop-blur p-5 text-center">
                     <p class="text-2xl font-bold text-white">{{ $statistics['route_count'] ?? $routes->count() }}</p>
-                    <p class="text-sm text-white/70">Tuyến đang khai thác</p>
+                    <p class="text-sm text-white/70">{{ __('companies.routes_count') }}</p>
                 </div>
                 <div class="rounded-2xl bg-white/10 backdrop-blur p-5 text-center">
                     <p class="text-2xl font-bold text-white">{{ $statistics['fleet_size'] ?? $busFleet->count() }}</p>
-                    <p class="text-sm text-white/70">Số lượng xe</p>
+                    <p class="text-sm text-white/70">{{ __('companies.fleet_size') }}</p>
                 </div>
                 <div class="rounded-2xl bg-white/10 backdrop-blur p-5 text-center">
                     <p class="text-2xl font-bold text-white">{{ $statistics['active_trip_count'] ?? $upcomingTrips->count() }}</p>
-                    <p class="text-sm text-white/70">Chuyến sắp chạy</p>
+                    <p class="text-sm text-white/70">{{ __('companies.upcoming_trips') }}</p>
                 </div>
                 <div class="rounded-2xl bg-white/10 backdrop-blur p-5 text-center">
-                    <p class="text-2xl font-bold text-white">{{ isset($statistics['min_price']) && $statistics['min_price'] ? number_format($statistics['min_price']) . ' đ' : 'Liên hệ' }}</p>
-                    <p class="text-sm text-white/70">Giá vé từ</p>
+                    <p class="text-2xl font-bold text-white">{{ isset($statistics['min_price']) && $statistics['min_price'] ? number_format($statistics['min_price']) . ' đ' : __('companies.contact') }}</p>
+                    <p class="text-sm text-white/70">{{ __('companies.ticket_price_from') }}</p>
                 </div>
             </div>
         </div>
@@ -67,7 +67,7 @@
     <section id="search-section" class="py-8 bg-slate-50">
         <div class="container mx-auto px-4">
             <div class="bg-white border border-slate-100 rounded-3xl p-4 shadow-sm">
-                <x-client.search-bar :search-data="$searchData" submit-label="Tìm tuyến" />
+                <x-client.search-bar :search-data="$searchData" submit-label="{{ __('companies.find_route') }}" />
             </div>
         </div>
     </section>
@@ -78,8 +78,8 @@
                 @if ($routes->isNotEmpty())
                     <section class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-6">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-slate-900">Tuyến đang khai thác</h2>
-                            <span class="text-sm text-slate-500">{{ $routes->count() }} tuyến</span>
+                            <h2 class="text-2xl font-bold text-slate-900">{{ __('companies.routes_count') }}</h2>
+                            <span class="text-sm text-slate-500">{{ $routes->count() }} {{ __('companies.routes_label') }}</span>
                         </div>
                         <div class="space-y-5">
                             @foreach ($routes as $route)
@@ -87,25 +87,21 @@
                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                         <div>
                                             <p class="text-lg font-semibold text-slate-900">{{ $route->name }}</p>
-                                            <p class="text-sm text-slate-500">{{ $route->description ?? 'Thông tin tuyến sẽ được cập nhật.' }}</p>
+                                            <p class="text-sm text-slate-500">{{ $route->description ?? __('companies.route_info_updating') }}</p>
                                         </div>
                                         <div class="flex flex-wrap items-center gap-4 text-sm text-slate-600">
-                                            <span class="inline-flex items-center gap-2"><i class="fa-solid fa-clock"></i>{{ $route->duration ?? 'Đang cập nhật' }}</span>
-                                            <span class="inline-flex items-center gap-2"><i class="fa-solid fa-road"></i>{{ $route->distance_km ? $route->distance_km . ' km' : 'Khoảng cách đang cập nhật' }}</span>
+                                            <span class="inline-flex items-center gap-2"><i class="fa-solid fa-clock"></i>{{ $route->duration ?? __('companies.updating') }}</span>
+                                            <span class="inline-flex items-center gap-2"><i class="fa-solid fa-road"></i>{{ $route->distance_km ? $route->distance_km . ' km' : __('companies.distance_updating') }}</span>
                                             <span class="inline-flex items-center gap-2 text-blue-600 font-semibold">
                                                 <i class="fa-solid fa-ticket"></i>
-                                                {{ $route->min_price ? 'Giá từ ' . number_format($route->min_price) . ' đ' : 'Liên hệ giá' }}
+                                                {{ $route->min_price ? __('companies.price_from') . ' ' . number_format($route->min_price) . ' đ' : __('companies.contact_price') }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex flex-wrap items-center gap-3 text-sm">
                                         <a href="{{ route('client.routes.show', ['slug' => $route->route_slug]) }}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold">
-                                            Xem tuyến tổng quan
+                                            {{ __('companies.view_route_overview') }}
                                             <i class="fa-solid fa-arrow-right"></i>
-                                        </a>
-                                        <a href="{{ route('client.booking.create', ['company_route' => $route->slug]) }}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold">
-                                            Đặt vé nhanh
-                                            <i class="fa-solid fa-ticket"></i>
                                         </a>
                                     </div>
                                 </article>
@@ -117,8 +113,8 @@
                 @if ($busFleet->isNotEmpty())
                     <section class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-5">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-slate-900">Đội xe</h2>
-                            <span class="text-sm text-slate-500">{{ $busFleet->count() }} xe</span>
+                            <h2 class="text-2xl font-bold text-slate-900">{{ __('companies.bus_fleet') }}</h2>
+                            <span class="text-sm text-slate-500">{{ $busFleet->count() }} {{ __('companies.buses_label') }}</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             @foreach ($busFleet as $bus)
@@ -128,8 +124,8 @@
                                     </div>
                                     <div class="space-y-1">
                                         <p class="text-lg font-semibold text-slate-900">{{ $bus->name }}</p>
-                                        <p class="text-sm text-slate-500">{{ $bus->model_name ?? 'Dòng xe tiện nghi' }}</p>
-                                        <p class="text-sm text-slate-500">{{ $bus->seat_count ? $bus->seat_count . ' chỗ' : 'Đang cập nhật số chỗ' }}</p>
+                                        <p class="text-sm text-slate-500">{{ $bus->model_name ?? __('companies.comfortable_bus_model') }}</p>
+                                        <p class="text-sm text-slate-500">{{ $bus->seat_count ? $bus->seat_count . ' ' . __('companies.seats') : __('companies.seat_count_updating') }}</p>
                                     </div>
                                     @if (!empty($bus->services))
                                         <div class="flex flex-wrap gap-2">
@@ -147,8 +143,8 @@
                 @if ($upcomingTrips->isNotEmpty())
                     <section class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-5">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-slate-900">Chuyến sắp chạy</h2>
-                            <span class="text-sm text-slate-500">{{ $upcomingTrips->count() }} chuyến</span>
+                            <h2 class="text-2xl font-bold text-slate-900">{{ __('companies.upcoming_trips') }}</h2>
+                            <span class="text-sm text-slate-500">{{ $upcomingTrips->count() }} {{ __('companies.trips_label') }}</span>
                         </div>
                         <div class="space-y-4">
                             @foreach ($upcomingTrips as $trip)
@@ -159,11 +155,11 @@
                                     </div>
                                     <div class="text-sm text-slate-500 space-y-1">
                                         <p><i class="fa-regular fa-clock"></i> {{ \Carbon\Carbon::parse($trip->start_time)->format('d/m H:i') }} - {{ \Carbon\Carbon::parse($trip->end_time)->format('H:i') }}</p>
-                                        <p class="font-semibold text-blue-600">{{ $trip->price ? number_format($trip->price) . ' đ' : 'Liên hệ giá' }}</p>
+                                        <p class="font-semibold text-blue-600">{{ $trip->price ? number_format($trip->price) . ' đ' : __('companies.contact_price') }}</p>
                                     </div>
-                                    <a href="{{ route('client.booking.create', ['bus_route_id' => $trip->id]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition">
+                                    <a href="{{ route('client.booking.create', ['bus_route_id' => $trip->id, 'date' => \Carbon\Carbon::parse($trip->start_time)->format('Y-m-d')]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition">
                                         <i class="fa-solid fa-ticket"></i>
-                                        Đặt vé
+                                        {{ __('companies.book_ticket') }}
                                     </a>
                                 </article>
                             @endforeach
@@ -175,8 +171,8 @@
             <aside class="space-y-6">
 
                 <div class="bg-slate-900 text-white rounded-3xl p-6 space-y-4">
-                    <h3 class="text-lg font-semibold">Liên hệ nhà xe</h3>
-                    <p class="text-sm text-white/80">Đặt vé theo đoàn hoặc cần hỗ trợ riêng, hãy liên hệ trực tiếp.</p>
+                    <h3 class="text-lg font-semibold">{{ __('companies.contact_company') }}</h3>
+                    <p class="text-sm text-white/80">{{ __('companies.contact_desc') }}</p>
                     @if ($company->hotline)
                         <a href="tel:{{ preg_replace('/[^0-9+]/', '', $company->hotline) }}" class="inline-flex items-center gap-3 px-5 py-3 bg-yellow-400 text-slate-900 font-semibold rounded-lg shadow hover:bg-yellow-300 transition">
                             <i class="fa-solid fa-phone"></i>
@@ -193,7 +189,7 @@
 
                 @if ($routes->isNotEmpty())
                     <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-4 text-sm text-slate-600">
-                        <h3 class="text-base font-semibold text-slate-900">Tuyến phổ biến</h3>
+                        <h3 class="text-base font-semibold text-slate-900">{{ __('companies.popular_routes') }}</h3>
                         <ul class="space-y-2">
                             @foreach ($routes->take(5) as $route)
                                 <li>
