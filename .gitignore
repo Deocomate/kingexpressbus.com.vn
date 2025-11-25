@@ -1,5 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+.claude/*
 docs/*
 plans/*
 assets/*
@@ -22,6 +22,9 @@ node_modules/*
 .idea/*
 .husky/*
 .venv/*
+
+CLAUDE.md
+.repomixignore
 
 # dependencies
 /node_modules
