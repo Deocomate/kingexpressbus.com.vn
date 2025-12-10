@@ -127,6 +127,7 @@ yarn-error.log
 .codebase/
 
 # Added by CodebaseTracker
+.claude/
 _codebase/
 .github/
 /public/userfiles
